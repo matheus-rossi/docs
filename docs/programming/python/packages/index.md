@@ -8,7 +8,7 @@ Requests allows you to send HTTP/1.1 requests extremely easily.
 
 There’s no need to manually add query strings to your URLs, or to form-encode your PUT & POST data — but nowadays, just use the json method!
 
-[Docs]('https://requests.readthedocs.io/en/latest/')
+[Docs](https://requests.readthedocs.io/en/latest/)
 
 ```bash
 poetry add requests
@@ -26,7 +26,7 @@ print(x.text)
 
 HTTPX is a fully featured HTTP client for Python 3, which provides sync and async APIs, and support for both HTTP/1.1 and HTTP/2.
 
-[Docs]('https://www.python-httpx.org/')
+[Docs](https://www.python-httpx.org/)
 
 ```bash
 poetry add httpx

@@ -5,7 +5,7 @@ export default defineConfig({
   title: "Matheus's Wiki",
   description: "All my notes, links, and knowledge.",
   themeConfig: {
-    // https://vitepress.dev/reference/default-theme-config
+    search: true,
     nav: [
       { text: 'Home', link: '/' },
       { text: 'Youtube', link: 'https://www.youtube.com/@matheus.srossi' }

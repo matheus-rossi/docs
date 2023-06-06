@@ -5,7 +5,9 @@ export default defineConfig({
   title: "Matheus's Wiki",
   description: "All my notes, links, and knowledge.",
   themeConfig: {
-    search: true,
+    search: {
+      provider: 'local'
+    },
     nav: [
       { text: 'Home', link: '/' },
       { text: 'Youtube', link: 'https://www.youtube.com/@matheus.srossi' }

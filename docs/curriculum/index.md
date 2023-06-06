@@ -2,8 +2,8 @@
 
 ## English Version Link
 
-[English - Here](/curriculum/english/index.md/)
+[English - Here](curriculum/english/index.md/)
 
 ## Versão em Português
 
-[Português - Aqui](/curriculum/portuguese/index.md/)
+[Português - Aqui](curriculum/portuguese/index.md/)

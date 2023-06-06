@@ -10,10 +10,10 @@ Brew is famous in macOS scene, but can also be installed on linux machines.
 
 Free and open source distributed version control system.
 
-[Git](/programming/git/index.md/)
+[Git](git/index.md)
 
 ## Python
 
 Free and open source distributed version control system.
 
-[Python](/programming/python/index.md)
+[Python](python/index.md)

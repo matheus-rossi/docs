@@ -13,7 +13,7 @@ List of uselful packages (focus on data engineering).
 Pyenv lets you easily switch between multiple versions of Python. 
 It's simple, unobtrusive, and follows the UNIX tradition of single-purpose tools that do one thing well.
 
-[PyEnv - Github]('https://github.com/pyenv/pyenv')
+[PyEnv - Github](https://github.com/pyenv/pyenv)
 
 How to install PyEnv
 
@@ -43,9 +43,9 @@ pyenv local 3.9.11
 
 Python packaging and dependency management made easy.
 
-[Poetry - Github](https://github.com/python-poetry/poetry')
+[Poetry - Github](https://github.com/python-poetry/poetry)
 
-[Poetry - Installations Methods]('https://python-poetry.org/docs/')
+[Poetry - Installations Methods](https://python-poetry.org/docs/)
 
 Install poetry
 ```bash

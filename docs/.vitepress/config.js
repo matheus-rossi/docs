@@ -18,10 +18,10 @@ export default defineConfig({
         text: 'Programming',
         link: 'programming/index.md',
         items: [
+          { text: 'CI / CD', link: '' },
           { text: 'Data Engineering', link: '' },
           { text: 'Databases', link: '' },
-          { text: 'DevOps', link: '' },
-          { text: 'Docker', link: '' },
+          { text: 'Containers', link: 'programming/containers/index.md' },
           { text: 'Git', link: 'programming/git/index.md' },
           { text: 'Kubernetes', link: '' },
           { text: 'Python', link: 'programming/python/index.md' },

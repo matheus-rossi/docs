@@ -1,13 +1,18 @@
 # Git
 
-### How to configure global properties
+## Install
+```bash
+brew install git
+```
+
+## Global properties
 
 ```bash
 git config --global user.email "YOUR_EMAIL_HERE"
 git config --global user.name "YOUR_NAME_HERE"
 ```
 
-### Branchs
+## Working with branchs
 
 ```bash
 # List branchs

@@ -23,7 +23,7 @@ export default defineConfig({
           { text: 'Databases', link: '' },
           { text: 'Containers', link: 'programming/containers/index.md' },
           { text: 'Git', link: 'programming/git/index.md' },
-          { text: 'Kubernetes', link: '' },
+          { text: 'Kubernetes', link: 'programming/kubernetes/index.md' },
           { text: 'Python', link: 'programming/python/index.md' },
         ]
       },

@@ -16,6 +16,8 @@ It has a large, rapidly growing ecosystem. Kubernetes services, support, and too
 
 ![K3D](./k3d.png)
 
+[K3D - Official Docs](https://k3d.io)
+
 k3d is a lightweight wrapper to run k3s (Rancher Lab’s minimal Kubernetes distribution) in docker.
 
 k3d makes it very easy to create single- and multi-node k3s clusters in docker, e.g. for local development on Kubernetes.
@@ -24,8 +26,6 @@ k3d makes it very easy to create single- and multi-node k3s clusters in docker, 
 
 * docker to be able to use k3d at all
 * kubectl to interact with the Kubernetes cluster
-
-[K3D - Official Docs](https://k3d.io/v5.5.1/)
 
 ```bash
 brew install k3d
@@ -58,9 +58,9 @@ k3d cluster list
 
 ![Lens - IDE](./lens.png)
 
-Lens Desktop is the only application you need to take control of your Kubernetes clusters. It's built on open source and free.
-
 [Open Lens Github](https://github.com/MuhammedKalkan/OpenLens)
+
+Lens Desktop is the only application you need to take control of your Kubernetes clusters. It's built on open source and free.
 
 ### Install
 ```bash
@@ -78,9 +78,9 @@ Go to extensions (ctrl+shift+e) add this name in the box: @alebcay/openlens-node
 
 ![K9s](./k9s.png)
 
-K9s is a terminal based UI to interact with your Kubernetes clusters. The aim of this project is to make it easier to navigate, observe and manage your deployed applications in the wild.
-
 [K9s Site](https://k9scli.io/)
+
+K9s is a terminal based UI to interact with your Kubernetes clusters. The aim of this project is to make it easier to navigate, observe and manage your deployed applications in the wild.
 
 ### Install
 

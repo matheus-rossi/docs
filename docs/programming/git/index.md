@@ -1,4 +1,9 @@
 # Git
+![Git](./git.png)
+
+Free and open source distributed version control system.
+
+[GIT - Docs](git/index.md)
 
 ## Install
 ```bash
@@ -12,7 +17,7 @@ git config --global user.email "YOUR_EMAIL_HERE"
 git config --global user.name "YOUR_NAME_HERE"
 ```
 
-## Working with branchs
+## Basic commands
 
 ```bash
 # List branchs

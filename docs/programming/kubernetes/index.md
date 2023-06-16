@@ -10,7 +10,17 @@ Kubernetes is a portable, extensible, open source platform for managing containe
 that facilitates both declarative configuration and automation. 
 It has a large, rapidly growing ecosystem. Kubernetes services, support, and tools are widely available.
 
+### Components and Manifests
 
+Components of K8s and examples on how to declare them via manifests in k8s.
+
+[Components - Docs](components/index.md)
+
+### Concepts
+
+Important concepts about kubernetes.
+
+[Concepts - Docs](concepts/index.md)
 
 ## K3D
 
@@ -87,3 +97,14 @@ K9s is a terminal based UI to interact with your Kubernetes clusters. The aim of
 ```bash
  brew install derailed/k9s/k9s
 ```
+
+## Helm Charts
+
+![Helm](./helm.png)
+
+The best way to deploy apps on kubernetes.
+
+[Helm - Site](https://helm.sh/)
+
+Helm uses a packaging format called charts. A chart is a collection of files that describe a related set of Kubernetes resources. 
+A single chart might be used to deploy something simple, like a memcached pod, or something complex, like a full web app stack with HTTP servers, databases, caches, and so on.

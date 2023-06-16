@@ -1,14 +1,25 @@
 # Python
 
-Best practices for installing python and creating virtual enviroments to work with python.
+![Python](./python.png)
+
+Python is a programming language that lets you work quickly
+and integrate systems more effectively.
+
+[Python - Docs](python/index.md)
+
+Best practices for installing and creating virtual enviroments to work with python.
 
 ## Packages
+
+![Pyton Packages](./python-packages.jpeg)
 
 List of uselful packages (focus on data engineering).
 
 [Packages](/programming/python/packages/index.md)
 
 ## PyEnv
+
+![PyEnv - Github](./pyenv.png)
 
 Pyenv lets you easily switch between multiple versions of Python. 
 It's simple, unobtrusive, and follows the UNIX tradition of single-purpose tools that do one thing well.
@@ -41,7 +52,7 @@ pyenv local 3.9.11
 
 ## Poetry
 
-Python packaging and dependency management made easy.
+![Poetry](./poetry.png)
 
 [Poetry - Github](https://github.com/python-poetry/poetry)
 

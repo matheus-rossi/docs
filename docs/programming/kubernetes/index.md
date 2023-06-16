@@ -39,7 +39,7 @@ Creating K8s cluster in one line.
 If you wanna expose your cluster in the local networ, provide your machine IP in --tls-san section.
 :::
 
-Blueprint
+### Usage
 ```bash
 k3d cluster create <CLUSTER_NAME> --agents 4 --servers 1 --k3s-arg "--tls-san=<YOUR_MACHINE_IP>@server:*"
 ```
@@ -62,7 +62,7 @@ Lens Desktop is the only application you need to take control of your Kubernetes
 
 [Open Lens Github](https://github.com/MuhammedKalkan/OpenLens)
 
-Install
+### Install
 ```bash
 brew install --cask openlens
 ```
@@ -73,3 +73,17 @@ brew install --cask openlens
 :::
 
 Go to extensions (ctrl+shift+e) add this name in the box: @alebcay/openlens-node-pod-menu and hit install
+
+## K9S - TUI for K8s
+
+![K9s](./k9s.png)
+
+K9s is a terminal based UI to interact with your Kubernetes clusters. The aim of this project is to make it easier to navigate, observe and manage your deployed applications in the wild.
+
+[K9s Site](https://k9scli.io/)
+
+### Install
+
+```bash
+ brew install derailed/k9s/k9s
+```

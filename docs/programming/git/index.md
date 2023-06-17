@@ -3,8 +3,6 @@
 
 Free and open source distributed version control system.
 
-[GIT - Docs](git/index.md)
-
 ## Install
 ```bash
 brew install git

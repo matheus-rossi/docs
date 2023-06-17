@@ -5,8 +5,6 @@
 Python is a programming language that lets you work quickly
 and integrate systems more effectively.
 
-[Python - Docs](python/index.md)
-
 Best practices for installing and creating virtual enviroments to work with python.
 
 ## Packages

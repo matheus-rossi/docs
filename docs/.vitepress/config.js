@@ -15,22 +15,22 @@ export default defineConfig({
 
     sidebar: [
       {
-        text: 'Programming',
-        link: 'programming/index.md',
+        text: 'Development',
+        link: 'development/index.md',
         collapsed: false,
         items: [
           { text: 'CI / CD', link: '' },
-          { text: 'Cloud', link: 'programming/cloud/index.md' },
-          { text: 'Containers', link: 'programming/containers/index.md' },
+          { text: 'Cloud', link: 'development/cloud/index.md' },
+          { text: 'Containers', link: 'development/containers/index.md' },
           { text: 'Data Engineering', link: '' },
-          { text: 'Data Governance', link: 'programming/data-governance/index.md' },
-          { text: 'Data Visualization', link: 'programming/data-visualization/index.md' },
+          { text: 'Data Governance', link: 'development/data-governance/index.md' },
+          { text: 'Data Visualization', link: 'development/data-visualization/index.md' },
           { text: 'Databases', link: '' },
-          { text: 'Documentation', link: 'programming/documentation/index.md' },
-          { text: 'Git', link: 'programming/git/index.md' },
-          { text: 'Kubernetes', link: 'programming/kubernetes/index.md' },
-          { text: 'Linux', link: 'programming/linux/index.md' },
-          { text: 'Python', link: 'programming/python/index.md' },
+          { text: 'Documentation', link: 'development/documentation/index.md' },
+          { text: 'Git', link: 'development/git/index.md' },
+          { text: 'Kubernetes', link: 'development/kubernetes/index.md' },
+          { text: 'Linux', link: 'development/linux/index.md' },
+          { text: 'Python', link: 'development/python/index.md' },
         ]
       },
       {
@@ -49,7 +49,7 @@ export default defineConfig({
 
     footer: {
       message: 'Feel free to use any content here.',
-      copyright: '2023-present Matheus Sandrini Rossi'
+      copyright: '2023 - present - Matheus Sandrini Rossi'
     }
 
   }

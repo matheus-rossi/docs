@@ -13,7 +13,7 @@ Best practices for installing and creating virtual enviroments to work with pyth
 
 List of uselful packages (focus on data engineering).
 
-[Packages](/programming/python/packages/index.md)
+[Packages](/development/python/packages/index.md)
 
 ## PyEnv
 

@@ -11,22 +11,22 @@ hero:
       alt: VitePress
   actions:
     - theme: brand
-      text: Wiki
-      link: /api-examples
+      text: Development
+      link: /development
     - theme: alt
       text: Curriculum
       link: /curriculum/index.md
 
 features:
-  - title: Programming
-    details: Python, Data Enginnering, Analytics, DevOps and more.
+  - title: Development
+    details: Python, Data Enginnering, Analytics, DevOps and more. Work in Progress
     icon: 💾
-    link: /programming/index
+    link: /development/index
   - title: Lean Thinking and Management
-    details: Useful resources to solve real world problems with real teams.
+    details: Useful resources to solve real world problems with real teams. Work in Progress
     icon: 💭
   - title: Curriculum
-    details: Details about my experiences and knowledge.
+    details: Details about my experiences and knowledge. Work in Progress
     icon: 🎯
     link: /curriculum/index
 ---

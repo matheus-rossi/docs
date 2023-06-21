@@ -39,3 +39,46 @@ https://aws.amazon.com/console/
 
 ## IAM & AWS CLI
 
+IAM - Identity and Access Management = Global Service
+
+* Root account -> NEVER use on production. Some services can't even be deployed / used with root user.
+* Users -> people within your organization
+* Groups -> only contain users, not other groups.
+* User can have zero, one, or multiple groups
+
+Users and groups will have policies, describing permissions on cloud.
+
+LEAST PRIVILEGE, always.
+
+### Policies
+
+Example of policy allowing acces to one bucket on s3
+
+```javascript
+{
+   "Version":"2012-10-17",
+   "Statement":[
+      {
+         "Effect":"Allow",
+         "Action": "s3:ListAllMyBuckets",
+         "Resource":"*"
+      },
+      {
+         "Effect":"Allow",
+         "Action":["s3:ListBucket","s3:GetBucketLocation"],
+         "Resource":"arn:aws:s3:::DOC-EXAMPLE-BUCKET1"
+      },
+      {
+         "Effect":"Allow",
+         "Action":[
+            "s3:PutObject",
+            "s3:PutObjectAcl",
+            "s3:GetObject",
+            "s3:GetObjectAcl",
+            "s3:DeleteObject"
+         ],
+         "Resource":"arn:aws:s3:::DOC-EXAMPLE-BUCKET1/*"
+      }
+   ]
+}
+```

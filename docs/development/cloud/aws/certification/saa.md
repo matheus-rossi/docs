@@ -82,3 +82,62 @@ Example of policy allowing acces to one bucket on s3
    ]
 }
 ```
+
+### AWS MFA
+
+Set password policy.
+
+Always use Multiple Factor Authentication, security is mandatory
+
+* Virtual - MFA (Google Authenticator, Authy, etc)
+* Phisical - U2F - Universal 2nd Factor, like a usb stick ... 
+
+###  CLI and SDK
+
+To use CLI, you must generate Access Key to yout account. Be careful, NEVER sote it in github, they are just like passwords.
+
+* AccessKeyId -> username
+* SecretAccesskey -> password
+
+With CLI you can interact with AWS using command line.
+
+With SDK you can program how to interact with AWS, using form example python to create resources on Cloud.
+
+Install CLI
+```bash
+brew install awscli
+```
+
+### AWS Cloud Shell
+
+Not avaiable on all regions.
+
+With cloud shell, you can ssh into your instances inside the console management, without using external apps.
+
+### AWS Roles
+
+Roles are just like users, but used inside other services inside aws. Examples: ec2, lambda, cloud formation
+
+IAM Role -> EC2 -> S#
+
+### Security Tools
+
+* IAM Credentials Report (account-level) -> All account's users
+* IAM Access Advisor (user-level) -> All permissions granted to user
+
+## EC2
+
+### Budget Setup
+
+
+::: tip
+Always set budgets whilw using aws, it will help you monitor the billing of yout account.
+:::
+
+### EC2 Basics
+
+EC2 -> Elastic Compute Cloud -> (vm's on cloud)
+
+You can choose:
+
+* Operational System: Linux, Win, MacOs

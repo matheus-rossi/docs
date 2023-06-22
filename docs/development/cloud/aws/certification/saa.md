@@ -1,5 +1,9 @@
 # Solutions Architect Associate
 
+::: details TO STUDY
+ENI - Elastic Network Interface
+:::
+
 ## Getting Started
 
 ### Regions
@@ -141,3 +145,285 @@ EC2 -> Elastic Compute Cloud -> (vm's on cloud)
 You can choose:
 
 * Operational System: Linux, Win, MacOs
+* Cpu
+* Ram
+* Storage (EBS & EFS)
+* Network
+* Firewall
+* Bootstrap
+
+### Bootstrap
+
+Runs script on the deploy of a ec2 instance. EC2 User Data.
+
+### Instance Types
+
+[List of Types](https://aws.amazon.com/ec2/instance-types/)
+
+| Tipo     |      Exemplos      | Usage |
+|----------|:------------------:| -----|
+| General Purpose |  M7, A1, T2 | Web Servers, Code Repositories, Development Environments, Test Environments |
+| Compute Optimized |  C4  | Gaming Servers, Machine Learning, Batch Processing, Media Transcode, High Performance Compute |
+| Memory Optimized |  R5, X1, z1d  | High Performance Databases, Distributed Web Scale In-Memory Caches, In-Memory Databases, Real Time Big Data Analytics |
+| Storage Optimized |  H1, I3  | Data Warehousing, Hadoop, MapReduce, Distributed File Systems, Network File Systems, Log or Data Processing, Cache in memory databases (Redis) |
+
+[Instance Type Comparison](https://instances.vantage.sh/)
+
+### Security Groups
+
+Security Groups are like firewalls, they control the traffic to your instances, allowing inbound and outbound rules. Rules can be applied to IPs and other security groups.
+
+::: tip
+Only contain allow rules, not deny rules.
+:::
+
+### Ec2 Purchasing Options
+
+* On Demand -> short workload, predictable pricing -> Pay as you go
+* Reserved -> Long workloads -> Up to 75% discount compared to on-demand -> 1 or 3 years
+* Savings Plans -> Flexibility to move across instance families, regions, OS -> Up to 72% discount compared to on-demand -> Commit to a consistent amount of compute usage (measured in $/hour) for a 1 or 3 year term
+* Spot -> Short workloads, for cheap, can lose instances -> Up to 90% discount compared to on-demand -> Bid a price for instance usage, if AWS spot price is below your bid, you get the instance, if above, you lose it.
+* Dedicated Hosts -> Useful for regulatory requirements that may not support multi-tenant virtualization -> Book an entire physical server, control instance placement.
+* Dedicated Instances -> Instances running on hardware that's dedicated to you -> May share hardware with other instances in same account.
+* Capacity Reservations -> Reserve capacity for your EC2 instances -> Ensure you have capacity when you need it.
+
+#### EC2 On Demand
+
+* Pay for what you use
+* Linux, Windows
+* Hiest cost but no upfront payment
+* No long term commitment
+
+#### EC2 Reserved Instances
+
+* Up to 72% discount compared to on-demand
+* Specific instance type in a region
+* Period of 1 or 3 years
+* Payment Options: No Upfront, Partial Upfront, All Upfront
+* Buy and sell in AWS Marketplace
+
+#### EC2 Savings Plans
+
+* Up to 72% discount compared to on-demand
+* Flexibility to move across instance families, regions, OS
+* Commit to a consistent amount of compute usage (measured in $/hour) for a 1 or 3 year term
+
+#### EC2 Spot Instances
+
+* Up to 90% discount compared to on-demand
+* Useful for workloads that are resilient to failure
+* Great for batch jobs, data analysis, workloads that are resilient to failure
+* Most cost-efficient instances in AWS
+* Not great for critical jobs or databases
+
+#### EC2 Dedicated Hosts
+
+* Physical dedicated EC2 server for your use
+* Compliance requirements that may not support multi-tenant virtualization
+* Can be purchased On-Demand or reserved
+* Most expensive EC2 pricing model
+
+#### EC2 Dedicated Instances
+
+* Instances running on hardware that's dedicated to you
+* May share hardware with other instances in same account
+* No control over instance placement (can move hardware after stop/start)
+
+#### EC2 Capacity Reservations
+
+* Reserve capacity for your EC2 instances
+* Ensure you have capacity when you need it
+* Can be purchased On-Demand
+
+#### Spot Instances vs Spot Fleet
+
+* Spot Fleet -> Set of Spot Instances + (optional) On-Demand Instances
+* Spot Fleet will try to meet the target capacity with price constraints
+* Define possible launch pools (different instance types)
+* Strategies -> LowestPrice, Diversified, CapacityOptimized, priceCapacityOptimized (best)
+
+#### IPv4 vs IPv6
+
+* IPv4 -> 32 bits -> 3.7 billion addresses
+* IPv6 -> 128 bits -> 340 undecillion addresses
+
+* Private IP -> can only be identified on private network
+* Public IP -> can be identified on the internet
+* Elastic IP -> If you need a fixed public IP for your instance, you can use Elastic IP. Avoid, prefer to use DNS instead.
+
+#### EC2 Placement Groups
+
+* Cluster -> Low latency, high throughput -> Same AZ
+* Spread -> Individual critical instances -> Max 7 instances per AZ 
+* Partition -> Large distributed and replicated workloads -> 100s of EC2 instances per AZ
+
+#### ENI Elastic Network Interface
+
+[Aws - Docs](https://aws.amazon.com/blogs/aws/new-elastic-network-interfaces-in-the-virtual-private-cloud/)
+
+* Logical component in a VPC that represents a virtual network card
+* Can have the following attributes:
+  * Primary private IPv4
+  * One or more secondary private IPv4
+  * One public IPv4
+  * One or more IPv6
+  * One or more security groups
+* ENI are valid in specific AZ
+
+#### EC2 Hibernate
+
+We can: 
+
+* Stop Instances -> EBS kept intact, RAM lost
+* Terminate Instances -> EBS deleted by default, RAM lost
+* Hibernate Instances -> RAM is preserved, because it's written into to EBS, that is kept intact
+
+No more then 60 days hibernating. EBS is mandatory.
+
+### EC2 Storage
+
+#### EBS
+
+* EBS is a Elastic Block Store, it's a network drive you can attach to your instances while they run.
+* You can persist data, even after the instance is terminated, but you can only attach it to one instance at a time.
+* It's locked to an AZ. 
+* Analogous to a physical hard drive. 
+* Billing per GB provisioned.
+* Can increase size of EBS.
+* Delete on termination attribute -> pay attention to this attribute, if you don't want to lose your data.
+
+#### EBS Snapshots
+
+* Make a backup of your EBS volume at a point in time.
+* Can copy snapshots across AZ or Region.
+* ENS Snapshots Archive
+
+### AMI - Amazon Machine Image
+
+* AMI are a customization of an EC2 instance.
+* You add your own software, configuration, operating system, monitoring.
+
+Process to create an AMI:
+* start an EC2 instance
+* customize it
+* stop the instance (optional)
+* build an AMI - this will create a snapshot
+* launch instances from other AMIs
+
+Tips:
+
+AMIs are built for a specific AWS Region, they're unique for each AWS Region. You can't launch an EC2 instance using an AMI in another AWS Region, but you can copy the AMI to the target AWS Region and then use it to create your EC2 instances.
+
+### EC2 Instance Store
+
+EBS have good but limited performance, if you need a high performance disk, you can use EC2 Instance Store.
+
+They have / are:
+* High I/O performance
+* Ephemeral
+* Good for buffer / cache / scratch data / temporary content
+* Risk of data loss if hardware fails
+* Backups and Replication are your responsibility
+
+### EBS Volume Types
+
+* gp2 / gp3 -> General Purpose SSD
+   * 1gb - 16tb
+   * gp2 -> older generation
+   * gp3 -> new generation, more performant
+* io1 / io2 -> Highes performance SSD -> low latency and high IOPS
+   * 4gb - 16tb
+   * io1 -> older generation
+   * io2 -> new generation, more performant
+   * support multi-attach
+* st1 -> Low cost HDD -> frequently accessed, throughput intensive workloads
+   * 125gb - 16tb
+* sc1 -> Lowest cost HDD -> less frequently accessed workloads
+
+Tips:
+
+By default, the Root volume type will be deleted as its "Delete On Termination" attribute checked by default. Any other EBS volume types will not be deleted as its "Delete On Termination" attribute disabled by default.
+
+### EBS Multi-Attach
+
+* EBS volumes can be attached to multiple EC2 instances in the same AZ
+* Only available for io1 and io2
+* Up to 16 EC2 instances
+* FileSystems must be cluster aware (ex: GFS2, OCFS2)
+
+### EBS Encryption
+
+Should always encrypt EBS volumes, it's easy to do so.
+
+You would like to encrypt an unencrypted EBS volume attached to your EC2 instance. What should you do? 
+
+Create an EBS snapshot of your EBS volume. 
+Copy the snapshot and tick the option to encrypt the copied snapshot. 
+Then, use the encrypted snapshot to create a new EBS volume
+
+### EFS - Elastic File System
+
+Uses NFSv4.1 protocol
+
+* Managed NFS (Network File System) that can be mounted on many EC2
+* EFS works with EC2 instances in multi AZ
+* Highly available, scalable, expensive (3x gp2), pay per use
+* Compatible with Linux based AMI
+
+EFS scale:
+* Scale up to the petabytes
+* Grow and shrink automatically
+
+Performmance Mode:
+* General Purpose
+* Max I/O - higher latency, higher throughput, higher cost
+
+Throughput Mode:
+* Bursting
+* Provisioned - throughput set
+* Elastic - throughput grows with the size of the file system
+
+Storage Tiers:
+* Standard - for frequently accessed files
+* Infrequent Access (EFS-IA) - cost to retrieve files, lower price to store
+
+Avaiability and Durability:
+* Multiple AZ
+* One AZ -> Great for dev, test
+
+### EBS vs EFS Differences
+
+* EBS can be used only with one EC2 instance (except multi-attach io1/io2)
+* EBS locked at AZ level
+* To move EBS through AZ, you need to take a snapshot
+* EFS can be mounted on multiple EC2 instances
+* EFS is only for linux instances
+* EFS is more expensive than EBS
+
+## ELB & ASG
+
+ELB - Elastic Load Balancer
+ASG - Auto Scaling Group
+
+### ELB - Elastic Load Balancer
+
+Load Balancer are servers that forward internet traffic to multiple servers (EC2 Instances) downstream.
+
+ELB are aws managed load balancers. Can be integreted with most AWS services. Health checks are automated.
+
+Kinds of load balancers:
+
+* Classic Load Balancer (v1 - old generation) -> 2009
+* Application Load Balancer (v2 - new generation) -> 2016
+   * http / https / websocket
+* Network Load Balancer (v2 - new generation) -> 2017
+   * TCP / TLS (secure tcp) / UDP
+* Gateway Load Balancer (v2 - new generation) -> 2020
+   * Layer 3 (network) 
+
+Some load balancer can be set as internal or external (public).
+
+Link security groups of EC2 to load balancers security groups.
+
+#### Application Load Balancer
+

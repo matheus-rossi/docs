@@ -403,6 +403,7 @@ Avaiability and Durability:
 ## ELB & ASG
 
 ELB - Elastic Load Balancer
+
 ASG - Auto Scaling Group
 
 ### ELB - Elastic Load Balancer
@@ -415,6 +416,7 @@ Kinds of load balancers:
 
 * Classic Load Balancer (v1 - old generation) -> 2009
 * Application Load Balancer (v2 - new generation) -> 2016
+   * layer 7
    * http / https / websocket
 * Network Load Balancer (v2 - new generation) -> 2017
    * TCP / TLS (secure tcp) / UDP
@@ -427,3 +429,122 @@ Link security groups of EC2 to load balancers security groups.
 
 #### Application Load Balancer
 
+Support redirections from http to https.
+
+Can be used with route tables to redirect traffic to specific instances.
+
+Works with containers and microservices.
+
+Possible targets (could be multiple targets):
+* EC2 instances
+* ECS tasks
+* Lambda functions
+* IP addresses (privates) 
+
+Application-based cookie:
+* APPUSERC - cookie name
+
+::: tip
+* Fixed hostname
+* Application Server dont see IP of client directly, it sees the IP of the load balancer
+  * X-Forwarded-For header contains the real IP of the client
+:::
+
+#### Network Load Balancer
+
+* Layer 4 (TCP) -> extreme performance
+   * tcp / udp
+* Handle millions of requests per second
+* Less latency ~100ms (vs 400ms for ALB)
+
+NLB has one static IP per AZ, and supports assigning Elastic IP (public) to it.
+
+Used for extreme performance, TCP or UDP traffic.
+
+Target groups -> EC2 instances, IP addresses, applications load balancers.
+
+Healh checks can usw TCP health checks, http, https.
+
+#### Gateway Load Balancer
+
+Usage: for third party appliances (firewalls, etc)
+
+Layer 3 (network)
+
+Uses geneve protocol on port 6081
+
+#### Sticky Sessions (Session Affinity)
+
+The same client is always redirected to the same instance behind a load balancer.
+
+Types:
+* load balancer generated cookie
+* application generated cookie
+
+#### Cross Zone Load Balancing
+
+* Each load balancer instance distributes evenly across all registered instances in all AZ
+* ALB enabled by default
+* NLB GLB disabled by default
+
+#### SSL/TLS
+
+Load balancer uses x.509 certificates.
+
+Can manage SSL certificates with ACM (AWS Certificate Manager), and create and upload your own certificates.
+
+SNI - Server Name Indication -> allows multiple SSL certificates on the same IP address.
+   * works for ALB and NLB
+
+Possible origins:
+* ACM
+* IAM
+* Import (private key, body, certificate chain)
+
+#### Connection Draining
+
+When an instance is unhealthy or de-registering, it will not receive new requests, but will finish the current ones.
+
+* Default timeout: 300 seconds
+* Can be configured between 1 and 3600 seconds
+* Can be disabled (value = 0)
+
+### ASG - Auto Scaling Group
+
+ASG is a group of EC2 instances that can scale up or down based on metrics.
+
+ADG is free, you only pay for the resources it creates.
+
+Param:
+* Min size
+* Desired capacity
+* Max size
+
+ASG can remove instances marked as unhealthy and launch new ones.
+
+Launch template:
+* AMI + Instance Type
+* EC2 User Data
+* EBS Volumes
+* Security Groups
+* SSH Key Pair
+* IAM Roles
+* Network configuration
+* Load Balancer
+
+Can be triggered by CloudWatch Alarms like CPU usage, network usage, etc.
+
+### ASG Scaling Policies
+
+* Target Tracking Scaling -> ex: set average CPU usage to 40%
+* Simple / Step Scaling -> ex: increase by 2 instances when CPU > 70%
+* Scheduled Actions -> ex: increase to 10 instances at 5pm on Fridays
+* Predictive Scaling -> ex: forecast future traffic based on historical traffic
+
+Good metrics to use:
+* CPU
+* Requests count
+* Network In / Out
+* Any custom metric (provided by CloudWatch)
+
+Cooldown period -> wait time before launching another scaling activity

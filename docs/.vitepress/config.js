@@ -23,12 +23,14 @@ export default defineConfig({
           { 
             text: 'Cloud', 
             link: 'development/cloud/index.md',
+            collapsed: true,
             items: [
               { 
                 text: 'AWS', 
                 link: 'development/cloud/aws/index.md',
+                collapsed: true,
                 items: [
-                  { text: 'certification', link: 'development/cloud/aws/certification/index.md' },
+                  { text: 'Certification', link: 'development/cloud/aws/certification/index.md' },
                 ]
               },
               { 

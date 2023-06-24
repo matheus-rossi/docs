@@ -20,7 +20,23 @@ export default defineConfig({
         collapsed: false,
         items: [
           { text: 'CI / CD', link: '' },
-          { text: 'Cloud', link: 'development/cloud/index.md' },
+          { 
+            text: 'Cloud', 
+            link: 'development/cloud/index.md',
+            items: [
+              { 
+                text: 'AWS', 
+                link: 'development/cloud/aws/index.md',
+                items: [
+                  { text: 'certification', link: 'development/cloud/aws/certification/index.md' },
+                ]
+              },
+              { 
+                text: 'GCP',
+                link: 'development/cloud/gcp/index.md'
+              }
+            ]
+          },
           { text: 'Containers', link: 'development/containers/index.md' },
           { text: 'Data Engineering', link: '' },
           { text: 'Data Governance', link: 'development/data-governance/index.md' },

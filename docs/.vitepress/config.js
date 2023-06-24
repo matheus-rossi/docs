@@ -31,6 +31,7 @@ export default defineConfig({
                 collapsed: true,
                 items: [
                   { text: 'Certification', link: 'development/cloud/aws/certification/index.md' },
+                  { text: 'Tools', link: 'development/cloud/aws/tools/index.md' },  
                 ]
               },
               { 
@@ -43,7 +44,15 @@ export default defineConfig({
           { text: 'Data Engineering', link: '' },
           { text: 'Data Governance', link: 'development/data-governance/index.md' },
           { text: 'Data Visualization', link: 'development/data-visualization/index.md' },
-          { text: 'Databases', link: '' },
+          { 
+            text: 'Databases', 
+            link: '',
+            collapsed: true,
+            items: [
+              { text: 'PostgreSQL', link: 'development/databases/postgresql/index.md' },
+              { text: 'SQL Server', link: 'development/databases/sql-server/index.md' },
+            ]
+          },
           { text: 'Documentation', link: 'development/documentation/index.md' },
           { text: 'Git', link: 'development/git/index.md' },
           { text: 'Kubernetes', link: 'development/kubernetes/index.md' },

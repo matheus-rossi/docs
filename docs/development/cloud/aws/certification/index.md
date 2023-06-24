@@ -5,4 +5,4 @@
 
 ## Solutions Architect Associate
 
-[Notes](./saa.md)
+[Studies Notes](./saa.md)

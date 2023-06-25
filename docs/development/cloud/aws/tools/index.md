@@ -2,4 +2,6 @@
 
 ##  Instance Types Comparison
 
-[Link](https://instances.vantage.sh/)
+Compare all avaliable instance types in AWS, look for the best price/performance.
+
+[Instances Vantage Link](https://instances.vantage.sh/)

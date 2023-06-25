@@ -13,7 +13,7 @@ export default defineConfig({
       { text: 'Home', link: '/' },
       { text: 'Youtube', link: 'https://www.youtube.com/@matheus.srossi' }
     ],
-
+    outline: [2,3],
     sidebar: [
       {
         text: 'Development',
@@ -23,7 +23,7 @@ export default defineConfig({
           { text: 'CI / CD', link: '' },
           { 
             text: 'Cloud', 
-            link: 'development/cloud/index.md',
+            link: '',
             collapsed: true,
             items: [
               { 
@@ -42,7 +42,14 @@ export default defineConfig({
             ]
           },
           { text: 'Containers', link: 'development/containers/index.md' },
-          { text: 'Data Engineering', link: '' },
+          { 
+            text: 'Data Engineering', 
+            link: '',
+            collapsed: true,
+            items: [
+              { text: 'Airflow', link: 'development/data-engineering/airflow/index.md' },
+            ]
+          },
           { text: 'Data Governance', link: 'development/data-governance/index.md' },
           { text: 'Data Visualization', link: 'development/data-visualization/index.md' },
           { 

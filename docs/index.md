@@ -23,10 +23,10 @@ features:
     icon: 💾
     link: /development/index
   - title: Lean Thinking and Management
-    details: Useful resources to solve real world problems with real teams. Work in Progress
+    details: Useful resources to solve real world problems with real teams. ToDo.
     icon: 💭
   - title: Curriculum
-    details: Details about my experiences and knowledge. Work in Progress
+    details: Details about my experiences and knowledge. Work in Progress.
     icon: 🎯
     link: /curriculum/index
 ---

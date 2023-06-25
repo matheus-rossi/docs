@@ -14,7 +14,7 @@ Execute process and exit.
 nohup ./process.sh &
 ```
 
-## Useful tools
+## Useful Tools
 
 ### GPING
 

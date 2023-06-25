@@ -4,6 +4,8 @@
 
 ## Install Locally
 
+[Official Astro Docs](https://docs.astronomer.io/astro/cli/overview)
+
 Astro CLI can be used to install Airflow locally. 
 
 To do it, make sure you have Docker and Brew installed and running on your machine.

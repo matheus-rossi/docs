@@ -47,7 +47,7 @@ This command, will generate the following project structure:
 astro dev start
 ```
 
-After that, you can access airflow in your browser at http://localhost:8080.
+After that, you can access airflow in your browser at `http://localhost:8080`.
 
 ::: warning
 You must restart your environment to apply changes from any of the following files:

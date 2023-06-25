@@ -10,7 +10,7 @@ Astro CLI can be used to install Airflow locally.
 
 To do it, make sure you have Docker and Brew installed and running on your machine.
 
-### Step 1: Install Astro CLI
+### Step 1: Install astro CLI
 
 Install the latest version of the Astro CLI:
 
@@ -43,7 +43,7 @@ This command, will generate the following project structure:
 └── requirements.txt # For Python packages
 ```
 
-### Step 3: Start Astro (Airflow) Locally
+### Step 3: Start astro (Airflow) locally
 
 ```bash
 astro dev start
@@ -69,7 +69,7 @@ Step 4: Stop or Kill Airflow
 `astro dev kill` command stop and remove all containers, including all data (volumes).
 :::
 
-## Install on Kubernetes
+## Install on kubernetes
 
 We can use airflow helm chart to install airflow on Kubernetes. You can install Airflow with the following command:
 

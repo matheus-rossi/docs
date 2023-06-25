@@ -4,6 +4,11 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   title: "Matheus's Wiki",
   description: "All my notes, links, and knowledge.",
+  logo: {
+    light: '/icon.png',
+    dark: '/icon.png',
+    alt: 'M',
+},
   themeConfig: {
     search: {
       provider: 'local'

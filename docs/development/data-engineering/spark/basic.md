@@ -187,13 +187,14 @@ dataframe.select('column_name', 'column_name2')
 ```python
 # Join two dataframes
 (
-    table1
+    table1.alias("one")
     .join(
-        table2, 
-        ( table1['user_id'] == table2['user_id'] )
-        &
-        ( table1['company_id'] == table2['company_id'] ),
-        'inner'
+        table2.alias("two"), 
+        [
+            F.col("one.user_id") == F.col("two.user_id"),
+            F.col("one.company_id") == F.col("two.company_id"),
+        ],
+        "inner"
     )
     .show(5)
 )

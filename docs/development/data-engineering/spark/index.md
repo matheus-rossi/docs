@@ -17,13 +17,12 @@ Make sure you have Java 8 installed on your machine. If not, you can install it 
 brew install openjdk@8
 ```
 
-### Step2: Create new environment with poetry
-
+### Step2: New environment
 ```bash
 poetry new spark-project-name
 ```
 
-### Step3: Add pyspark dependency
+### Step3: Pyspark dependency
 
 Run steps 3, 4 and 5 inside the environment created by poetry
 
@@ -37,13 +36,13 @@ Then you can install the follwing dependencies:
 poetry add pyspark
 ```
 
-### Step4: Install jupyter-lab
+### Step4: Install JupyterLab
 
 ```bash
 poetry add jupyterlab
 ```
 
-### Step5: Start jupyter-lab
+### Step5: Start JupyterLab
 
 ```bash
 jupyter-lab
@@ -106,7 +105,9 @@ df.show(truncate=False)
 
 ## Basic Operations
 
-### Init Spark Session
+### Init 
+
+The follwing code provides the installation of packages avro and delta. If you do not need them, you can remove them.
 
 ```python
 # Import SparkSession
@@ -198,7 +199,22 @@ df_orc = (
 
 #### JDBC
 
-When reading from JDBC, first analyze the table and look for a column that can be used as a partition key. This will improve the performance of the read operation.
+##### Simple JDBC:
+
+```python
+table = (
+    spark
+    .read
+    .format("jdbc")
+    .option("url", "<jdbc-url>")
+    .option("dbtable", "<table-name>")
+    .option("user", "<username>")
+    .option("password", "<password>")
+    .load()
+)
+```
+
+##### Complex JDBC:
 
 By default, Spark will store the data read from the JDBC connection in a single partition. As a consequence, only one executor in the cluster is used for the reading process. To increase the number of nodes reading in parallel, the data needs to be partitioned by passing all of the following four options:
 
@@ -212,11 +228,13 @@ Under the hood, Spark will generate a SQL query for each partition with an indiv
 
 ###### Partitioning example:
 
+Change COLUMN_NAME and TABLE_NAME to your values.
+
 ```python
 query_min_max = f"""
 SELECT Min(COLUMN_NAME),
        Max(COLUMN_NAME)
- FROM  TABLE s
+  FROM TABLE_NAME s
 """
 
 # Determine min and maximum values
@@ -227,6 +245,11 @@ df_min_max = spark.read.jdbc(
 ).collect()
 
 min, max = df_min_max[0][0], df_min_max[0][1]
+
+query = """
+SELECT category, value
+  FROM TABLE_NAME
+"""
 
 # Partition the data
 df = (
@@ -244,24 +267,9 @@ df = (
 )
 ```
 
-###### Simple JDBC read example:
-
-```python
-table = (
-    spark
-    .read
-    .format("jdbc")
-    .option("url", "<jdbc-url>")
-    .option("dbtable", "<table-name>")
-    .option("user", "<username>")
-    .option("password", "<password>")
-    .load()
-)
-```
-
 ### Process
 
-Basic functions:
+#### Basic functions:
 
 ```python
 # Show schema
@@ -273,11 +281,46 @@ dataframe.printSchema()
 # arg3 - show dataframe in vertical orientation
 dataframe.show(20, truncate=False, vertical=True) 
 
-# Show number of rows
+# Number of rows
 dataframe.count()
 
-# Show number of columns
+# Number of columns
 len(dataframe.columns)
+```
 
+### Join
 
+```python
+# Join two dataframes
+(
+    table1
+    .join(
+        table2, 
+        ( table1['user_id'] == table2['user_id'] )
+        &
+        ( table1['company_id'] == table2['company_id'] ),
+        'inner'
+    )
+    .show(5)
+)
+```
 
+### SparkSQL
+
+How to run SQL queries on spark dataframes:
+
+```python
+# Create or replace view to use SQL
+dataframe.createOrReplaceTempView('dataframe')
+
+# Spark SQL Example
+spark.sql("""
+    SELECT COLUMN_NAME,
+           COLUMN_NAME2
+      FROM dataframe
+     LIMIT 5
+""").show()
+
+# Drop view after usage
+spark.catalog.dropTempView('dataframe')
+```

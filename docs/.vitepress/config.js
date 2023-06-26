@@ -47,7 +47,8 @@ export default defineConfig({
             link: '',
             collapsed: true,
             items: [
-              { text: 'Airflow', link: 'development/data-engineering/airflow/index.md' },
+              { text: 'Apache Airflow', link: 'development/data-engineering/airflow/index.md' },
+              { text: 'Apache Spark', link: 'development/data-engineering/spark/index.md' },
             ]
           },
           { text: 'Data Governance', link: 'development/data-governance/index.md' },

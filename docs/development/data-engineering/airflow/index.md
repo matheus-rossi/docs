@@ -2,6 +2,11 @@
 
 ![Apache Airflow](airflow.png)
 
+## Certifications
+::: tip ToDo
+Link to certifications
+:::
+
 ## Install Locally
 
 [Official Astro Docs](https://docs.astronomer.io/astro/cli/overview)
@@ -71,8 +76,74 @@ Step 4: Stop or Kill Airflow
 
 ## Install on kubernetes
 
-We can use airflow helm chart to install airflow on Kubernetes. You can install Airflow with the following command:
+We can use airflow helm chart to install airflow on Kubernetes.
 
-::: tip ToDo
-link to argocd deploying airflow helm chart
+Helm chart used to deploy Airflow on K8s:
+
+[Airflow Helm Chart](https://airflow.apache.org/docs/helm-chart/stable/index.html)
+
+### Deploy on ArgoCD
+
+The helm chart need some changes to be deployed on ArgoCD. Inside values.yaml, when deploying into a kubernetes cluster, we need to change the following value:
+
+::: warning
+If you do not change these values, the deployment will fail. 
+
+Do not forget to change other values you may need to.
 :::
+
+```yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: airflow
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: ${REPO_URL}
+    targetRevision: ${REPO_BRANCH}
+    path: ${REPO_PATH}
+    directory:
+      recursive: true
+    helm:
+      passCredentials: true
+      chart: airflow
+      parameters:
+      - name: executor
+        value: KubernetesExecutor
+      - name: createUserJob.useHelmHooks
+        value: "false" // [!code hl]
+      - name: migrateDatabaseJob.useHelmHooks
+        value: "false" // [!code hl]
+```
+
+## Install Managed Airflow on AWS, GCP, Azure
+
+- AWS -> [MWAA](https://aws.amazon.com/pt/managed-workflows-for-apache-airflow/)
+- GCP -> [Cloud Composer](https://cloud.google.com/composer)
+- AZURE -> [Azure Data Factory](https://azure.microsoft.com/en-us/services/data-factory/)
+
+## Important Notes
+
+### Parameters
+
+### Xcom
+
+### Callbacks
+
+* on_failure_callback
+* on_retry_callback
+* on_success_callback
+
+### How to handle failures
+
+* retry
+* retry_delay
+* email_on_retry
+* email_on_failure
+* on_failure_callback
+* on_retry_callback
+
+### Connections Examples
+

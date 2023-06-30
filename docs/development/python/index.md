@@ -80,4 +80,7 @@ poetry add django@2.2.19
 
 # Set python version
 poetry env use python3.7
+
+## If above command fails, try this
+poetry env use $(pyenv which python)
 ```

@@ -548,3 +548,102 @@ Good metrics to use:
 * Any custom metric (provided by CloudWatch)
 
 Cooldown period -> wait time before launching another scaling activity
+
+## RDS + Aurora + ElastiCache
+
+### RDS - Relational Database Service
+
+RDS is a managed DB service for the follwing DBs:
+
+* Postgres
+* MySQL
+* MariaDB
+* Oracle
+* Microsoft SQL Server
+* Aurora (AWS Proprietary DB)
+
+RDS is a managed service, AWS handles:
+
+* Setup the DB
+* Patching the DB software
+* Backups
+* OS Maintenance
+* Scaling
+* Multi AZ setup for DR
+
+#### RDS - Storage Auto Scaling
+
+* Storage autoscaling is enabled by default
+* Set a maximum storage threshold
+
+Automaticaly increase storagewhen:
+
+* Size 90% full
+* low storage lasts 5 minutes
+* 6 hours passed since last modification
+
+#### RDS - Read Replicas
+
+* Up to 5 read replicas
+* Within AZ, Cross AZ or Cross Region
+* Replication is ASYNC, so reads are eventually consistent
+
+Read replicas are used for reporting or BI (Business Intelligence) tools
+
+::: warning
+Not network cost between AZs, but there is network cost between regions.
+:::
+
+#### RDS Multi AZ (Disaster Recovery)
+
+Sync replication to another AZ, changes are only accepted if they are written to both databases.
+
+Not used for scaling, only for disaster recovery.
+
+#### RDS from single AZ to Multi AZ
+
+* Zero downtime
+* Just modify the database
+
+What happens behind the scenes:
+
+* snapshot of the primary DB is taken
+* snapshot is restored into the second db
+* syncronization is established between the two DBs
+
+#### RDS Custom
+
+With custom RDS, you can access the underlying EC2 instances.
+
+Avaliable only for:
+
+* Oracle
+* SQL Server
+
+### Aurora
+
+* AWS Proprietary database
+* Postgres and MySQL are both supported as Aurora DB
+* Aurora is "AWS cloud optimized" and claims 5x performance improvement over MySQL on RDS, over 3x the performance of Postgres on RDS
+* Storage automatically grows in increments of 10GB, up to 128TB
+* Can have 15 replicas
+* Failover is instantenous (HA)
+* Aurora costs more than RDS (20% more) - but is more efficient
+
+#### Aurora High Availability and Read Scaling
+
+6 copies of your data across 3 AZs
+
+* 4 copies out of 6 needed for writes
+* 3 copies out of 6 needed for reads
+
+1 master (writes)
+1 to 15 replicas (reads)
+
+Suports cross region replicas
+
+* Writer endpoint -> master
+* Reader endpoint -> load balancer across all replicas
+
+#### Aurora Replicas - Autoscaling
+

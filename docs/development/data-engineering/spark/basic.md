@@ -94,8 +94,10 @@ df_orc = (
 
 #### Simple JDBC:
 
+Import Table
+
 ```python
-table = (
+(
     spark
     .read
     .format("jdbc")
@@ -106,6 +108,22 @@ table = (
     .load()
 )
 ```
+
+Execute Query
+
+```python
+(
+    spark
+    .read
+    .format("jdbc")
+    .option("url", "<jdbc-url>")
+    .option("query", "select c1, c2 from t1")
+    .option("user", "<username>")
+    .option("password", "<password>")
+    .load()
+)
+```
+
 
 #### Complex JDBC:
 

@@ -12,7 +12,7 @@ hero:
   actions:
     - theme: brand
       text: Development
-      link: /development
+      link: /development/index.md
     - theme: alt
       text: Curriculum
       link: /curriculum/index.md

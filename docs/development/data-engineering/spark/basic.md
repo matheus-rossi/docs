@@ -341,9 +341,31 @@ windowSpec = (
 ```
 
 ## UDF
-::: tip
-Work in progress
-:::
+
+User defined functions can be used to apply custom functions to dataframes.
+
+Example: Apply 10% discount to all products orders after the third order of each customer.
+
+```python
+from pyspark.sql import functions as F
+from pyspark.sql.window import Window
+
+windowSpec  = Window.partitionBy("COLUMN1").orderBy("COLUMN1","COLUMN3")
+
+def calc_discount():
+    return F.when(F.col("row_number") > 3, F.col("value") * 0.90 ).otherwise(F.col("value"))
+
+udf_discount = F.udf(lambda z: calcula_desconto)
+
+orders_with_discount = (
+    orders
+    .join(products,["COLUMN2"],"inner")
+    .withColumn("row_number", F.row_number().over(windowSpec))
+    .withColumn("value_with_discount", calc_discount()) 
+)
+
+orders_with_discount.show(truncate=False)
+```
 
 ## Drop Duplicates
 ::: warning

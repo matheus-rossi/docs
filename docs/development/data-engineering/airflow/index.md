@@ -124,26 +124,10 @@ spec:
 - GCP -> [Cloud Composer](https://cloud.google.com/composer)
 - AZURE -> [Azure Data Factory](https://azure.microsoft.com/en-us/services/data-factory/)
 
-## Important Notes
+## Important Concepts
 
-### Parameters
+Learn more about important Apache Airflow concepts:
 
-### Xcom
+[Concepts](concepts.md)
 
-### Callbacks
-
-* on_failure_callback
-* on_retry_callback
-* on_success_callback
-
-### How to handle failures
-
-* retry
-* retry_delay
-* email_on_retry
-* email_on_failure
-* on_failure_callback
-* on_retry_callback
-
-### Connections Examples
 

@@ -17,12 +17,11 @@ nohup ./process.sh &
 ## Useful Tools
 
 ### GPING
+Ping, but with a graph. 
 
 ![Gping](./gping.gif)
 
-Ping, but with a graph.
-
-[GitHUb](https://github.com/orf/gping)
+[Project GitHub](https://github.com/orf/gping)
 
 ```bash
 brew install gping

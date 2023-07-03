@@ -178,6 +178,11 @@ df = (
 )
 ```
 
+## Schema
+::: tip
+Work in progress
+:::
+
 ## Useful Functions
 
 ```python
@@ -217,6 +222,11 @@ dataframe.select('column_name', 'column_name2')
     .show(5)
 )
 ```
+
+## Aggregations
+::: tip
+Work in progress
+:::
 
 ## SparkSQL
 

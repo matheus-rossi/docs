@@ -9,7 +9,7 @@
 
 ## Installation
 
-### Local Installation
+### Local Virtual Environment
 
 #### Step1: Java
 

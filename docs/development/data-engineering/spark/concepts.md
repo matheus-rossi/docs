@@ -41,10 +41,10 @@ Imagine the following scenario:
 
 What is the best option? 
 
-- :red_circle: Option A -> Garbage collection delays would slow down your job
-- :green_circle: Option B -> Best option (in general, max 5 cores per executor)
-- :red_circle: Option C -> less parallelism and more memory overhead
-- :red_circle: Option D -> No parallelism and hard to calculate memory overhead
+* :red_circle: Option A -> Garbage collection delays would slow down your job
+* :green_circle: Option B -> Best option (in general, max 5 cores per executor)
+* :red_circle: Option C -> Less parallelism and more memory overhead
+* :red_circle: Option D -> No parallelism and hard to calculate memory overhead
 
 ### Memory
 

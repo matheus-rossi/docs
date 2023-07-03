@@ -7,14 +7,6 @@ and integrate systems more effectively.
 
 Best practices for installing and creating virtual enviroments to work with python.
 
-## Packages
-
-![Pyton Packages](./python-packages.jpeg)
-
-List of uselful packages (focus on data engineering).
-
-[Packages](/development/python/packages/index.md)
-
 ## PyEnv
 
 ![PyEnv - Github](./pyenv.png)

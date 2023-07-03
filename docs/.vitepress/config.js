@@ -68,7 +68,15 @@ export default withMermaid(
               { text: 'Git', link: 'development/git/index.md' },
               { text: 'Kubernetes', link: 'development/kubernetes/index.md' },
               { text: 'Linux', link: 'development/linux/index.md' },
-              { text: 'Python', link: 'development/python/index.md' },
+              { 
+                text: 'Python', 
+                collapsed: true,
+                items: [
+                  { text: 'Environment', link: 'development/python/environment/index.md' },
+                  { text: 'Packages', link: 'development/python/packages/index.md' },
+                  { text: 'Functions', link: 'development/python/functions/index.md' },
+                ]
+              },
             ]
           },
           {

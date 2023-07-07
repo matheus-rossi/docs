@@ -1,5 +1,13 @@
 # Apache Airflow Concepts
 
+## Basic Architecture
+
+![Airflow Architecture](architecture.png)
+
+## Life Cycle
+
+![Airflow Life Cycle](lifecycle.png)
+
 ## Parameters
 
 ## Xcom

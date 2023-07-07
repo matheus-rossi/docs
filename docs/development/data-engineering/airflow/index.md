@@ -86,6 +86,8 @@ Helm chart used to deploy Airflow on K8s:
 
 The helm chart need some changes to be deployed on ArgoCD. Inside values.yaml, when deploying into a kubernetes cluster, we need to change the following value:
 
+[Official Docs](https://airflow.apache.org/docs/helm-chart/stable/index.html#installing-the-chart-with-argo-cd-flux-rancher-or-terraform)
+
 ::: warning
 If you do not change these values, the deployment will fail. 
 
@@ -116,6 +118,8 @@ spec:
         value: "false" // [!code hl]
       - name: migrateDatabaseJob.useHelmHooks
         value: "false" // [!code hl]
+      - name: "migrateDatabaseJob.jobAnnotations.argocd.argoproj.io/hook"
+        value: "Sync" [!code hl]
 ```
 
 ## Install Managed Airflow on AWS, GCP, Azure

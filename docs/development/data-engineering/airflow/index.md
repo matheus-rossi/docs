@@ -119,7 +119,7 @@ spec:
       - name: migrateDatabaseJob.useHelmHooks
         value: "false" // [!code hl]
       - name: "migrateDatabaseJob.jobAnnotations.argocd.argoproj.io/hook"
-        value: "Sync" [!code hl]
+        value: "Sync" // [!code hl]
 ```
 
 ## Install Managed Airflow on AWS, GCP, Azure

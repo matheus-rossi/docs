@@ -2,7 +2,7 @@
 
 ## Driver and Executors
 
-![Spark Architecture](driver-exec.png)
+![Spark Architecture](driver-exec.png){data-zoomable}
 
 ### Driver
 
@@ -122,7 +122,7 @@ Shuffling is expensive.
 
 Example of shuffling in a group by operation:
 
-![Shuffling](shuffling.png)
+![Shuffling](shuffling.png){data-zoomable}
 
 ::: tip
 [Shuffling Video By Palantir](https://www.youtube.com/watch?v=ffHboqNoW_A)

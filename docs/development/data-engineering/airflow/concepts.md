@@ -2,11 +2,11 @@
 
 ## Basic Architecture
 
-![Airflow Architecture](architecture.png)
+![Airflow Architecture](architecture.png){data-zoomable}
 
 ## Life Cycle
 
-![Airflow Life Cycle](lifecycle.png)
+![Airflow Life Cycle](lifecycle.png){data-zoomable}
 
 ## Parameters
 

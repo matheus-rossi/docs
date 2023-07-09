@@ -75,8 +75,9 @@ export default withMermaid(
                 collapsed: true,
                 items: [
                   { text: 'Environment', link: 'development/python/environment/index.md' },
-                  { text: 'Packages', link: 'development/python/packages/index.md' },
+                  { text: 'Fast', link: 'development/python/fast/index.md' },
                   { text: 'Functions', link: 'development/python/functions/index.md' },
+                  { text: 'Packages', link: 'development/python/packages/index.md' },
                 ]
               },
             ]

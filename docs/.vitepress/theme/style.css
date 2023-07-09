@@ -82,3 +82,10 @@
   --docsearch-primary-color: var(--vp-c-brand) !important;
 }
 
+.medium-zoom-overlay {
+  z-index: 20;
+}
+
+.medium-zoom-image {
+  z-index: 21;
+}

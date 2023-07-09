@@ -7,6 +7,7 @@
 ## DataLakeHouse
 
 ## Ingestion Flow
+
 ```mermaid
 flowchart TD
     A[Data Strategy] --> B[List Sources and Volumes]
@@ -20,7 +21,7 @@ flowchart TD
     RR --> LR{Load Type}
     MB --> LR
     LR --> FL[Full]
-    LR --> |timestamp_col| IC[Incremental]
+    LR --> |timestamp_col, CDC| IC[Incremental]
     FL --> BD[Bucket]
     IC --> BD
     BD --> ZNBR[raw]

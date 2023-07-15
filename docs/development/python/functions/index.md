@@ -9,6 +9,10 @@ Work in progress
 
 ## Dict Comprehension
 
+## Datetime
+
+## Logging
+
 ## ZIP
 
 ### Unzip Files
@@ -163,7 +167,3 @@ with open('file.txt', 'r') as file:
 with open('file.txt', 'w') as file:
     file.write('Hello\nWorld!')
 ```
-
-## Datetime
-
-## Logging

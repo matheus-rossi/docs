@@ -53,6 +53,7 @@ export default withMermaid(
                   { text: 'Apache Spark', link: 'development/data-engineering/spark/index.md' },
                   { text: 'Concepts', link: 'development/data-engineering/concepts/index.md' },
                   { text: 'Data Lakehouse', link: 'development/data-engineering/data-lakehouse/index.md' },
+                  { text: 'DBT', link: 'development/data-engineering/dbt/index.md' },
                 ]
               },
               { text: 'Data Governance', link: 'development/data-governance/index.md' },

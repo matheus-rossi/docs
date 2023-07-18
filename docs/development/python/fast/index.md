@@ -14,28 +14,24 @@ Threading is a package that allows us to run multiple threads (tasks, function c
 
 ```python
 from threading import Thread
-import os
 
-def square_numbers():
-    for i in range(100):
-        i * i
-
+tables = ['A','B','C']
 threads = []
-num_threads = 10
 
-for i in range(num_threads):
-    t = Thread(target=square_numbers)
+def load_data(table_name):
+    return True
+
+for table_name in tables:
+    t = Thread(
+        target=load_data,
+        args=(table_name,) # Note the comma, args expects an interable, passing an string will raise error.
+    )
     threads.append(t)
-
-#start
-for t in threads:
     t.start()
 
 #join
 for t in threads:
     t.join()
-
-print('end main')
 ```
 
 ### Process

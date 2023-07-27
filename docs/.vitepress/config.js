@@ -69,7 +69,8 @@ export default withMermaid(
               },
               { text: 'Documentation', link: 'development/documentation/index.md' },
               { 
-                text: 'ERP', 
+                text: 'ERP',
+                collapsed: true,
                 items: [
                   { text: 'Sap Hana', link: 'development/erp/sap-hana/index.md' },
                   { text: 'Protheus', link: 'development/erp/protheus/index.md' },

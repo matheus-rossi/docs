@@ -68,6 +68,13 @@ export default withMermaid(
                 ]
               },
               { text: 'Documentation', link: 'development/documentation/index.md' },
+              { 
+                text: 'ERP', 
+                items: [
+                  { text: 'Sap Hana', link: 'development/erp/sap-hana/index.md' },
+                  { text: 'Protheus', link: 'development/erp/protheus/index.md' },
+                ]
+              },
               { text: 'Git', link: 'development/git/index.md' },
               { text: 'Kubernetes', link: 'development/kubernetes/index.md' },
               { text: 'Linux', link: 'development/linux/index.md' },

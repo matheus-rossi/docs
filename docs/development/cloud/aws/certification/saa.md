@@ -647,3 +647,37 @@ Suports cross region replicas
 
 #### Aurora Replicas - Autoscaling
 
+Reader endpoint will autoscalle the number of replicas based on the load.
+
+#### Aurora Custom Endpoints
+
+Custom endpoints for your Aurora DB cluster (read replicas)
+
+#### Aurora Serverless
+
+* Automated database instantiation and auto-scaling based on actual usage
+* Good for infrequent, intermittent or unpredictable workloads
+* No capacity planning needed
+* Pay per second, can be more cost-effective
+
+#### Global Aurora
+
+* 1 primary region (read and write)
+* Up to 5 secondary regions (read only), replication lag < 1 second
+* Promote another region as the new primary in case of DR (RTO < 1 minute)
+* Cross replication is less than 1 second
+
+#### Aurora Backups
+
+* Automated backups
+   * daily full snapshot 
+   * transaction logs -> every 5 minutes
+   *  1 to 35 days of retention
+
+* Manual backups
+   * manual trigger
+   * retention without limits
+
+#### Aurora Database Cloning
+
+Uses copy-on-write mechanism, really fast. Useful for staging environment.

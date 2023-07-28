@@ -1,5 +1,14 @@
 # SAP HANA
 
+## All columns of a table
+
+```sql
+ SELECT * 
+ 	FROM M_CS_ALL_COLUMNS 
+  WHERE TABLE_NAME = 'TABLE_NAME' 
+    AND SCHEMA_NAME='SCHEMA_NAME';
+```
+
 ## Special Columns
 
 When ever a table is created in HANA, hana internally adds its own 3 columns to HANA internal purposes which we generally do not use in normal queries and also does not it gets displayed with normal “select * from <table_name>” query. 

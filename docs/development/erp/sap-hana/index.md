@@ -11,7 +11,7 @@
 
 ## Special Columns
 
-When ever a table is created in HANA, hana internally adds its own 3 columns to HANA internal purposes which we generally do not use in normal queries and also does not it gets displayed with normal “select * from <table_name>” query. 
+When ever a table is created in HANA, hana internally adds its own 3 columns to HANA internal purposes which we generally do not use in normal queries and also does not it gets displayed with normal “select * from <table_name>” query.
 
 ```sql
  SELECT ("$rowid$") AS "rowid",

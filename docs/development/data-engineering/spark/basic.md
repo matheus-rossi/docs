@@ -204,6 +204,13 @@ len(dataframe.columns)
 # Select columns
 dataframe.select('column_name', 'column_name2')
 ```
+## Drop Columns
+```python
+
+drop_cols = ("COL1", "COL2")
+df.drop(*drop_cols)
+
+```
 
 ## Join
 
@@ -355,7 +362,7 @@ windowSpec  = Window.partitionBy("COLUMN1").orderBy("COLUMN1","COLUMN3")
 def calc_discount():
     return F.when(F.col("row_number") > 3, F.col("value") * 0.90 ).otherwise(F.col("value"))
 
-udf_discount = F.udf(lambda z: calcula_desconto)
+udf_discount = F.udf(lambda z: calc_discount)
 
 orders_with_discount = (
     orders

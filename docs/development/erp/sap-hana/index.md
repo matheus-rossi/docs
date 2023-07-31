@@ -1,5 +1,11 @@
 # SAP HANA
 
+## SQL GUIDE
+
+List of all avaliable sql functions in SAP HANA.
+
+[Official Docs](https://help.sap.com/docs/HANA_SERVICE_CF/7c78579ce9b14a669c1f3295b0d8ca16/f12b86a6284c4aeeb449e57eb5dd3ebd.html)
+
 ## All columns of a table
 
 ```sql

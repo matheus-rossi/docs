@@ -120,6 +120,12 @@ Basic operations are the most common operations that you will use in your day to
 
 [Basic Operations](./basic.md)
 
+## Helpers
+
+Boilerplate code that you can use to help you with your Spark jobs.
+
+[Helpers](./helpers.md)
+
 ## Important Concepts
 
 Important concepts that you should know when working with Spark.

@@ -4,18 +4,18 @@ layout: home
 
 hero:
   name: "Matheus S. Rossi"
-  text: "Docs"
-  tagline: My Personal Wiki
+  text: "Wiki"
+  tagline: Almost everything a data engineer needs to know.
   image:
       src: /logo.png
       alt: VitePress
   actions:
     - theme: brand
-      text: Development
+      text: Go to Wiki
       link: /development/index.md
     - theme: alt
-      text: Curriculum
-      link: /curriculum/index.md
+      text: LinkedIn
+      link: https://www.linkedin.com/in/matheus-sandrini-rossi/
 
 features:
   - title: Development
@@ -25,9 +25,5 @@ features:
   - title: Lean Thinking and Management
     details: Useful resources to solve real world problems with real teams. ToDo.
     icon: 💭
-  - title: Curriculum
-    details: Details about my experiences and knowledge. Work in Progress.
-    icon: 🎯
-    link: /curriculum/index
 ---
 

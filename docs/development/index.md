@@ -8,6 +8,12 @@ My personal development environment is based on macOS, but most of the tools her
 
 ## Brew
 
+::: tip
+If you are using Windows, you can use Windows Subsystem for Linux (WSL).
+
+[Windows Docs](https://learn.microsoft.com/pt-br/windows/wsl/install)
+::::
+
 [Brew - Site](https://brew.sh/)
 
 All steps here documented by default uses brew as a package manager.

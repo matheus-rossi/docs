@@ -13,7 +13,9 @@ services:
 ```
 
 ::: tip
-user: postgres - password: postgres
+user: postgres
+
+password: postgres
 :::
 
 ## K8s Operator

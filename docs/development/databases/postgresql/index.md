@@ -1,8 +1,19 @@
 # Postgresql
 
-## Docker Image
-::: tip WIP
-Work in Progress
+## Docker Compose
+    
+```yaml
+services:
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: "postgres"
+    ports:
+      - "5432:5432"
+```
+
+::: tip
+user: postgres - password: postgres
 :::
 
 ## K8s Operator

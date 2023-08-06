@@ -4,9 +4,15 @@
 Work in progress
 :::
 
+![Data Lakehouse](./data-lakehouse.png){data-zoomable}
+
 ## Delta 
 
-[Delta Lake](/development/data-engineering/data-lakehouse/delta-table/index.md)
+![Delta](./delta.png)
+
+Learn more about Delta:
+
+[Delta Lake Documentation](/development/data-engineering/data-lakehouse/delta/index.md)
 
 ## Iceberg
 

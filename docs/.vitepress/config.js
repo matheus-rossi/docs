@@ -54,8 +54,16 @@ export default withMermaid(
                   { text: 'Apache Airflow', link: 'development/data-engineering/airflow/index.md' },
                   { text: 'Apache Spark', link: 'development/data-engineering/spark/index.md' },
                   { text: 'Concepts', link: 'development/data-engineering/concepts/index.md' },
-                  { text: 'Data Lakehouse', link: 'development/data-engineering/data-lakehouse/index.md' },
+                  { 
+                    text: 'Data Lakehouse', 
+                    link: 'development/data-engineering/data-lakehouse/index.md',
+                    collapsed: true,
+                    items: [
+                      { text: 'Delta Lake', link: 'development/data-engineering/data-lakehouse/delta/index.md' }
+                    ]
+                  },
                   { text: 'DBT', link: 'development/data-engineering/dbt/index.md' },
+                  { text: 'File Formats', link: 'development/data-engineering/file-formats/index.md' },
                 ]
               },
               { text: 'Data Governance', link: 'development/data-governance/index.md' },

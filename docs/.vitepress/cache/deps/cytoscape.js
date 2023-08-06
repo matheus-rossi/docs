@@ -1520,9 +1520,9 @@ var require_cytoscape_cjs = __commonJS({
     function _nonIterableRest() {
       throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
     }
-    var window$1 = typeof window === "undefined" ? null : window;
-    var navigator = window$1 ? window$1.navigator : null;
-    window$1 ? window$1.document : null;
+    var _window = typeof window === "undefined" ? null : window;
+    var navigator = _window ? _window.navigator : null;
+    _window ? _window.document : null;
     var typeofstr = _typeof("");
     var typeofobj = _typeof({});
     var typeoffn = _typeof(function() {
@@ -1988,29 +1988,29 @@ var require_cytoscape_cjs = __commonJS({
       }
       return obj;
     };
-    var performance = window$1 ? window$1.performance : null;
+    var performance = _window ? _window.performance : null;
     var pnow = performance && performance.now ? function() {
       return performance.now();
     } : function() {
       return Date.now();
     };
     var raf = function() {
-      if (window$1) {
-        if (window$1.requestAnimationFrame) {
+      if (_window) {
+        if (_window.requestAnimationFrame) {
           return function(fn2) {
-            window$1.requestAnimationFrame(fn2);
+            _window.requestAnimationFrame(fn2);
           };
-        } else if (window$1.mozRequestAnimationFrame) {
+        } else if (_window.mozRequestAnimationFrame) {
           return function(fn2) {
-            window$1.mozRequestAnimationFrame(fn2);
+            _window.mozRequestAnimationFrame(fn2);
           };
-        } else if (window$1.webkitRequestAnimationFrame) {
+        } else if (_window.webkitRequestAnimationFrame) {
           return function(fn2) {
-            window$1.webkitRequestAnimationFrame(fn2);
+            _window.webkitRequestAnimationFrame(fn2);
           };
-        } else if (window$1.msRequestAnimationFrame) {
+        } else if (_window.msRequestAnimationFrame) {
           return function(fn2) {
-            window$1.msRequestAnimationFrame(fn2);
+            _window.msRequestAnimationFrame(fn2);
           };
         }
       }
@@ -13593,8 +13593,9 @@ var require_cytoscape_cjs = __commonJS({
     styfn$6.containerCss = function(propName) {
       var cy = this._private.cy;
       var domElement2 = cy.container();
-      if (window$1 && domElement2 && window$1.getComputedStyle) {
-        return window$1.getComputedStyle(domElement2).getPropertyValue(propName);
+      var containerWindow = cy.window();
+      if (containerWindow && domElement2 && containerWindow.getComputedStyle) {
+        return containerWindow.getComputedStyle(domElement2).getPropertyValue(propName);
       }
     };
     var styfn$5 = {};
@@ -16049,8 +16050,9 @@ var require_cytoscape_cjs = __commonJS({
       size: function size() {
         var _p = this._private;
         var container = _p.container;
+        var cy = this;
         return _p.sizeCache = _p.sizeCache || (container ? function() {
-          var style = window$1.getComputedStyle(container);
+          var style = cy.window().getComputedStyle(container);
           var val = function val2(name) {
             return parseFloat(style.getPropertyValue(name));
           };
@@ -16165,7 +16167,7 @@ var require_cytoscape_cjs = __commonJS({
         container._cyreg = reg;
       }
       reg.cy = cy;
-      var head = window$1 !== void 0 && container !== void 0 && !opts.headless;
+      var head = _window !== void 0 && container !== void 0 && !opts.headless;
       var options = opts;
       options.layout = extend({
         name: head ? "grid" : "null"
@@ -16349,6 +16351,16 @@ var require_cytoscape_cjs = __commonJS({
       },
       container: function container() {
         return this._private.container || null;
+      },
+      window: function window2() {
+        var container = this._private.container;
+        if (container == null)
+          return _window;
+        var ownerDocument = this._private.container.ownerDocument;
+        if (ownerDocument === void 0 || ownerDocument == null) {
+          return _window;
+        }
+        return ownerDocument.defaultView || _window;
       },
       mount: function mount(container) {
         if (container == null) {
@@ -18505,7 +18517,7 @@ var require_cytoscape_cjs = __commonJS({
       }
       var container = this.container;
       var rect = container.getBoundingClientRect();
-      var style = window$1.getComputedStyle(container);
+      var style = this.cy.window().getComputedStyle(container);
       var styleValue = function styleValue2(name) {
         return parseFloat(style.getPropertyValue(name));
       };
@@ -20555,7 +20567,8 @@ var require_cytoscape_cjs = __commonJS({
     };
     BRp$3.binder = function(tgt) {
       var r = this;
-      var tgtIsDom = tgt === window || tgt === document || tgt === document.body || domElement(tgt);
+      var containerWindow = r.cy.window();
+      var tgtIsDom = tgt === containerWindow || tgt === containerWindow.document || tgt === containerWindow.document.body || domElement(tgt);
       if (r.supportsPassiveEvents == null) {
         var supportsPassive = false;
         try {
@@ -20565,7 +20578,7 @@ var require_cytoscape_cjs = __commonJS({
               return true;
             }
           });
-          window.addEventListener("test", null, opts);
+          containerWindow.addEventListener("test", null, opts);
         } catch (err) {
         }
         r.supportsPassiveEvents = supportsPassive;
@@ -20601,6 +20614,7 @@ var require_cytoscape_cjs = __commonJS({
     };
     BRp$3.load = function() {
       var r = this;
+      var containerWindow = r.cy.window();
       var isSelected = function isSelected2(ele) {
         return ele.selected();
       };
@@ -20774,7 +20788,7 @@ var require_cytoscape_cjs = __commonJS({
           attributes: true
         });
       }
-      r.registerBinding(window, "resize", onResize);
+      r.registerBinding(containerWindow, "resize", onResize);
       if (haveResizeObserverApi) {
         r.resizeObserver = new ResizeObserver(onResize);
         r.resizeObserver.observe(r.container);
@@ -20965,7 +20979,7 @@ var require_cytoscape_cjs = __commonJS({
         select[0] = select[2] = pos[0];
         select[1] = select[3] = pos[1];
       }, false);
-      r.registerBinding(window, "mousemove", function mousemoveHandler(e) {
+      r.registerBinding(containerWindow, "mousemove", function mousemoveHandler(e) {
         var capture = r.hoverData.capture;
         if (!capture && !eventInContainer(e)) {
           return;
@@ -21192,7 +21206,7 @@ var require_cytoscape_cjs = __commonJS({
         }
       }, false);
       var clickTimeout, didDoubleClick, prevClickTimeStamp;
-      r.registerBinding(window, "mouseup", function mouseupHandler(e) {
+      r.registerBinding(containerWindow, "mouseup", function mouseupHandler(e) {
         var capture = r.hoverData.capture;
         if (!capture) {
           return;
@@ -21415,7 +21429,7 @@ var require_cytoscape_cjs = __commonJS({
         }
       };
       r.registerBinding(r.container, "wheel", wheelHandler, true);
-      r.registerBinding(window, "scroll", function scrollHandler(e) {
+      r.registerBinding(containerWindow, "scroll", function scrollHandler(e) {
         r.scrollingPage = true;
         clearTimeout(r.scrollingPageTimeout);
         r.scrollingPageTimeout = setTimeout(function() {
@@ -21634,7 +21648,7 @@ var require_cytoscape_cjs = __commonJS({
           }, r.tapholdDuration);
         }
         if (e.touches.length >= 1) {
-          var sPos = r.touchData.startPosition = [];
+          var sPos = r.touchData.startPosition = [null, null, null, null, null, null];
           for (var i2 = 0; i2 < now.length; i2++) {
             sPos[i2] = earlier[i2] = now[i2];
           }
@@ -21990,7 +22004,7 @@ var require_cytoscape_cjs = __commonJS({
         }
       }, false);
       var touchcancelHandler;
-      r.registerBinding(window, "touchcancel", touchcancelHandler = function touchcancelHandler2(e) {
+      r.registerBinding(containerWindow, "touchcancel", touchcancelHandler = function touchcancelHandler2(e) {
         var start = r.touchData.start;
         r.touchData.capture = false;
         if (start) {
@@ -21998,7 +22012,7 @@ var require_cytoscape_cjs = __commonJS({
         }
       });
       var touchendHandler, didDoubleTouch, touchTimeout, prevTouchTimeStamp;
-      r.registerBinding(window, "touchend", touchendHandler = function touchendHandler2(e) {
+      r.registerBinding(containerWindow, "touchend", touchendHandler = function touchendHandler2(e) {
         var start = r.touchData.start;
         var capture = r.touchData.capture;
         if (capture) {
@@ -22194,7 +22208,7 @@ var require_cytoscape_cjs = __commonJS({
         r.dragData.didDrag = false;
         if (e.touches.length === 0) {
           r.touchData.dragDelta = [];
-          r.touchData.startPosition = null;
+          r.touchData.startPosition = [null, null, null, null, null, null];
           r.touchData.startGPosition = null;
           r.touchData.didSelect = false;
         }
@@ -22764,8 +22778,9 @@ var require_cytoscape_cjs = __commonJS({
       r.options = options;
       r.cy = options.cy;
       var ctr = r.container = options.cy.container();
-      if (window$1) {
-        var document2 = window$1.document;
+      var containerWindow = r.cy.window();
+      if (containerWindow) {
+        var document2 = containerWindow.document;
         var head = document2.head;
         var stylesheetId = "__________cytoscape_stylesheet";
         var className = "__________cytoscape_container";
@@ -22779,7 +22794,7 @@ var require_cytoscape_cjs = __commonJS({
           stylesheet2.textContent = "." + className + " { position: relative; }";
           head.insertBefore(stylesheet2, head.children[0]);
         }
-        var computedStyle = window$1.getComputedStyle(ctr);
+        var computedStyle = containerWindow.getComputedStyle(ctr);
         var position2 = computedStyle.getPropertyValue("position");
         if (position2 === "static") {
           warn("A Cytoscape container has style position:static and so can not use UI extensions properly");
@@ -26640,7 +26655,7 @@ var require_cytoscape_cjs = __commonJS({
       }
       return style;
     };
-    var version = "3.25.0";
+    var version = "3.26.0";
     var cytoscape = function cytoscape2(options) {
       if (options === void 0) {
         options = {};

@@ -12,17 +12,48 @@ Databricks originally developed the Delta Lake protocol and continues to activel
 
 Main features:
  - ACID transactions
+
+| Atomicity | Consistency | Isolation | Durability |
+|-----------|-------------|-----------|------------|
+| All or nothing | Data is always valid | Concurrent reads and writes | Data is always available |
+| Commit or rollback | Types, PK | Read committed / uncommitted | Persisted to disk |
+
  - Schema enforcement
- - Time travel
- - Upserts
- - Deletes
  - Schema evolution
+ - Time travel
  - Audit history
+ - Upserts / Merge
+ - Deletes
  - Streaming
- - Compaction
- - Z-Ordering
  - Change Data Feed
 
+## Apache Parquet
+
+Apache Parquet is an open source, column-oriented data file format designed for efficient data storage and retrieval.
+
+[Parquet File Format](https://parquet.apache.org/)
+
+## Delta Concept
+::: tip
+- Delta is NOT a file format
+- Delta uses PARQUET as file format.
+:::
+
+![Delta](./concept.png){data-zoomable}
+
+Real example:
+
+![Real Example](./delta-example.png){data-zoomable}
+
+## Delta Folder Structure
+
+![Delta](./folder-structure.png){data-zoomable}
+
+_delta_log is a folder that contains the transaction log of all the changes made to the table.
+
+- 00001.json is the first version of the table.
+- 00002.json is the second version of the table.
+- and so on...
 
 ## How to use Delta
 
@@ -36,7 +67,7 @@ See [Delta-Rs](https://github.com/delta-io/delta-rs) for example.
 
 ### Local Spark
 
-You can use the [Spark Quickstart](https://spark.apache.org/docs/latest/quick-start.html) to get a local Spark cluster running.
+You can use the [Spark Quickstart](/development/data-engineering/spark/index.md) to get a local Spark cluster running.
 
 ### Delta Versions
 
@@ -65,9 +96,49 @@ spark = (
 )
 ```
 
-## Delta Folder Structure
-::: tip WIP
-Work in progress
+## Basic Operations
+
+### Check if delta exists
+
+```python
+DeltaTable.isDeltaTable(spark, "path/table") 
+#True or False
+```
+
+### Create
+
+```python
+(
+    df
+    .write
+    .format("delta")
+    .mode("append")
+    .partitionBy("column")
+    .save("path/table")
+)
+```
+
+#### Create if not exists
+::: tip
+if merging data, you must create the table first, otherwise you will get an error.
+:::
+
+```python
+(
+    DeltaTable.createIfNotExists(spark)
+        .location("path/delta")
+        .execute()
+)
+```
+
+### Merge / Upsert
+::: tip
+Working in progress
+:::
+
+### Delete
+::: tip
+Working in progress
 :::
 
 ## Change Data Feed
@@ -78,9 +149,12 @@ Work in progress
 CDC, but for Delta Tables.
 
 ```sql
-CREATE TABLE student (id INT, name STRING, age INT) TBLPROPERTIES (delta.enableChangeDataFeed = true)
+CREATE TABLE student
+    (id INT, name STRING, age INT)
+    TBLPROPERTIES (delta.enableChangeDataFeed = true)
 -- or
-ALTER TABLE myDeltaTable SET TBLPROPERTIES (delta.enableChangeDataFeed = true)
+ALTER TABLE myDeltaTable
+    SET TBLPROPERTIES (delta.enableChangeDataFeed = true)
 ```
 
 ```python
@@ -117,41 +191,3 @@ ALTER TABLE myDeltaTable SET TBLPROPERTIES (delta.enableChangeDataFeed = true)
     .load("pathToMyDeltaTable")
 )
 ```
-
-
-## Basic Operations
-
-### Check if delta exists
-
-```python
-DeltaTable.isDeltaTable(spark, "path/table") 
-#True or False
-```
-
-### Create delta table
-
-#### Create
-```python
-(
-    df
-    .write
-    .format("delta")
-    .mode("append")
-    .partitionBy("column")
-    .save("path/table")
-)
-```
-
-#### Create if not exists
-::: tip
-if merging data, you must create the table first, otherwise you will get an error.
-:::
-
-```python
-(
-    DeltaTable.createIfNotExists(spark)
-        .location("path/delta")
-        .execute()
-)
-```
-

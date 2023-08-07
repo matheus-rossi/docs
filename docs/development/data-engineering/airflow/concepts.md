@@ -104,3 +104,14 @@ delay_python_task = PythonOperator(
     "extra": "{\"endpoint_url\": \"http://minio.minio.svc:9000\", \"region_name\": \"local\"}"
   }
 ```
+
+## Import files from project
+
+How to import files to a dag.
+
+```python
+DIR_PATH = pathlib.Path(__file__).parent.absolute()
+
+# EMR
+EMR_CONFIG=f'{DIR_PATH}/conf/emr.json'
+```

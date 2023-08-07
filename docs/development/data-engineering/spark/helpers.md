@@ -67,3 +67,11 @@ logger.info('Reading landing data')
 df_table = get_data(spark, 'base_path', date_list_load_path)
 
 ```
+
+## Rename all columns
+
+```python
+df = df.select(
+    [ F.col(c).alias('prefix' + c + 'suffix') for c in df.columns ]
+)
+```

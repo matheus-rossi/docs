@@ -29,3 +29,11 @@ Ping, but with a graph.
 ```bash
 brew install gping
 ```
+### Bandwhich
+Show bandwidth usage, connection information, outgoing hosts and DNS queries in real-time
+
+![Bandwhich](./bandwhich.png)
+
+```bash
+brew install bandwhich
+```

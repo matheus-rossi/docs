@@ -1,5 +1,11 @@
 # SAP HANA
 
+## JDBC params
+
+```python
+self.source = "jdbc:sap://SERVER:PORT/?reconnect=TRUE&connectTimeout=0&communicationTimeout=0" 
+```
+
 ## SQL Guide
 
 List of all avaliable sql functions in SAP HANA.

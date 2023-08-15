@@ -191,3 +191,20 @@ ALTER TABLE myDeltaTable
     .load("pathToMyDeltaTable")
 )
 ```
+
+## Optimize
+
+Small files are a common problem in data lakes. They can cause performance issues and increase costs.
+
+```python
+from delta.tables import *
+
+deltaTable = DeltaTable.forPath(spark, pathToTable)
+
+deltaTable.optimize().executeCompaction()
+```
+If you have a large amount of data and only want to optimize a subset of it, you can specify an optional partition predicate using `where`
+
+```python
+deltaTable.optimize().where("date='2021-11-18'").executeCompaction()
+```

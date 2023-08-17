@@ -2,4 +2,4 @@
 
 ## Certifications
 
-[Certifications](./certification/index.md)
+[Certifications](./../certification/index.md)

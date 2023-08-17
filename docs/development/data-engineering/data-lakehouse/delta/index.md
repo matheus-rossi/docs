@@ -125,8 +125,11 @@ if merging data, you must create the table first, otherwise you will get an erro
 
 ```python
 (
-    DeltaTable.createIfNotExists(spark)
-        .location("path/delta")
+    DeltaTable
+        .createIfNotExists(spark)
+        .tableName(table_name)
+        .addColumns(df.schema)
+        .location(path)
         .execute()
 )
 ```

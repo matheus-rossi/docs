@@ -30,9 +30,9 @@ export default withMermaid(
                 items: [
                   { 
                     text: 'AWS', 
-                    link: 'development/cloud/aws/index.md',
                     collapsed: true,
                     items: [
+                      { text: 'Intro', link: 'development/cloud/aws/intro/index.md' },
                       { text: 'Certification', link: 'development/cloud/aws/certification/index.md' },
                       { text: 'Tools', link: 'development/cloud/aws/tools/index.md' },
                       { text: 'EMR', link: 'development/cloud/aws/emr/index.md' },

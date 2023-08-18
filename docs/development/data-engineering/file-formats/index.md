@@ -14,6 +14,15 @@ Working with data also means working with files. There are many file formats ava
 ## json
 
 ## parquet
+::: tip
+[Parquet Explained by Databricks](https://youtu.be/1j8SdS7s_NY)
+:::
+
+Small Files
+![Small Files](./small-files.png)
+
+Big Files
+![Huge Files](./huge-files.png)
 
 ## orc
 

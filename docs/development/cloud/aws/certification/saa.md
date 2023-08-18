@@ -681,3 +681,15 @@ Custom endpoints for your Aurora DB cluster (read replicas)
 #### Aurora Database Cloning
 
 Uses copy-on-write mechanism, really fast. Useful for staging environment.
+
+#### Aurora & RDS Security
+
+* Encryption at rest with KMS
+* Encryption in flight with TLS
+* IAM authentication
+* RDS security groups 
+* Audit logs can be sent to CloudWatch logs
+
+### ElastiCache
+
+ ::

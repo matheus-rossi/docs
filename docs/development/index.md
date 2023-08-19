@@ -1,5 +1,5 @@
 # Development
-![me-logo](vite-logo.png)
+![me-logo](me-logo.png)
 
 ## Who am I ?
 

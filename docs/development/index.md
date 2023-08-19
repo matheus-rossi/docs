@@ -1,12 +1,31 @@
 # Development
-::: info
-Tools, tips, tricks, studies, guides, etc.
-:::
+## Who am I ?
 
-All development related topics are documented here. 
-My personal development environment is based on macOS, but most of the tools here can and should be used on linux machines.
+My name is Matheus Sandrini Rossi, I'm a data architect / data engineer and I'm passionate about technology and data.
 
-## Brew
+## What can you find here ?
+
+Almost everything I use in my day to day, from tools, tips, tricks, studies, guides, etc.
+
+## Will it be useful to me ?
+
+If you work with IT and the data universe, probably yes.
+
+If you are not in this universe, but you are curious, it may be useful to you too.
+
+## Pre-requisites
+
+Basic knowledge of:
+- python
+- linux
+- git
+- docker
+
+If you dont know about it, don't worry, you can find some tips here.
+
+## Tools
+
+### Brew
 
 ::: tip
 If you are using Windows, you can use Windows Subsystem for Linux (WSL).
@@ -17,7 +36,7 @@ If you are using Windows, you can use Windows Subsystem for Linux (WSL).
 [Brew - Site](https://brew.sh/)
 
 All steps here documented by default uses brew as a package manager.
-Brew is famous in macOS, but can also be installed on linux machines.
+Brew is famous in macOS, but can also be installed on linux machines, and windows (WSL).
 
 ![HomeBrew](./brew.png)
 

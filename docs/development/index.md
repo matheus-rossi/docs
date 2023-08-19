@@ -1,4 +1,6 @@
 # Development
+![me-logo](vite-logo.png)
+
 ## Who am I ?
 
 My name is Matheus Sandrini Rossi, I'm a data architect / data engineer and I'm passionate about technology and data.
@@ -11,7 +13,7 @@ Almost everything I use in my day to day, from tools, tips, tricks, studies, gui
 
 If you work with IT and the data universe, probably yes.
 
-If you are not in this universe, but you are curious, it may be useful to you too.
+If you are not in this context, but you are curious, it may be useful to you too.
 
 ## Pre-requisites
 
@@ -20,6 +22,7 @@ Basic knowledge of:
 - linux
 - git
 - docker
+- sql
 
 If you dont know about it, don't worry, you can find some tips here.
 

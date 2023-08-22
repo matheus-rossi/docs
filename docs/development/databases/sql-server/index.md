@@ -24,20 +24,20 @@ CDC uses this information to record changes in an easily consumed relational for
 First check if CDC is enabled
 
 ```sql
-USE db
-GO
-SELECT database_id, name, is_cdc_enabled 
-  FROM sys.databases
-GO
+USE [db];
+
+SELECT database_id,
+       name,
+       is_cdc_enabled
+  FROM sys.databases;
 ```
 
 Than, you can activate CDC at database level
 
 ```sql
-USE db
-GO
-EXEC sys.sp_cdc_enable_db 
-GO 
+USE [db];
+
+EXEC sys.sp_cdc_enable_db;
 ```
 
 ### Table Level
@@ -45,9 +45,9 @@ GO
 Check if CDC is enabled for a table
 
 ```sql
-USE db;
-SELECT s.name as schema,
-       tb.name as table,
+USE [db];
+SELECT s.name as 'schema',
+       tb.name as 'table',
        tb.object_id,
        tb.type,
        tb.type_desc,
@@ -55,32 +55,30 @@ SELECT s.name as schema,
   FROM sys.tables tb
  INNER JOIN sys.schemas s
     ON s.schema_id = tb.schema_id
- WHERE tb.is_tracked_by_cdc = 1
+ WHERE tb.is_tracked_by_cdc = 1;
 ```
 
 Enable CDC for a table
 
 ```sql
-USE db;
-GO 
+USE [db];
+
 EXEC sys.sp_cdc_enable_table
      @source_schema = N'dbo',
      @source_name = N'table1',
      @role_name = NULL,
      @filegroup_name = N'PRIMARY'
-GO
 ```
 
 Disable CDC for a table
 
 ```sql
-USE db;
-GO
+USE [db];
+
 EXEC sys.sp_cdc_disable_table
      @source_schema = N'dbo',
      @source_name = N'table1',
-     @capture_instance = N'dbo_table1'
-GO
+     @capture_instance = N'dbo_table1';
 ```
 
 ### Testing CDC
@@ -88,7 +86,7 @@ GO
 First, insert, update or delete some data, then:
 
 ```sql
-USE db;
+USE [db];
+
 SELECT * FROM [cdc].[dbo_table1_CT]
-GO
 ```

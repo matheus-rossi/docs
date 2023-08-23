@@ -1,4 +1,9 @@
 # Matheus Sandrini Rossi
-## Project DOC's
 
-Replacing my notion with this app.
+## The Data Engineer Bible
+
+Work In Progress
+
+The only docs you need to become a Data Engineer.
+
+https://matheusrossi.com/

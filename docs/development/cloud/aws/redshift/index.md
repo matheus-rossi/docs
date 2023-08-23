@@ -6,6 +6,26 @@
 
 ## Create table
 
+## Grant
+
+[Oficial Docs](https://docs.aws.amazon.com/redshift/latest/dg/r_GRANT.html)
+
+```sql 
+grant all on schema schema_name to "user_name";
+```
+
+## Users
+
+### List
+```sql
+select * from pg_user;
+```
+
+### Superuser
+```sql
+ALTER USER "user_name" WITH CREATEUSER
+```
+
 ## Parquet to Redshift
 
 ```python

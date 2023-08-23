@@ -9,6 +9,10 @@ Secrets are encrypted using KMS.
 ## Retrieve a secret
 
 ```python
+import boto3 
+import json
+from botocore.exceptions import ClientError
+
 class SecretManager:
     def __init__(self, secret_name:str, region_name:str):
         self.secret_name = secret_name
@@ -26,6 +30,21 @@ class SecretManager:
             raise e
 
         secret = get_secret_value_response['SecretString']
-        
+        # if data is json
+        # secret = json.loads(get_secret_value_response['SecretString'])
+
         return secret
+    
+    def create_secret(self, secret:str):
+        try:
+            create_secret_response = self.client.create_secret(
+                Name=self.secret_name,
+                SecretString=secret
+            )
+        except ClientError as e:
+            # For a list of exceptions thrown, see
+            # https://docs.aws.amazon.com/secretsmanager/latest/apireference/API_CreateSecret.html
+            raise e
+
+        return create_secret_response
 ```

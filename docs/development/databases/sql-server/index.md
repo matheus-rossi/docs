@@ -88,5 +88,5 @@ First, insert, update or delete some data, then:
 ```sql
 USE [db];
 
-SELECT * FROM [cdc].[dbo_table1_CT]
+SELECT * FROM [cdc].[dbo_table1_CT];
 ```

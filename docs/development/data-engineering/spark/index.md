@@ -16,7 +16,15 @@
 Make sure you have Java 8 installed on your machine. If not, you can install it using brew:
 
 ```bash
-brew install openjdk@8
+# Install Java 11 (Arm Compatible)
+brew install openjdk@11
+```
+```bash
+# Symlink
+sudo ln -sfn $HOMEBREW_PREFIX/opt/openjdk@11/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk-11.jdk
+```
+```bash
+java --version
 ```
 
 #### Step2: New environment

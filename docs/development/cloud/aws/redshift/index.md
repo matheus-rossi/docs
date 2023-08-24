@@ -29,24 +29,20 @@ ALTER USER "user_name" WITH CREATEUSER
 ## Parquet to Redshift
 
 ```python
-    def spark_to_redshift_type(self, spark_type:str):
+    def spark_to_redshift_type(self, spark_type:str, precision:Union[str,None]):
         """
         - Convert spark type to redshift type
         """
 
         mapping = {
-            "ByteType": "SMALLINT",
-            "ShortType": "SMALLINT",
-            "IntegerType": "INTEGER",
-            "LongType": "BIGINT",
-            "FloatType": "REAL",
-            "DoubleType": "DOUBLE PRECISION",
-            "DecimalType": "DECIMAL",
-            "StringType": "VARCHAR",
-            "BinaryType": "BYTEA",
-            "BooleanType": "BOOLEAN",
-            "TimestampType": "TIMESTAMP",
-            "DateType": "DATE",
+            "integer": "INTEGER",
+            "long": "BIGINT",
+            "float": "REAL",
+            "double": "DOUBLE PRECISION",
+            "decimal": f"DECIMAL{precision}",
+            "string ": "VARCHAR",
+            "timestamp": "TIMESTAMP",
+            "date": "DATE",
         }
 
         return mapping.get(spark_type, "VARCHAR")
@@ -55,7 +51,13 @@ ALTER USER "user_name" WITH CREATEUSER
         schema = df.schema
         columns = []
         for field in schema.fields:
-            redshift_type = self.spark_to_redshift_type(field.dataType.typeName())
+
+            if isinstance(field.dataType, DecimalType):
+                precision = f"({field.dataType.precision},{field.dataType.scale})"
+            else:
+                precision = None
+
+            redshift_type = self.spark_to_redshift_type(field.dataType.typeName(), precision)
             columns.append(f"{field.name} {redshift_type}")
         columns_str = ", ".join(columns)
         create_table_sql = f"CREATE TABLE IF NOT EXISTS {table_name} ({columns_str});"
@@ -82,4 +84,26 @@ And just use it like:
 schema_table = schema + "." + table_name
 create_table_sql = self.generate_redshift_create_table(df, schema_table)
 self.execute_redshift_query(create_table_sql, self.redshift_credentials)
+```
+
+### Errors on copy
+
+If you get errors like this:
+
+```
+error:  Spectrum Scan Error
+  code:      15007
+  context:   File 'https://... parquet ... c000.snappy.parquet' has an incompatible Parquet schema for column 's3://... 
+  query:     43966693
+  location:  dory_util.cpp:1509
+  process:   worker_thread [pid=13526]
+
+```
+You can query the details on:
+
+```sql
+select message
+  from SVL_S3LOG
+ where query = 43966714
+ order by query,segment,slice;
 ```

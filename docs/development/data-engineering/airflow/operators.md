@@ -18,3 +18,7 @@ SELECT *
   FROM pet
  WHERE birth_date BETWEEN SYMMETRIC {{ params.begin_date }} AND {{ params.end_date }};
 ```
+
+## EMR 
+
+[Airflow EMR Official Docs](https://airflow.apache.org/docs/apache-airflow-providers-amazon/stable/operators/emr/emr.html#wait-on-an-amazon-emr-job-flow-state)

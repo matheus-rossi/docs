@@ -17,10 +17,10 @@ List of all avaliable sql functions in SAP HANA.
 Select all columns from a table
 
 ```sql
- SELECT *
- 	 FROM M_CS_ALL_COLUMNS
-  WHERE TABLE_NAME = 'TABLE_NAME'
-    AND SCHEMA_NAME ='SCHEMA_NAME';
+  SELECT *
+    FROM M_CS_ALL_COLUMNS
+   WHERE TABLE_NAME = 'TABLE_NAME'
+     AND SCHEMA_NAME ='SCHEMA_NAME';
 ```
 
 ## Get primary key

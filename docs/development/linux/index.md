@@ -29,6 +29,12 @@ Ping, but with a graph.
 ```bash
 brew install gping
 ```
+Usage:
+
+```bash
+gping google.com -s --clear --watch-interval 1
+```
+
 ### Bandwhich
 Show bandwidth usage, connection information, outgoing hosts and DNS queries in real-time
 

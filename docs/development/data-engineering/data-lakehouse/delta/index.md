@@ -211,3 +211,10 @@ If you have a large amount of data and only want to optimize a subset of it, you
 ```python
 deltaTable.optimize().where("date='2021-11-18'").executeCompaction()
 ```
+
+Control the size of the files using:
+
+```python
+# 128 mb
+.config("spark.databricks.delta.optimize.maxFileSize", 134217728)
+```

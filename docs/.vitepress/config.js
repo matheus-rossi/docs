@@ -59,6 +59,7 @@ export default withMermaid(
                     link: '',
                     collapsed: true,
                     items: [
+                      { text: 'Intro', link: 'development/data-engineering/data-lakehouse/index.md' },
                       { text: 'Delta Lake', link: 'development/data-engineering/data-lakehouse/delta/index.md' }
                     ]
                   },

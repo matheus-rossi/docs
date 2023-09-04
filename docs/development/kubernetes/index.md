@@ -92,7 +92,13 @@ Go to extensions (ctrl+shift+e) add this name in the box: @alebcay/openlens-node
 
 K9s is a terminal based UI to interact with your Kubernetes clusters. The aim of this project is to make it easier to navigate, observe and manage your deployed applications in the wild.
 
-## Kdash
+### Install
+
+```bash
+ brew install derailed/k9s/k9s
+```
+
+## Kdash - TUI for K8s
 
 A simple terminal dashboard for Kubernetes built with Rust.
 
@@ -101,12 +107,6 @@ A simple terminal dashboard for Kubernetes built with Rust.
 ```bash
 brew tap kdash-rs/kdash
 brew install kdash
-```
-
-### Install
-
-```bash
- brew install derailed/k9s/k9s
 ```
 
 ## Helm Charts

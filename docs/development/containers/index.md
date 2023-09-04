@@ -1,6 +1,8 @@
 # Containers
 
-## Rancher Desktop
+## Tools
+
+### Rancher Desktop
 
 A great alternative to docker desktop.
 Rancher Desktop is delivered as a desktop application.
@@ -10,7 +12,7 @@ https://docs.rancherdesktop.io/getting-started/installation/
 
 ![Rancher](./rancher.png)
 
-## Portainer
+### Portainer
 
 Portainer Community Edition (CE) is our foundation. With over half a million regular users, CE is a powerful, open source toolset that allows you to easily build and manage containers in Docker, Docker Swarm, Kubernetes and Azure ACI.
 
@@ -32,7 +34,7 @@ Run portainer
 docker run -d -p 8000:8000 -p 9000:9000 --name=portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce
 ```
 
-## Lazydocker
+### Lazydocker
 
 Lazydocker is a simple terminal UI for both docker and docker-compose, written in Go.
 
@@ -42,7 +44,9 @@ Lazydocker is a simple terminal UI for both docker and docker-compose, written i
 brew install jesseduffield/lazydocker/lazydocker
 ```
 
-## Container Management
+## Commands
+
+### Container Management
 
 Basic commands to manage containers
 
@@ -75,7 +79,7 @@ docker ps
 docker ps -a
 ```
 
-## Build Images
+### Build Images
 
 ```bash
 # Login into dockerhub

@@ -32,6 +32,16 @@ Run portainer
 docker run -d -p 8000:8000 -p 9000:9000 --name=portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce
 ```
 
+## Lazydocker
+
+Lazydocker is a simple terminal UI for both docker and docker-compose, written in Go.
+
+![Lazydocker](./lazydocker.gif)
+
+```bash
+brew install jesseduffield/lazydocker/lazydocker
+```
+
 ## Container Management
 
 Basic commands to manage containers

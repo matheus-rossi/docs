@@ -104,6 +104,8 @@ A simple terminal dashboard for Kubernetes built with Rust.
 
 ![Kdash](./kdash.gif)
 
+### Install
+
 ```bash
 brew tap kdash-rs/kdash
 brew install kdash

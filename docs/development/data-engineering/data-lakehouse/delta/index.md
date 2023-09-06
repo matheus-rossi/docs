@@ -151,6 +151,8 @@ Work in progress
 
 CDC, but for Delta Tables.
 
+### Config
+
 ```sql
 CREATE TABLE student
     (id INT, name STRING, age INT)
@@ -159,6 +161,21 @@ CREATE TABLE student
 ALTER TABLE myDeltaTable
     SET TBLPROPERTIES (delta.enableChangeDataFeed = true)
 ```
+
+Or in spark session
+
+```python
+builder = (
+    SparkSession.builder.appName("DeltaLakeApp")
+    .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension")
+    .config("spark.sql.catalog.spark_catalog", "org.apache.spark.sql.delta.catalog.DeltaCatalog")
+    .config("spark.jars.packages","io.delta:delta-core_2.12:2.0.0")
+    .config("spark.databricks.delta.properties.defaults.enableChangeDataFeed", "true")
+)
+spark = configure_spark_with_delta_pip(builder).getOrCreate()
+```
+
+### Usage
 
 ```python
 # version as ints or longs

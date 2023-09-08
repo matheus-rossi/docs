@@ -1,7 +1,7 @@
 # SAP HANA
 
 ## SAP DataSheet
-::: success
+::: info
 [SAP HANA DataSheet](https://www.sapdatasheet.org/) 🎯
 :::
 

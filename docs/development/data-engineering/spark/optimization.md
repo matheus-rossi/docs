@@ -1,5 +1,12 @@
 # Optimization
 
+## _SUCCESS
+::: tip
+Ommit _SUCCESS files from being written to S3
+:::
+
+- mapreduce.fileoutputcommitter.marksuccessfuljobs = false
+
 ## Parameters
 
 - spark.sql.adaptive.enabled = true

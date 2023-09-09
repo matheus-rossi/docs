@@ -65,6 +65,7 @@ export default withMermaid(
                   },
                   { text: 'DBT', link: 'development/data-engineering/dbt/index.md' },
                   { text: 'File Formats', link: 'development/data-engineering/file-formats/index.md' },
+                  { text: 'SQL', link: 'development/data-engineering/sql/index.md' },
                 ]
               },
               { text: 'Data Governance', link: 'development/data-governance/index.md' },

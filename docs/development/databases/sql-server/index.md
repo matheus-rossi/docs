@@ -93,7 +93,6 @@ SELECT * FROM [cdc].[dbo_table1_CT];
 ### Jobs
 
 ```sql
-USE [dbo];
 SELECT * FROM msdb.dbo.cdc_jobs;
 ```
 

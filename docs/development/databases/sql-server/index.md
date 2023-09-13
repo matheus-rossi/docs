@@ -90,3 +90,22 @@ USE [db];
 
 SELECT * FROM [cdc].[dbo_table1_CT];
 ```
+### Checking CDC Configuration
+
+```sql
+USE [dbo];
+SELECT * FROM msdb.dbo.cdc_jobs;
+```
+
+### Changing CDC Retention
+
+The default retention period is 3 days. You can change it to 07 days, for example:
+
+
+```sql
+USE [db];
+
+EXEC sys.sp_cdc_change_job
+     @job_type = N'cleanup',
+     @retention = 10080;
+```

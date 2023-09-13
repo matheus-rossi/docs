@@ -108,3 +108,16 @@ EXEC sys.sp_cdc_change_job
      @job_type = N'cleanup',
      @retention = 10080;
 ```
+### Useful Commands
+
+```sql
+exec sys.sp_cdc_help_change_data_capture
+
+exec sys.sp_cdc_help_jobs
+
+select * from cdc.change_tables
+
+select * from sys.dm_cdc_errors
+ 
+select * from sys.dm_cdc_log_scan_sessions
+```

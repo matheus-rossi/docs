@@ -17,7 +17,7 @@ CDC uses this information to record changes in an easily consumed relational for
 | 2014      | Enterprise   | Yes             |
 | 2012      | Enterprise   | Yes             |
 
-### How to enable CDC
+### Enable
 
 ### Database Level
 
@@ -81,7 +81,7 @@ EXEC sys.sp_cdc_disable_table
      @capture_instance = N'dbo_table1';
 ```
 
-### Testing CDC
+### Testing
 
 First, insert, update or delete some data, then:
 

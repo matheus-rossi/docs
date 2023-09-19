@@ -121,3 +121,28 @@ select * from sys.dm_cdc_errors
  
 select * from sys.dm_cdc_log_scan_sessions
 ```
+
+### Procedures
+
+After enabling CDC, some procedures are automatically created:
+
+```sql
+-- Example
+SELECT * FROM cdc.fn_cdc_get_all_changes_dbo_table1( @from_lsn, @to_lsn, 'all' );
+```
+### Query CDC tables
+
+You can use automatically created functions to query CDC tables. For example:
+
+```sql
+DECLARE @begin_time DATETIME, @end_time DATETIME, @from_lsn BINARY(10), @to_lsn BINARY(10);
+
+SELECT @begin_time = GETDATE()-7, @end_time = GETDATE();
+
+SET @from_lsn = sys.fn_cdc_map_time_to_lsn('smallest greater than', @begin_time);
+SET @to_lsn = sys.fn_cdc_map_time_to_lsn('largest less than or equal', @end_time);
+
+--SELECT sys.fn_cdc_map_lsn_to_time(@from_lsn) min_lsn_to_datetime, @from_lsn, sys.fn_cdc_map_lsn_to_time(@to_lsn) max_lsn_to_datetime, @to_lsn;
+
+SELECT * FROM cdc.fn_cdc_get_all_changes_gkoscf_FMCONHEC( @from_lsn, @to_lsn, 'all' );
+```

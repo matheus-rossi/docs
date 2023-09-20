@@ -37,6 +37,7 @@ export default withMermaid(
                       { text: 'Tools', link: 'development/cloud/aws/tools/index.md' },
                       { text: 'EMR', link: 'development/cloud/aws/emr/index.md' },
                       { text: 'Redshift', link: 'development/cloud/aws/redshift/index.md' },
+                      { text: 'Lambda', link: 'development/cloud/aws/lambda/index.md' },
                     ]
                   },
                   { 

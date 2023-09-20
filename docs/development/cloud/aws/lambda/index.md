@@ -8,6 +8,19 @@
 
 Create the new lambda function and give the rights permissions to the role.
 
+## Configuration
+::: TIP
+Error: Runtime exited with error: signal: killed Runtime.ExitError
+
+Provide more memory to the lambda function.
+:::
+
+::: TIP
+Error: Task timed out after 3.05 seconds
+
+Increase the timeout of the lambda function.
+:::
+
 ## Development
 
 When using python with lambda, follow this pattern:

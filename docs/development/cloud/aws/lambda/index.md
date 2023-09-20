@@ -2,6 +2,8 @@
 
 ## Aws-SDK-Pandas
 
+Make it easy to use pandas with AWS services.
+
 [Aws-SDK-Pandas](../aws-sdk-pandas/index.md)
 
 ## Create
@@ -9,13 +11,13 @@
 Create the new lambda function and give the rights permissions to the role.
 
 ## Configuration
-::: TIP
+::: tip
 Error: Runtime exited with error: signal: killed Runtime.ExitError
 
 Provide more memory to the lambda function.
 :::
 
-::: TIP
+::: tip
 Error: Task timed out after 3.05 seconds
 
 Increase the timeout of the lambda function.
@@ -38,14 +40,14 @@ When using python with lambda, follow this pattern:
 3. Handler Name: `lambda_handler`
 
 ```python
-def hello_world():
-    return 'lambda working!'
+def hello(event):
+    return message = 'Hello {} {}!'.format(event['first_name'], event['last_name']) 
+
 
 def lambda_handler(event, context):
-    test = hello_world()
-    print(test)
-
-    message = 'Hello {} {}!'.format(event['first_name'], event['last_name']) 
+    message = hello_world(event)
+    print(message)
+    
     return { 
         'message' : message
     }

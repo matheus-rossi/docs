@@ -156,13 +156,35 @@ cdc.fn_cdc_get_net_changes_ | just the las change for each row    | 1      | 2  
 You can use automatically created functions to query CDC tables. For example:
 
 ```sql
-DECLARE @begin_time DATETIME, @end_time DATETIME, @from_lsn BINARY(10), @to_lsn BINARY(10);
+CREATE PROCEDURE dbo.usp_GetCDCChanges
+    @functionName NVARCHAR(100),
+    @begin_time_string NVARCHAR(50),
+    @end_time_string NVARCHAR(50)
+AS
+BEGIN
+    DECLARE @begin_time DATETIME, @end_time DATETIME, @from_lsn BINARY(10), @to_lsn BINARY(10);
 
-SELECT @begin_time = GETDATE()-1, @end_time = GETDATE();
+    -- Convert string timestamps to DATETIME
+    SET @begin_time = CONVERT(DATETIME, @begin_time_string, 120);
+    SET @end_time = CONVERT(DATETIME, @end_time_string, 120);
 
-SET @from_lsn = sys.fn_cdc_map_time_to_lsn('smallest greater than', @begin_time);
-SET @to_lsn = sys.fn_cdc_map_time_to_lsn('largest less than or equal', @end_time);
+    -- Map time to LSN
+    SET @from_lsn = sys.fn_cdc_map_time_to_lsn('smallest greater than', @begin_time);
+    SET @to_lsn = sys.fn_cdc_map_time_to_lsn('largest less than or equal', @end_time);
 
-SELECT sys.fn_cdc_map_lsn_to_time([__$start_lsn]), *
-  FROM cdc.fn_cdc_get_net_changes_dbo_table1( @from_lsn, @to_lsn, 'all with merge' );
+    -- Execute the dynamic CDC function
+    DECLARE @sql NVARCHAR(MAX);
+    SET @sql = N'
+        SELECT sys.fn_cdc_map_lsn_to_time([__$start_lsn]) as cdc_timestamp,
+               *
+          FROM cdc.' + QUOTENAME(@functionName) + N'(@from_lsn, @to_lsn, ''all with merge'')
+          ORDER BY 1 DESC;
+    ';
+
+    EXEC sp_executesql @sql, N'@from_lsn BINARY(10), @to_lsn BINARY(10)', @from_lsn, @to_lsn;
+END;
+
+
+EXEC dbo.usp_GetCDCChanges 'fn_cdc_get_net_changes_dbo_table1', '2023-09-24 00:00:00', '2023-09-25 00:00:00';
+
 ```

@@ -17,6 +17,28 @@ CDC uses this information to record changes in an easily consumed relational for
 | 2014      | Enterprise   | Yes             |
 | 2012      | Enterprise   | Yes             |
 
+### Considerations
+
+- CDC is disabled by default
+- CDC is enabled at database level and at table level
+- CDC is enabled for each table individually
+
+### Terms
+
+####  capture instance
+
+A table that contains the changes for a source table
+
+#### LSN
+
+LSN = Log Sequence Number
+
+Every record in the SQL Server transaction log is uniquely identified by a log sequence number (LSN). 
+
+LSNs are ordered such that if LSN2 is greater than LSN1, the change described by the log record referred to by LSN2 occurred after the change described by the log record LSN.
+
+LSN's can be mapped to timestamps using the function `sys.fn_cdc_map_lsn_to_time`
+
 ### Enable
 
 ### Database Level

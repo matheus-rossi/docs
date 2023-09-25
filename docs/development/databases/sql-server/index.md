@@ -153,7 +153,11 @@ After enabling CDC, some procedures are automatically created:
 get_all function returns one row for each change applied to the source table.
 
 ```
-<row_filter_option> ::= { all | all update old }
+<row_filter_option> ::= 
+{
+     all
+     | all update old
+}
 ```
 
 #### fn_cdc_get_net_changes_
@@ -162,9 +166,10 @@ Get_net function returns the just the last value of each row, after all changes 
 
 ```
 <row_filter_option> ::=  
-{ all  
- | all with mask  
- | all with merge  
+{ 
+     all  
+     | all with mask  
+     | all with merge  
 }
 ```
 #### Operations

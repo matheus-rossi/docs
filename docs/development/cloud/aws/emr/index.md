@@ -59,3 +59,9 @@ Create a .zip file with all your python files and upload it to S3.
 ```python
 py_files = 's3://bucket/python_files.zip'
 ```
+
+## Quotas
+
+If you get the following error:
+
+```bash

@@ -206,7 +206,7 @@ BEGIN
     SET @sql = N'
         SELECT sys.fn_cdc_map_lsn_to_time([__$start_lsn]) as cdc_timestamp,
                *
-          FROM cdc.' + QUOTENAME(@functionName) + N'(@from_lsn, @to_lsn, ''all with merge'')
+               FROM cdc.fn_cdc_get_net_changes_' + @functionName + N'(@from_lsn, @to_lsn, ''all with merge'')
           ORDER BY 1 DESC;
     ';
 
@@ -214,6 +214,6 @@ BEGIN
 END;
 
 
-EXEC dbo.usp_GetCDCChanges 'fn_cdc_get_net_changes_dbo_table1', '2023-09-24 00:00:00', '2023-09-25 00:00:00';
+EXEC dbo.usp_GetCDCChanges 'dbo_table1', '2023-09-24 00:00:00', '2023-09-25 00:00:00';
 
 ```

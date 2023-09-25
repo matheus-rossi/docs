@@ -167,10 +167,10 @@ Just the last change.
 ```
 #### Operations
 
-function                    | description                         | delete | insert | update old | update new | merge 
---------------------------- | ----------------------------------- | ------ | ------ | ---------- | ---------- | ------
-cdc.fn_cdc_get_all_changes_ | one row for each change             | 1      | 2      | 3          | 4          |  
-cdc.fn_cdc_get_net_changes_ | just the las change for each row    | 1      | 2      | 3          | 4          | 5
+function                | delete | insert | update old | update new | merge 
+----------------------- | ------ | ------ | ---------- | ---------- | ------
+fn_cdc_get_all_changes_ | 1      | 2      | 3          | 4          |  
+fn_cdc_get_net_changes_ | 1      | 2      | 3          | 4          | 5
 
 
 ### Query CDC tables

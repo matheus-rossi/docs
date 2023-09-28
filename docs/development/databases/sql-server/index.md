@@ -217,3 +217,15 @@ END;
 EXEC dbo.usp_GetCDCChanges 'dbo_table1', '2023-09-24 00:00:00', '2023-09-25 00:00:00';
 
 ```
+
+::: tip
+If you are using spark with jdbc, you can't use the procedures. <br>
+You need to query the tables directly.
+:::
+
+```sql
+SELECT sys.fn_cdc_map_lsn_to_time([__$start_lsn]) as CDC_TIMESTAMP, 
+	   * 
+  from gkoscf.cdc.dbo_table1_CT
+ where sys.fn_cdc_map_lsn_to_time([__$start_lsn]) > CONVERT(datetime, '2023-09-27 08:00:00', 120)
+```

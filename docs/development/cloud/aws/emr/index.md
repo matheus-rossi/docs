@@ -10,7 +10,7 @@ The reason for allocating larger executors is that since EMR 5.32 and EMR 6.2 th
 
 So as the result you have fewer executor containers than you expected, each of them has more memory and cores that you specified.
 
-If you disable this option (--conf "spark.yarn.heterogeneousExecutors.enabled=false"), EMR will create containers with the specified spark.executor.memory and spark.executor.cores settings and will not coalesce them into larger containers.
+If you disable this option `(--conf "spark.yarn.heterogeneousExecutors.enabled=false")`, EMR will create containers with the specified spark.executor.memory and spark.executor.cores settings and will not coalesce them into larger containers.
 
 ## Args
 

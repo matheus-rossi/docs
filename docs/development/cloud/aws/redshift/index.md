@@ -1,5 +1,9 @@
 # Redshift
 
+::: tip
+[SQL Commands in Redshift](https://docs.aws.amazon.com/redshift/latest/dg/c_SQL_commands.html)
+:::
+
 ## Delta to Redshift
 
 ![Delta and Redshift](./redshift-delta.png)
@@ -24,6 +28,37 @@ select * from pg_user;
 ### Superuser
 ```sql
 ALTER USER "user_name" WITH CREATEUSER
+```
+
+## Groups
+
+Create
+```sql
+create group <GROUP_NAME> with user <USER_NAME1>, <USER_NAME2>;
+```
+
+Add user to group
+```sql
+alter group <GROUP_NAME> add user <USER_NAME>;
+```
+
+Remove users from group
+```sql
+alter group <GROUP_NAME> drop user <USER_NAME1>, <USER_NAME2>;
+```
+
+Delete group
+```sql
+drop group <GROUP_NAME>;
+```
+
+::: tip
+If the group has privileges for an object, first revoke the privileges before dropping the group. The following example revokes all privileges on all tables in the public schema from the GUEST user group, and then drops the group.
+:::
+
+```sql
+revoke all on all tables in schema public from group guest;
+drop group guests;
 ```
 
 ## Parquet to Redshift
@@ -90,15 +125,15 @@ self.execute_redshift_query(create_table_sql, self.redshift_credentials)
 
 If you get errors like this:
 
-```
+```sql
 error:  Spectrum Scan Error
   code:      15007
-  context:   File 'https://... parquet ... c000.snappy.parquet' has an incompatible Parquet schema for column 's3://... 
+  context:   File 'https://... parquet ... c000.snappy.parquet' has an incompatible Parquet schema for column 's3://
   query:     43966693
   location:  dory_util.cpp:1509
   process:   worker_thread [pid=13526]
-
 ```
+
 You can query the details on:
 
 ```sql

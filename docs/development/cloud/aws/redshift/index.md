@@ -9,6 +9,9 @@
 ![Delta and Redshift](./redshift-delta.png)
 
 ## Create table
+::: tip WIP
+Work in progress
+:::
 
 ## Grant
 
@@ -128,7 +131,7 @@ If you get errors like this:
 ```sql
 error:  Spectrum Scan Error
   code:      15007
-  context:   File 'https://... parquet ... c000.snappy.parquet' has an incompatible Parquet schema for column 's3://
+  context:   File 'https://... parquet ... c000.snappy.parquet' has an incompatible Parquet schema for column 's3://'
   query:     43966693
   location:  dory_util.cpp:1509
   process:   worker_thread [pid=13526]

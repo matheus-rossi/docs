@@ -65,3 +65,9 @@ py_files = 's3://bucket/python_files.zip'
 If you get the following error:
 
 ```bash
+botocore.exceptions.ClientError: 
+An error occurred (ThrottlingException) when calling the DescribeStep operation
+(reached max retries: 4): Rate exceeded
+```
+
+It may be necessary to increase the quota in aws service quotas.

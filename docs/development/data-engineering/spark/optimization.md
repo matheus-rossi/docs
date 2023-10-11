@@ -7,6 +7,11 @@ Ommit _SUCCESS files from being written to S3
 
 - mapreduce.fileoutputcommitter.marksuccessfuljobs = false
 
+## Small Files
+
+- spark.sql.files.maxPartitionBytes=33554432  (32mb)
+- spark.sql.shuffle.partitions=4
+
 ## Parameters
 
 - spark.sql.adaptive.enabled = true

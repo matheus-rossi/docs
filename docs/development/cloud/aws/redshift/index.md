@@ -8,18 +8,22 @@
 
 ![Delta and Redshift](./redshift-delta.png)
 
-## Create table
+## Database
+```sql
+create database <SCHEMA_NAME> with owner <USER_NAME>;
+```
+
+## Schema
+```sql
+create schema <SCHEMA_NAME> authorization <USER_NAME>;
+grant all on schema <SCHEMA_NAME> to <USER_NAME>;
+``````
+## Table 
+
 ::: tip WIP
 Work in progress
 :::
 
-## Grant
-
-[Oficial Docs](https://docs.aws.amazon.com/redshift/latest/dg/r_GRANT.html)
-
-```sql 
-grant all on schema schema_name to "user_name";
-```
 
 ## Users
 

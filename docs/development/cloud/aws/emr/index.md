@@ -66,7 +66,8 @@ If you get the following error:
 
 ```bash
 botocore.exceptions.ClientError: 
-An error occurred (ThrottlingException) when calling the DescribeStep operation
+An error occurred (ThrottlingException)
+when calling the DescribeStep operation
 (reached max retries: 4): Rate exceeded
 ```
 

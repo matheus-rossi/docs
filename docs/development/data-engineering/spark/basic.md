@@ -421,3 +421,9 @@ window = Window.partitionBy("DESIRED_COLUMN").orderBy('tiebreak')
     .show()
 )
 ```
+
+## Check if DF is empty
+
+```python
+df.head(1).isEmpty
+```

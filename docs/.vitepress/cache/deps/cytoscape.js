@@ -13937,6 +13937,11 @@ var require_cytoscape_cjs = __commonJS({
           integer: true,
           unitless: true
         },
+        nonNegativeNumber: {
+          number: true,
+          min: 0,
+          unitless: true
+        },
         position: {
           enums: ["parent", "origin"]
         },
@@ -14177,7 +14182,7 @@ var require_cytoscape_cjs = __commonJS({
           unitless: true
         },
         edgeDistances: {
-          enums: ["intersection", "node-position"]
+          enums: ["intersection", "node-position", "endpoints"]
         },
         edgeEndpoint: {
           number: true,
@@ -14403,10 +14408,12 @@ var require_cytoscape_cjs = __commonJS({
       }];
       var behavior = [{
         name: "events",
-        type: t.bool
+        type: t.bool,
+        triggersZOrder: diff.any
       }, {
         name: "text-events",
-        type: t.bool
+        type: t.bool,
+        triggersZOrder: diff.any
       }];
       var visibility = [{
         name: "display",
@@ -14438,7 +14445,7 @@ var require_cytoscape_cjs = __commonJS({
         triggersZOrder: diff.any
       }, {
         name: "z-index",
-        type: t.nonNegativeInt,
+        type: t.number,
         triggersZOrder: diff.any
       }];
       var overlay = [{
@@ -17202,6 +17209,20 @@ var require_cytoscape_cjs = __commonJS({
     function CoseLayout(options) {
       this.options = extend({}, defaults$4, options);
       this.options.layout = this;
+      var nodes = this.options.eles.nodes();
+      var edges = this.options.eles.edges();
+      var notEdges = edges.filter(function(e) {
+        var sourceId = e.source().data("id");
+        var targetId = e.target().data("id");
+        var hasSource = nodes.some(function(n) {
+          return n.data("id") === sourceId;
+        });
+        var hasTarget = nodes.some(function(n) {
+          return n.data("id") === targetId;
+        });
+        return !hasSource || !hasTarget;
+      });
+      this.options.eles = this.options.eles.not(notEdges);
     }
     CoseLayout.prototype.run = function() {
       var options = this.options;
@@ -18150,6 +18171,8 @@ var require_cytoscape_cjs = __commonJS({
       // whether to fit to viewport
       padding: 30,
       // padding on fit
+      spacingFactor: void 0,
+      // Applies a multiplicative factor (>0) to expand or compress the overall area that the nodes take up
       animate: false,
       // whether to transition the node positions
       animationDuration: 500,
@@ -18943,6 +18966,53 @@ var require_cytoscape_cjs = __commonJS({
       return cachedVal;
     };
     var BRp$c = {};
+    BRp$c.findMidptPtsEtc = function(edge, pairInfo) {
+      var posPts = pairInfo.posPts, intersectionPts = pairInfo.intersectionPts, vectorNormInverse = pairInfo.vectorNormInverse;
+      var midptPts;
+      var srcManEndpt = edge.pstyle("source-endpoint");
+      var tgtManEndpt = edge.pstyle("target-endpoint");
+      var haveManualEndPts = srcManEndpt.units != null && tgtManEndpt.units != null;
+      var recalcVectorNormInverse = function recalcVectorNormInverse2(x12, y12, x22, y22) {
+        var dy = y22 - y12;
+        var dx = x22 - x12;
+        var l = Math.sqrt(dx * dx + dy * dy);
+        return {
+          x: -dy / l,
+          y: dx / l
+        };
+      };
+      var edgeDistances = edge.pstyle("edge-distances").value;
+      switch (edgeDistances) {
+        case "node-position":
+          midptPts = posPts;
+          break;
+        case "intersection":
+          midptPts = intersectionPts;
+          break;
+        case "endpoints": {
+          if (haveManualEndPts) {
+            var _this$manualEndptToPx = this.manualEndptToPx(edge.source()[0], srcManEndpt), _this$manualEndptToPx2 = _slicedToArray(_this$manualEndptToPx, 2), x1 = _this$manualEndptToPx2[0], y1 = _this$manualEndptToPx2[1];
+            var _this$manualEndptToPx3 = this.manualEndptToPx(edge.target()[0], tgtManEndpt), _this$manualEndptToPx4 = _slicedToArray(_this$manualEndptToPx3, 2), x2 = _this$manualEndptToPx4[0], y2 = _this$manualEndptToPx4[1];
+            var endPts = {
+              x1,
+              y1,
+              x2,
+              y2
+            };
+            vectorNormInverse = recalcVectorNormInverse(x1, y1, x2, y2);
+            midptPts = endPts;
+          } else {
+            warn("Edge ".concat(edge.id(), " has edge-distances:endpoints specified without manual endpoints specified via source-endpoint and target-endpoint.  Falling back on edge-distances:intersection (default)."));
+            midptPts = intersectionPts;
+          }
+          break;
+        }
+      }
+      return {
+        midptPts,
+        vectorNormInverse
+      };
+    };
     BRp$c.findHaystackPoints = function(edges) {
       for (var i2 = 0; i2 < edges.length; i2++) {
         var edge = edges[i2];
@@ -18983,8 +19053,6 @@ var require_cytoscape_cjs = __commonJS({
     };
     BRp$c.findSegmentsPoints = function(edge, pairInfo) {
       var rs = edge._private.rscratch;
-      var posPts = pairInfo.posPts, intersectionPts = pairInfo.intersectionPts, vectorNormInverse = pairInfo.vectorNormInverse;
-      var edgeDistances = edge.pstyle("edge-distances").value;
       var segmentWs = edge.pstyle("segment-weights");
       var segmentDs = edge.pstyle("segment-distances");
       var segmentsN = Math.min(segmentWs.pfValue.length, segmentDs.pfValue.length);
@@ -18995,7 +19063,7 @@ var require_cytoscape_cjs = __commonJS({
         var d = segmentDs.pfValue[s];
         var w1 = 1 - w;
         var w2 = w;
-        var midptPts = edgeDistances === "node-position" ? posPts : intersectionPts;
+        var _this$findMidptPtsEtc = this.findMidptPtsEtc(edge, pairInfo), midptPts = _this$findMidptPtsEtc.midptPts, vectorNormInverse = _this$findMidptPtsEtc.vectorNormInverse;
         var adjustedMidpt = {
           x: midptPts.x1 * w1 + midptPts.x2 * w2,
           y: midptPts.y1 * w1 + midptPts.y2 * w2
@@ -19061,8 +19129,6 @@ var require_cytoscape_cjs = __commonJS({
     };
     BRp$c.findBezierPoints = function(edge, pairInfo, i2, edgeIsUnbundled, edgeIsSwapped) {
       var rs = edge._private.rscratch;
-      var vectorNormInverse = pairInfo.vectorNormInverse, posPts = pairInfo.posPts, intersectionPts = pairInfo.intersectionPts;
-      var edgeDistances = edge.pstyle("edge-distances").value;
       var stepSize = edge.pstyle("control-point-step-size").pfValue;
       var ctrlptDists = edge.pstyle("control-point-distances");
       var ctrlptWs = edge.pstyle("control-point-weights");
@@ -19088,7 +19154,7 @@ var require_cytoscape_cjs = __commonJS({
         var distanceFromMidpoint = manctrlptDist !== void 0 ? manctrlptDist : normctrlptDist;
         var w1 = 1 - ctrlptWeight;
         var w2 = ctrlptWeight;
-        var midptPts = edgeDistances === "node-position" ? posPts : intersectionPts;
+        var _this$findMidptPtsEtc2 = this.findMidptPtsEtc(edge, pairInfo), midptPts = _this$findMidptPtsEtc2.midptPts, vectorNormInverse = _this$findMidptPtsEtc2.vectorNormInverse;
         var adjustedMidpt = {
           x: midptPts.x1 * w1 + midptPts.x2 * w2,
           y: midptPts.y1 * w1 + midptPts.y2 * w2
@@ -26655,7 +26721,7 @@ var require_cytoscape_cjs = __commonJS({
       }
       return style;
     };
-    var version = "3.26.0";
+    var version = "3.27.0";
     var cytoscape = function cytoscape2(options) {
       if (options === void 0) {
         options = {};

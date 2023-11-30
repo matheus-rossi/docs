@@ -22,7 +22,15 @@ export default withMermaid(
             link: 'development/index.md',
             collapsed: false,
             items: [
-              { text: 'CI / CD', link: '' },
+              {
+                text: 'CI / CD', 
+                link: '',
+                collapsed: true,
+                items: [
+                  { text: 'Intro', link: 'development/ci-cd/index.md' },
+                  { text: 'ArgoCD', link: 'development/ci-cd/argocd/index.md' }
+                ]
+              },
               { 
                 text: 'Cloud', 
                 link: '',
@@ -90,6 +98,7 @@ export default withMermaid(
                 ]
               },
               { text: 'Git', link: 'development/git/index.md' },
+              { text: 'Terraform', link: 'development/iac/terraform/index.md' },
               { text: 'Kubernetes', link: 'development/kubernetes/index.md' },
               { text: 'Linux', link: 'development/linux/index.md' },
               { 

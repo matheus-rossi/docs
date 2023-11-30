@@ -1,4 +1,4 @@
-import "./chunk-76J2PTFD.js";
+import "./chunk-Y2F7D3TJ.js";
 
 // node_modules/medium-zoom/dist/medium-zoom.esm.js
 var _extends = Object.assign || function(target) {
@@ -467,6 +467,6 @@ export {
 /*! Bundled license information:
 
 medium-zoom/dist/medium-zoom.esm.js:
-  (*! medium-zoom 1.0.8 | MIT License | https://github.com/francoischalifour/medium-zoom *)
+  (*! medium-zoom 1.1.0 | MIT License | https://github.com/francoischalifour/medium-zoom *)
 */
 //# sourceMappingURL=medium-zoom.js.map

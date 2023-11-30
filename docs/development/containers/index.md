@@ -157,8 +157,7 @@ RUN apt-get update \
     && rm -r /root/.cache \
     && rm -rf /var/cache/apt/* 
 
-RUN pip3 install pyspark==3.3.2 \
-    && pip3 install 
+RUN pip3 install pyspark==3.3.2
 
 WORKDIR /opt/spark/work-dir
 

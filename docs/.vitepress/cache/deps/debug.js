@@ -1,6 +1,6 @@
 import {
   __commonJS
-} from "./chunk-76J2PTFD.js";
+} from "./chunk-Y2F7D3TJ.js";
 
 // node_modules/ms/index.js
 var require_ms = __commonJS({
@@ -289,7 +289,7 @@ var require_browser = __commonJS({
     exports.load = load;
     exports.useColors = useColors;
     exports.storage = localstorage();
-    exports.destroy = (() => {
+    exports.destroy = /* @__PURE__ */ (() => {
       let warned = false;
       return () => {
         if (!warned) {

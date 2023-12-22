@@ -15,6 +15,12 @@ git config --global user.email "YOUR_EMAIL_HERE"
 git config --global user.name "YOUR_NAME_HERE"
 ```
 
+## Tips
+
+```bash
+git commit --allow-empty -m "triggering pipeline without code"
+```
+
 ## Basic commands
 
 ```bash

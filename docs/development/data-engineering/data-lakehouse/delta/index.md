@@ -60,7 +60,7 @@ _delta_log is a folder that contains the transaction log of all the changes made
 In order to use all Delta features, you probably want to use Spark, but you can also use Delta without it.
 
 ::: tip
-It's possible to use Delta without Spark, but not all features are available.
+It"s possible to use Delta without Spark, but not all features are available.
 
 See [Delta-Rs](https://github.com/delta-io/delta-rs) for example.
 :::
@@ -78,6 +78,12 @@ See [Delta Versions](https://docs.delta.io/latest/releases.html#compatibility-wi
 :::
 
 ### Usage with PySpark
+
+Install:
+
+```bash
+poetry add delta-spark
+```
 
 You can import Delta Lake using the following code:
 
@@ -135,19 +141,81 @@ if merging data, you must create the table first, otherwise you will get an erro
 ```
 
 ### Merge / Upsert
-::: tip
-Working in progress
-:::
+
+```python
+(
+    delta_table.alias("destination")
+    .merge(
+        dataframe.alias("updates"),
+        "destination.pk = updates.pk"
+    )
+    .whenMatchedUpdateAll()
+    .whenNotMatchedInsertAll()
+    .execute()
+)
+```
+
+### Update
+
+```python
+(
+    delta_table.alias("destination")
+    .merge(
+        dataframe.alias("updates"),
+        "destination.pk = updates.pk"
+    )
+    .whenMatchedUpdate(
+        set={ "col": "value" }
+    )
+    .execute()
+)
+```
+
+### Insert
+
+Just specific columns
+
+```python
+(
+    delta_table.alias("destination")
+    .merge(
+        dataframe.alias("updates"),
+        "destination.pk = updates.pk"
+    )
+    .whenNotMatchedInsert(
+        values = {
+            "target.key": "source.key",
+            "target.lastSeen": "source.timestamp",
+            "target.status": "'active'"
+        }
+    )
+    .execute()
+)
+```
 
 ### Delete
-::: tip
-Working in progress
-:::
+
+Deleting data where column has value 1
+
+```python
+delta_table.delete(" col = 1 ")
+```
+
+Deleting rows where pks that doesn't exists in the new dataframe (updates)
+```python
+(
+    delta_table.alias("destination")
+    .merge(
+        dataframe.alias("updates"),
+        "destination.pk = updates.pk"
+    )
+    .whenNotMatchedBySourceDelete()
+    .execute()
+)
+```
+
 
 ## Change Data Feed
-::: tip WIP
-Work in progress
-:::
 
 CDC, but for Delta Tables.
 
@@ -167,10 +235,10 @@ Or in spark session
 ```python
 builder = (
     SparkSession.builder.appName("DeltaLakeApp")
+    .config("spark.jars.packages","io.delta:delta-core_2.12:2.4.0")
     .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension")
     .config("spark.sql.catalog.spark_catalog", "org.apache.spark.sql.delta.catalog.DeltaCatalog")
-    .config("spark.jars.packages","io.delta:delta-core_2.12:2.0.0")
-    .config("spark.databricks.delta.properties.defaults.enableChangeDataFeed", "true")
+    .config("spark.databricks.delta.properties.defaults.enableChangeDataFeed", "True")
 )
 spark = configure_spark_with_delta_pip(builder).getOrCreate()
 ```
@@ -196,8 +264,8 @@ spark = configure_spark_with_delta_pip(builder).getOrCreate()
     .read
     .format("delta")
     .option("readChangeFeed", "true")
-    .option("startingTimestamp", '2021-04-21 05:45:46')
-    .option("endingTimestamp", '2021-05-21 12:00:00')
+    .option("startingTimestamp", "2021-04-21 05:45:46")
+    .option("endingTimestamp", "2021-05-21 12:00:00")
     .load("pathToMyDeltaTable")
 )
 
@@ -226,7 +294,7 @@ deltaTable.optimize().executeCompaction()
 If you have a large amount of data and only want to optimize a subset of it, you can specify an optional partition predicate using `where`
 
 ```python
-deltaTable.optimize().where("date='2021-11-18'").executeCompaction()
+deltaTable.optimize().executeCompaction()
 ```
 
 Control the size of the files using:

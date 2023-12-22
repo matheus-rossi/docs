@@ -141,6 +141,9 @@ if merging data, you must create the table first, otherwise you will get an erro
 ```
 
 ### Merge / Upsert
+::: warning
+When using merge ALWAYS make sure you have no duplicates on the dataset you will use.
+:::
 
 ```python
 (

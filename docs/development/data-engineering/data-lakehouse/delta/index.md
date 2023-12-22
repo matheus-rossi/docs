@@ -41,13 +41,7 @@ Apache Parquet is an open source, column-oriented data file format designed for 
 
 ![Delta](./concept.png){data-zoomable}
 
-Real example:
-
 ![Real Example](./delta-example.png){data-zoomable}
-
-## Delta Folder Structure
-
-![Delta](./folder-structure.png){data-zoomable}
 
 _delta_log is a folder that contains the transaction log of all the changes made to the table.
 

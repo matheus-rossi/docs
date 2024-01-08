@@ -55,36 +55,31 @@ def lambda_handler(event, context):
 
 ## Python Layers
 
-* Step 1
-
-Create new local folder
+1. Create new local folder
 
 ```bash
 mkdir python
 cd python
 ```
 
-* Step 2
-
-Install desired package
-
-```bash
-pip3 install pandas -t .
-```
-
-* Step 3
-
-Create zip file
+2. Install desired package
 
 :::tip
 Your zip file should have a folder named python with all content inside
 :::
 
 ```bash
+pip3 install --platform manylinux2014_x86_64 --only-binary=:all: --upgrade -t python pyyaml
+```
+
+3. Create zip file
+
+
+```bash
 zip -r pandas_layer.zip .
 ```
 
-* Step 4
+4. AWS
 
 Navigate to Lambda > Layers and create a layer. 
 

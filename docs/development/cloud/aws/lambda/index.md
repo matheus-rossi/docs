@@ -52,3 +52,40 @@ def lambda_handler(event, context):
         'message' : message
     }
 ```
+
+## Python Layers
+
+* Step 1
+
+Create new local folder
+
+```bash
+mkdir python
+cd python
+```
+
+* Step 2
+
+Install desired package
+
+```bash
+pip3 install pandas -t .
+```
+
+* Step 3
+
+Create zip file
+
+:::tip
+Your zip file should have a folder named python with all content inside
+:::
+
+```bash
+zip -r pandas_layer.zip .
+```
+
+* Step 4
+
+Navigate to Lambda > Layers and create a layer. 
+
+Don`t forget to reference the compatibles runtimes, this will help you to add easily your layer to your function.

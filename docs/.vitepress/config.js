@@ -42,6 +42,7 @@ export default withMermaid(
                     items: [
                       { text: 'Intro', link: 'development/cloud/aws/intro/index.md' },
                       { text: 'Certification', link: 'development/cloud/aws/certification/index.md' },
+                      { text: 'DataSync', link: 'development/cloud/aws/data-sync/index.md' },
                       { text: 'Tools', link: 'development/cloud/aws/tools/index.md' },
                       { text: 'EMR', link: 'development/cloud/aws/emr/index.md' },
                       { text: 'Redshift', link: 'development/cloud/aws/redshift/index.md' },

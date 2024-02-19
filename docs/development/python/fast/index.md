@@ -30,19 +30,19 @@ with ThreadPoolExecutor() as executor:
 Multiprocessing is a package that supports spawning processes using an API similar to the threading module. 
 
 ```python
-from multiprocessing import Pool
+from concurrent.futures import ProcessPoolExecutor
 import os
 
-def square_numbers(_):  # The argument is added to match the API of Pool.map
+def square_numbers():
     for i in range(100):
         i * i
 
-if __name__ == "__main__":
-    num_processes = os.cpu_count()
+processes = []
+num_processes = os.cpu_count()
 
-    with Pool(processes=num_processes) as pool:
-        pool.map(square_numbers, range(num_processes))
-
+with ProcessPoolExecutor() as executor:
+    for _ in range(num_processes):
+        executor.submit(square_numbers)
 ```
 
 ### Differences

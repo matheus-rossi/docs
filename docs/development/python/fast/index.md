@@ -13,25 +13,16 @@ Best blog about Python concurrency:
 Threading is a package that allows us to run multiple threads (tasks, function calls) at the same time. 
 
 ```python
-from threading import Thread
+from concurrent.futures import ThreadPoolExecutor
 
-tables = ['A','B','C']
-threads = []
+tables = ['A', 'B', 'C']
 
 def load_data(table_name):
     return True
 
-for table_name in tables:
-    t = Thread(
-        target=load_data,
-        args=(table_name,) # Note the comma, args expects an interable, passing an string will raise error.
-    )
-    threads.append(t)
-    t.start()
-
-#join
-for t in threads:
-    t.join()
+with ThreadPoolExecutor() as executor:
+    futures = [executor.submit(load_data, table_name) for table_name in tables]
+    results = [future.result() for future in futures]
 ```
 
 ### Process
@@ -39,29 +30,19 @@ for t in threads:
 Multiprocessing is a package that supports spawning processes using an API similar to the threading module. 
 
 ```python
-from multiprocessing import Process
+from multiprocessing import Pool
 import os
 
-def square_numbers():
+def square_numbers(_):  # The argument is added to match the API of Pool.map
     for i in range(100):
         i * i
 
-processes = []
-num_processes = os.cpu_count()
+if __name__ == "__main__":
+    num_processes = os.cpu_count()
 
-for i in range(num_processes):
-    p = Process(target=square_numbers)
-    processes.append(p)
+    with Pool(processes=num_processes) as pool:
+        pool.map(square_numbers, range(num_processes))
 
-# start
-for p in processes:
-    p.start()
-
-# join
-for p in processes:
-    p.join()
-
-print('end main')
 ```
 
 ### Differences

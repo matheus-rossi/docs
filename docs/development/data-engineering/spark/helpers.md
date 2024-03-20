@@ -15,6 +15,25 @@ def path_exists(path, spark:SparkSession):
     return fs.exists(sc._jvm.org.apache.hadoop.fs.Path(path))
 ```
 
+## List all files inside bucket
+```python
+def get_files(spark:SparkSession, path:str):
+    """
+    List all files inside the provided path
+    """
+
+    files = spark.sparkContext._jvm.org.apache.hadoop.fs.FileSystem.get(
+        spark.sparkContext._jvm.jaba.net.URI.create(path),
+        spark.sparkContext._jsc.hadoopConfiguration()
+    ).listStatus(spark.sparkContext._jvm.org.apache.hadoop.fs.Path(path))
+
+    files_list = []
+    for file in files:
+        files_list.append(file.getPath().getName())
+    
+    return files_list
+```
+
 ## Generate list of partitions to read
 
 ```python

@@ -112,6 +112,13 @@ export default withMermaid(
                   { text: 'Packages', link: 'development/python/packages/index.md' },
                 ]
               },
+              { 
+                text: 'Systems', 
+                collapsed: true,
+                items: [
+                  { text: 'Salesforce', link: 'development/systems/salesforce/index.md' },
+                ]
+              },
             ]
           },
           {

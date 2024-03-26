@@ -70,7 +70,7 @@ def load_yaml(file_path:str, context=None) -> dict:
 
 To use it, just declare a dict where the key is the variable to be replaced, and the desired value
 
-````
+```
 context = {
     'ENV': 'VALUE'
 }

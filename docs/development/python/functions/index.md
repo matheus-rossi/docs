@@ -37,54 +37,45 @@ shutil.make_archive('./files_2', 'zip', './to_zip')
 if you need to set password on the zip file see pyminizip
 :::
 
-## XML
 
-### Read
+## Yaml
+Read yml changing variables to mapped values
 
-```python
-import xml.etree.ElementTree as ET
-import dicttoxml
-
-# Read XML
-tree = ET.parse('file_1.xml')
-root = tree.getroot()
-
-# Find all "item" in xml
-for elem in root:
-    for subelem in elem.findall('item'):
-        # if we don't need to know the name of the attribute(s), get the dict     
-        # Attributes
-        print(subelem.attrib)
-        
-        # Text
-        print(subelem.text)
-
-        # if we know the name of the attribute, access it directly
-        print(subelem.get('name'))
-```
-### Save
-
-First, install the package:
-
-```bash
-poerty add dicttoxml
+```yaml
+path: 's3://bucket-$ENV/data'
 ```
 
 ```python
-import xml.etree.ElementTree as ET
-import dicttoxml
+# poetry add PyYAML
+import string, yaml
 
-# Save XML
-data = {
-    'name': 'Lewis Hamilton',
-    'nationality': 'British',
-    'team': 'Mercedes'
+def load_yaml(file_path:str, context=None) -> dict:
+
+    def string_constructot(loader, node):
+        t = string.Template(node.value)
+        value = t.substitute(context)
+        return value
+    
+    l = yaml.SafeLoader
+    l.add_constructor('tag:yaml.org,2002:str', string_constructor)
+
+    token_re = string.Template.pattern
+    l.add_implicit_resolver('tag:yaml.org,2002:str', token_re, None)
+
+    with open (file_path, 'r') as file:
+        x = yamli.safe_load(file_path)
+    
+    return x
+```
+
+To use it, just declare a dict where the key is the variable to be replaced, and the desired value
+
+````
+context = {
+    'ENV': 'VALUE'
 }
 
-xml = dicttoxml.dicttoxml(data)
-
-with open("file2.xml", "w") as f:
-    f.write(str(xml,"utf-8"))
+yaml_with_values = load_yaml('./file.yaml', context)
 ```
 
 ## Json
@@ -130,6 +121,7 @@ with open('file_1.csv', 'r') as file:
     for row in reader:
         print(row)
 ```
+
 ### Save
 ```python
 import csv
@@ -144,6 +136,7 @@ with open('file_2.csv', 'w', encoding='UTF8', newline='') as f:
     writer = csv.writer(f)
     writer.writerows(data)
 ```
+
 ## Txt
 
 ### Read single line

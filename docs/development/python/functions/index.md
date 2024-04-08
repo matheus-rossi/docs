@@ -5,7 +5,25 @@ Commonly used functions in Python, working as a data engineer.
 Work in progress
 :::
 
-## List Comprehension
+## List
+
+### List Comprehension
+
+### Flatten
+
+```python
+def flatten(lst:list) -> list:
+    flattened_list = []
+
+    for element in lst:
+        if isinstance(element, list):
+            flattened_list.extend(flatten(element))
+        else:
+            flattened_list.append(element)
+    
+    return flattened_list
+
+```
 
 ## Dict Comprehension
 

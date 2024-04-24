@@ -94,3 +94,24 @@ df = df.select(
     [ F.col(c).alias('prefix' + c + 'suffix') for c in df.columns ]
 )
 ```
+
+## Convert STRING col to JSON with AutoSchema Inference
+
+```python
+# Load Dataframe
+df = spark.read.format("text/json").load(path)
+
+# AutoInfer Schema from String Column
+schema_df = spark.read.json(df.limit(1).rdd.map(lambda r: r.value)).schema
+
+# Read JSON and Explode Cols
+exploded_df = (
+    df.withColumn(
+        "value",
+        F.from_json ("value", schema_df)]
+    )
+    .select(F.col('value.*'))
+
+# Show Data
+exploded_df.show(1, vertical-True, truncate=False)
+```

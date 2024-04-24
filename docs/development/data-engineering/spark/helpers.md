@@ -108,7 +108,7 @@ schema_df = spark.read.json(df.limit(1).rdd.map(lambda r: r.value)).schema
 exploded_df = (
     df.withColumn(
         "value",
-        F.from_json ("value", schema_df)]
+        F.from_json("value", schema_df)
     )
     .select(F.col('value.*'))
 

@@ -2,9 +2,19 @@
 
 ## Concepts
 
+:::tip
+Kafka EcoSystem
+:::
+
+![Kafka EcoSysten](kafka-ecosystem.jpg){data-zoomable}
+
 ## Kafka Cluster
 
 ### Strimzi
+
+![Strimzi](strimzi_logo.png)
+
+[Official Docs](https://strimzi.io/)
 
 ## Kafka Connect
 

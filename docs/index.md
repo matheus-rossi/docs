@@ -19,11 +19,11 @@ hero:
 
 features:
   - title: Development
-    details: Python, Data Enginnering, Analytics, DevOps and more. Work in Progress
+    details: Python, Data Enginnering, Analytics, DevOps and more.
     icon: 💾
     link: /development/index
   - title: Lean Thinking and Management
-    details: Useful resources to solve real world problems with real teams. ToDo.
+    details: TODO. Useful resources to solve real world problems with real teams.
     icon: 💭
 ---
 

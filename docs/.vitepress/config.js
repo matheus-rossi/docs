@@ -13,7 +13,7 @@ export default withMermaid(
         },
         nav: [
           { text: 'Home', link: '/' },
-          { text: 'Youtube', link: 'https://www.youtube.com/@matheus.srossi' }
+          { text: 'Youtube', link: 'https://www.youtube.com/@datawaybr' }
         ],
         outline: [2,3],
         sidebar: [
@@ -63,13 +63,14 @@ export default withMermaid(
                 items: [
                   { text: 'Apache Airflow', link: 'development/data-engineering/airflow/index.md' },
                   { text: 'Apache Spark', link: 'development/data-engineering/spark/index.md' },
+                  { text: 'Apache Kafka', link: 'development/data-engineering/kafka/index.md' },
                   { text: 'Concepts', link: 'development/data-engineering/concepts/index.md' },
                   { 
                     text: 'Data Lakehouse', 
                     link: '',
                     collapsed: true,
                     items: [
-                      { text: 'Intro', link: 'development/data-engineering/data-lakehouse/index.md' },
+                      { text: 'Intro', link: 'development/data-engineering/data-lakehouse/intro/index.md' },
                       { text: 'Delta Lake', link: 'development/data-engineering/data-lakehouse/delta/index.md' }
                     ]
                   },

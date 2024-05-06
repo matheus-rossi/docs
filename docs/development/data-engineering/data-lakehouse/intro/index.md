@@ -1,9 +1,5 @@
 # Data Lakehouse
 
-::: tip
-Work in progress
-:::
-
 ![Data Lakehouse](./data-lakehouse.png){data-zoomable}
 
 ## Delta 

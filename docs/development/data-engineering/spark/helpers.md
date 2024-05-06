@@ -102,6 +102,7 @@ df = df.select(
 df = spark.read.format("text/json").load(path)
 
 # AutoInfer Schema from String Column
+# value is the name of the col with type str having json data
 schema_df = spark.read.json(df.limit(1).rdd.map(lambda r: r.value)).schema
 
 # Read JSON and Explode Cols

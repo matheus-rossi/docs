@@ -6,7 +6,7 @@
 Kafka EcoSystem
 :::
 
-![Kafka EcoSysten](kafka-ecosystem.jpg){data-zoomable}
+![Kafka EcoSysten](kafka-ecosystem.png){data-zoomable}
 
 ## Kafka Cluster
 
@@ -37,17 +37,22 @@ Kafka EcoSystem
 ### Queries (Pull vs Push)
 
 ### Streams
-
-#### Get Headers
+:::tip
+[Official Docs](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/create-stream/)
+:::
 
 Sometimes, you need to get data from the header of the topic,
 to help with that, ksql provides an interesting feature:
 
 ```sql
-CREATE STREAM IF NOT EXISTS flights_stream (
-  flight_id     STRING KEY,
+CREATE STREAM IF NOT EXISTS FLIGHTS_STREAM (
+  flight_id    STRING,
   from_airport STRING,
   to_airport   STRING,
+  coordinates  STRUCT <
+    lat STRING,
+    lon STRING
+  >
   produced_at  BYTES HEADER('producedAt')
 ) WITH (
   KAFKA_TOPIC  = 'source_topic',
@@ -59,18 +64,39 @@ With that you get the header as bytes, that can be decoded in another stream.
 
 ```sql
 CREATE OR REPLACE 
-  flights_stream_decoded 
+  FLIGHTS_STREAM_DECODED 
 WITH ( VALUE_FORMAT = 'JSON' )
 AS
   SELECT
     flight_id,
     from_airport,
     to_airport,
+    coordinates->lat as coordinates_lat,
+    coordinates->lon as coordinates_lon,
     FROM_BYTES(produced_at, 'utf-8') as produced_at
   FROM 
-    flights_stream;
+    FLIGHTS_STREAM
+  PARTITION BY flight_id;
 ```
 
 ### Tables
+:::tip
+[Official Docs](https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/create-table/)
+:::
 
+```sql
+-- TABLE <> SOURCE TABLE
+CREATE SOURCE TABLE
+  TABLE_FLIGHTS (
+    flight_id STRING PRIMARY KEY,
+    from_airport STRING,
+    to_airport STRING,
+    coordinates_lat STRING,
+    coordinates_lon STRING,
+    produced_at STRING
+  ) WITH (
+    KAFKA_TOPIC = 'FLIGHTS_STREAM_DECODED',
+    VALUE_FORMAT = 'JSON'
+  )
+```
 ### Joins

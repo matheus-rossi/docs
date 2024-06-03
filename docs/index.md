@@ -22,6 +22,10 @@ features:
     details: Python, Data Enginnering, Analytics, DevOps and more.
     icon: 💾
     link: /development/index
+  - title: Curriculum
+    details: Versions in English and Portuguese
+    icon: ❇️
+    link: /curriculum/index
   - title: Lean Thinking and Management
     details: TODO. Useful resources to solve real world problems with real teams.
     icon: 💭

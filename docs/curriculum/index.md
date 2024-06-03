@@ -1,9 +1,7 @@
 # Curriculum
 
-## English Version Link
+### English Version
+[Click Here](english/index.md)
 
-[English - Here](english/index.md)
-
-## Versão em Português
-
-[Português - Aqui](portuguese/index.md)
+### Versão em Português
+[Clique Aqui](portuguese/index.md)

@@ -1,5 +1,14 @@
 # Large Language Models
 
+## LangChain
+![Lang Chain Logo](langchain-logo.png)
+
+LangChain is a framework for developing applications powered by LLMs.
+
+### Useful code
+
+[My Docs](./langchain/index.md)
+
 ## Ollama
 
 ![Ollama Logo](ollama.png)

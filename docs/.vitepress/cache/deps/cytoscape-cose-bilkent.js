@@ -1,6 +1,6 @@
 import {
   __commonJS
-} from "./chunk-Y2F7D3TJ.js";
+} from "./chunk-BUSYA2B4.js";
 
 // node_modules/layout-base/layout-base.js
 var require_layout_base = __commonJS({
@@ -221,17 +221,14 @@ var require_layout_base = __commonJS({
                 vNode = loc;
               }
               LGraphObject.call(this, vNode);
-              if (gm.graphManager != null)
-                gm = gm.graphManager;
+              if (gm.graphManager != null) gm = gm.graphManager;
               this.estimatedSize = Integer.MIN_VALUE;
               this.inclusionTreeDepth = Integer.MAX_VALUE;
               this.vGraphObject = vNode;
               this.edges = [];
               this.graphManager = gm;
-              if (size != null && loc != null)
-                this.rect = new RectangleD(loc.x, loc.y, size.width, size.height);
-              else
-                this.rect = new RectangleD();
+              if (size != null && loc != null) this.rect = new RectangleD(loc.x, loc.y, size.width, size.height);
+              else this.rect = new RectangleD();
             }
             LNode.prototype = Object.create(LGraphObject.prototype);
             for (var prop in LGraphObject) {
@@ -303,8 +300,7 @@ var require_layout_base = __commonJS({
               var self = this;
               self.edges.forEach(function(edge2) {
                 if (edge2.target == to) {
-                  if (edge2.source != self)
-                    throw "Incorrect edge source!";
+                  if (edge2.source != self) throw "Incorrect edge source!";
                   edgeList.push(edge2);
                 }
               });
@@ -315,8 +311,7 @@ var require_layout_base = __commonJS({
               var edge;
               var self = this;
               self.edges.forEach(function(edge2) {
-                if (!(edge2.source == self || edge2.target == self))
-                  throw "Incorrect edge source and/or target";
+                if (!(edge2.source == self || edge2.target == self)) throw "Incorrect edge source and/or target";
                 if (edge2.target == other || edge2.source == other) {
                   edgeList.push(edge2);
                 }
@@ -1578,16 +1573,13 @@ var require_layout_base = __commonJS({
                   var descriptor = props[i];
                   descriptor.enumerable = descriptor.enumerable || false;
                   descriptor.configurable = true;
-                  if ("value" in descriptor)
-                    descriptor.writable = true;
+                  if ("value" in descriptor) descriptor.writable = true;
                   Object.defineProperty(target, descriptor.key, descriptor);
                 }
               }
               return function(Constructor, protoProps, staticProps) {
-                if (protoProps)
-                  defineProperties(Constructor.prototype, protoProps);
-                if (staticProps)
-                  defineProperties(Constructor, staticProps);
+                if (protoProps) defineProperties(Constructor.prototype, protoProps);
+                if (staticProps) defineProperties(Constructor, staticProps);
                 return Constructor;
               };
             }();
@@ -1907,8 +1899,7 @@ var require_layout_base = __commonJS({
               return obj.uniqueID;
             };
             UniqueIDGeneretor.getString = function(id) {
-              if (id == null)
-                id = UniqueIDGeneretor.lastID;
+              if (id == null) id = UniqueIDGeneretor.lastID;
               return "Object#" + id;
             };
             UniqueIDGeneretor.isPrimitive = function(arg) {
@@ -2578,8 +2569,7 @@ var require_layout_base = __commonJS({
                 }
               }
               length = edge.getLength();
-              if (length == 0)
-                return;
+              if (length == 0) return;
               springForce = this.springConstant * (length - idealLength);
               springForceX = springForce * (edge.lengthX / length);
               springForceY = springForce * (edge.lengthY / length);
@@ -2886,8 +2876,7 @@ var require_layout_base = __commonJS({
             ;
             HashSet.prototype.add = function(obj) {
               var theId = UniqueIDGeneretor.createID(obj);
-              if (!this.contains(theId))
-                this.set[theId] = obj;
+              if (!this.contains(theId)) this.set[theId] = obj;
             };
             HashSet.prototype.remove = function(obj) {
               delete this.set[UniqueIDGeneretor.createID(obj)];
@@ -2933,16 +2922,13 @@ var require_layout_base = __commonJS({
                   var descriptor = props[i];
                   descriptor.enumerable = descriptor.enumerable || false;
                   descriptor.configurable = true;
-                  if ("value" in descriptor)
-                    descriptor.writable = true;
+                  if ("value" in descriptor) descriptor.writable = true;
                   Object.defineProperty(target, descriptor.key, descriptor);
                 }
               }
               return function(Constructor, protoProps, staticProps) {
-                if (protoProps)
-                  defineProperties(Constructor.prototype, protoProps);
-                if (staticProps)
-                  defineProperties(Constructor, staticProps);
+                if (protoProps) defineProperties(Constructor.prototype, protoProps);
+                if (staticProps) defineProperties(Constructor, staticProps);
                 return Constructor;
               };
             }();
@@ -2955,13 +2941,10 @@ var require_layout_base = __commonJS({
             var Quicksort = function() {
               function Quicksort2(A, compareFunction) {
                 _classCallCheck(this, Quicksort2);
-                if (compareFunction !== null || compareFunction !== void 0)
-                  this.compareFunction = this._defaultCompareFunction;
+                if (compareFunction !== null || compareFunction !== void 0) this.compareFunction = this._defaultCompareFunction;
                 var length = void 0;
-                if (A instanceof LinkedList)
-                  length = A.size();
-                else
-                  length = A.length;
+                if (A instanceof LinkedList) length = A.size();
+                else length = A.length;
                 this._quicksort(A, 0, length - 1);
               }
               _createClass(Quicksort2, [{
@@ -2990,25 +2973,20 @@ var require_layout_base = __commonJS({
                       this._swap(A, i, j);
                       i++;
                       j--;
-                    } else
-                      return j;
+                    } else return j;
                   }
                 }
               }, {
                 key: "_get",
                 value: function _get(object, index) {
-                  if (object instanceof LinkedList)
-                    return object.get_object_at(index);
-                  else
-                    return object[index];
+                  if (object instanceof LinkedList) return object.get_object_at(index);
+                  else return object[index];
                 }
               }, {
                 key: "_set",
                 value: function _set(object, index, value) {
-                  if (object instanceof LinkedList)
-                    object.set_object_at(index, value);
-                  else
-                    object[index] = value;
+                  if (object instanceof LinkedList) object.set_object_at(index, value);
+                  else object[index] = value;
                 }
               }, {
                 key: "_swap",
@@ -3037,16 +3015,13 @@ var require_layout_base = __commonJS({
                   var descriptor = props[i];
                   descriptor.enumerable = descriptor.enumerable || false;
                   descriptor.configurable = true;
-                  if ("value" in descriptor)
-                    descriptor.writable = true;
+                  if ("value" in descriptor) descriptor.writable = true;
                   Object.defineProperty(target, descriptor.key, descriptor);
                 }
               }
               return function(Constructor, protoProps, staticProps) {
-                if (protoProps)
-                  defineProperties(Constructor.prototype, protoProps);
-                if (staticProps)
-                  defineProperties(Constructor, staticProps);
+                if (protoProps) defineProperties(Constructor.prototype, protoProps);
+                if (staticProps) defineProperties(Constructor, staticProps);
                 return Constructor;
               };
             }();
@@ -3111,10 +3086,8 @@ var require_layout_base = __commonJS({
                   for (var _i2 = 1; _i2 < this.iMax; _i2++) {
                     for (var _j2 = 1; _j2 < this.jMax; _j2++) {
                       var diag = void 0;
-                      if (this.sequence1[_i2 - 1] === this.sequence2[_j2 - 1])
-                        diag = this.grid[_i2 - 1][_j2 - 1] + this.match_score;
-                      else
-                        diag = this.grid[_i2 - 1][_j2 - 1] + this.mismatch_penalty;
+                      if (this.sequence1[_i2 - 1] === this.sequence2[_j2 - 1]) diag = this.grid[_i2 - 1][_j2 - 1] + this.match_score;
+                      else diag = this.grid[_i2 - 1][_j2 - 1] + this.mismatch_penalty;
                       var up = this.grid[_i2 - 1][_j2] + this.gap_penalty;
                       var left = this.grid[_i2][_j2 - 1] + this.gap_penalty;
                       var maxOf = [diag, up, left];
@@ -3159,11 +3132,10 @@ var require_layout_base = __commonJS({
                         seq2: this.sequence2[current.pos[1] - 1] + current.seq2
                       });
                     }
-                    if (current.pos[0] === 0 && current.pos[1] === 0)
-                      this.alignments.push({
-                        sequence1: current.seq1,
-                        sequence2: current.seq2
-                      });
+                    if (current.pos[0] === 0 && current.pos[1] === 0) this.alignments.push({
+                      sequence1: current.seq1,
+                      sequence2: current.seq2
+                    });
                     inProcessAlignments.shift();
                   }
                   return this.alignments;
@@ -3867,8 +3839,7 @@ var require_cose_base = __commonJS({
               for (var i = 0; i < zeroDegree.length; i++) {
                 var node = zeroDegree[i];
                 var p_id = node.getParent().id;
-                if (typeof tempMemberGroups[p_id] === "undefined")
-                  tempMemberGroups[p_id] = [];
+                if (typeof tempMemberGroups[p_id] === "undefined") tempMemberGroups[p_id] = [];
                 tempMemberGroups[p_id] = tempMemberGroups[p_id].concat(node);
               }
               Object.keys(tempMemberGroups).forEach(function(p_id2) {
@@ -4017,8 +3988,7 @@ var require_cose_base = __commonJS({
                   lnode.rect.x = x;
                   lnode.rect.y = y;
                   x += lnode.rect.width + organization.horizontalPadding;
-                  if (lnode.rect.height > maxHeight)
-                    maxHeight = lnode.rect.height;
+                  if (lnode.rect.height > maxHeight) maxHeight = lnode.rect.height;
                 }
                 y += maxHeight + organization.verticalPadding;
               }
@@ -4047,10 +4017,8 @@ var require_cose_base = __commonJS({
                 horizontalPadding
               };
               nodes.sort(function(n1, n2) {
-                if (n1.rect.width * n1.rect.height > n2.rect.width * n2.rect.height)
-                  return -1;
-                if (n1.rect.width * n1.rect.height < n2.rect.width * n2.rect.height)
-                  return 1;
+                if (n1.rect.width * n1.rect.height > n2.rect.width * n2.rect.height) return -1;
+                if (n1.rect.width * n1.rect.height < n2.rect.width * n2.rect.height) return 1;
                 return 0;
               });
               for (var i = 0; i < nodes.length; i++) {
@@ -4083,8 +4051,7 @@ var require_cose_base = __commonJS({
                 organization.width = w;
               }
               var h = node.rect.height;
-              if (rowIndex > 0)
-                h += organization.verticalPadding;
+              if (rowIndex > 0) h += organization.verticalPadding;
               var extraHeight = 0;
               if (h > organization.rowHeight[rowIndex]) {
                 extraHeight = organization.rowHeight[rowIndex];
@@ -4122,12 +4089,10 @@ var require_cose_base = __commonJS({
                 return true;
               }
               var min = organization.rowWidth[sri];
-              if (min + organization.horizontalPadding + extraWidth <= organization.width)
-                return true;
+              if (min + organization.horizontalPadding + extraWidth <= organization.width) return true;
               var hDiff = 0;
               if (organization.rowHeight[sri] < extraHeight) {
-                if (sri > 0)
-                  hDiff = extraHeight + organization.verticalPadding - organization.rowHeight[sri];
+                if (sri > 0) hDiff = extraHeight + organization.verticalPadding - organization.rowHeight[sri];
               }
               var add_to_row_ratio;
               if (organization.width - min >= extraWidth + organization.horizontalPadding) {
@@ -4142,10 +4107,8 @@ var require_cose_base = __commonJS({
               } else {
                 add_new_row_ratio = (organization.height + hDiff) / organization.width;
               }
-              if (add_new_row_ratio < 1)
-                add_new_row_ratio = 1 / add_new_row_ratio;
-              if (add_to_row_ratio < 1)
-                add_to_row_ratio = 1 / add_to_row_ratio;
+              if (add_new_row_ratio < 1) add_new_row_ratio = 1 / add_new_row_ratio;
+              if (add_to_row_ratio < 1) add_to_row_ratio = 1 / add_to_row_ratio;
               return add_to_row_ratio < add_new_row_ratio;
             };
             CoSELayout.prototype.shiftToLastRow = function(organization) {
@@ -4162,15 +4125,12 @@ var require_cose_base = __commonJS({
                 organization.width = organization.rowWidth[instance.getLongestRowIndex(organization)];
                 var maxHeight = Number.MIN_VALUE;
                 for (var i = 0; i < row.length; i++) {
-                  if (row[i].height > maxHeight)
-                    maxHeight = row[i].height;
+                  if (row[i].height > maxHeight) maxHeight = row[i].height;
                 }
-                if (longest > 0)
-                  maxHeight += organization.verticalPadding;
+                if (longest > 0) maxHeight += organization.verticalPadding;
                 var prevTotal = organization.rowHeight[longest] + organization.rowHeight[last];
                 organization.rowHeight[longest] = maxHeight;
-                if (organization.rowHeight[last] < node.height + organization.verticalPadding)
-                  organization.rowHeight[last] = node.height + organization.verticalPadding;
+                if (organization.rowHeight[last] < node.height + organization.verticalPadding) organization.rowHeight[last] = node.height + organization.verticalPadding;
                 var finalTotal = organization.rowHeight[longest] + organization.rowHeight[last];
                 organization.height += finalTotal - prevTotal;
                 this.shiftToLastRow(organization);
@@ -4530,32 +4490,19 @@ var require_cytoscape_cose_bilkent = __commonJS({
               getUserOptions(this.options);
             }
             var getUserOptions = function getUserOptions2(options) {
-              if (options.nodeRepulsion != null)
-                CoSEConstants.DEFAULT_REPULSION_STRENGTH = FDLayoutConstants.DEFAULT_REPULSION_STRENGTH = options.nodeRepulsion;
-              if (options.idealEdgeLength != null)
-                CoSEConstants.DEFAULT_EDGE_LENGTH = FDLayoutConstants.DEFAULT_EDGE_LENGTH = options.idealEdgeLength;
-              if (options.edgeElasticity != null)
-                CoSEConstants.DEFAULT_SPRING_STRENGTH = FDLayoutConstants.DEFAULT_SPRING_STRENGTH = options.edgeElasticity;
-              if (options.nestingFactor != null)
-                CoSEConstants.PER_LEVEL_IDEAL_EDGE_LENGTH_FACTOR = FDLayoutConstants.PER_LEVEL_IDEAL_EDGE_LENGTH_FACTOR = options.nestingFactor;
-              if (options.gravity != null)
-                CoSEConstants.DEFAULT_GRAVITY_STRENGTH = FDLayoutConstants.DEFAULT_GRAVITY_STRENGTH = options.gravity;
-              if (options.numIter != null)
-                CoSEConstants.MAX_ITERATIONS = FDLayoutConstants.MAX_ITERATIONS = options.numIter;
-              if (options.gravityRange != null)
-                CoSEConstants.DEFAULT_GRAVITY_RANGE_FACTOR = FDLayoutConstants.DEFAULT_GRAVITY_RANGE_FACTOR = options.gravityRange;
-              if (options.gravityCompound != null)
-                CoSEConstants.DEFAULT_COMPOUND_GRAVITY_STRENGTH = FDLayoutConstants.DEFAULT_COMPOUND_GRAVITY_STRENGTH = options.gravityCompound;
-              if (options.gravityRangeCompound != null)
-                CoSEConstants.DEFAULT_COMPOUND_GRAVITY_RANGE_FACTOR = FDLayoutConstants.DEFAULT_COMPOUND_GRAVITY_RANGE_FACTOR = options.gravityRangeCompound;
-              if (options.initialEnergyOnIncremental != null)
-                CoSEConstants.DEFAULT_COOLING_FACTOR_INCREMENTAL = FDLayoutConstants.DEFAULT_COOLING_FACTOR_INCREMENTAL = options.initialEnergyOnIncremental;
-              if (options.quality == "draft")
-                LayoutConstants.QUALITY = 0;
-              else if (options.quality == "proof")
-                LayoutConstants.QUALITY = 2;
-              else
-                LayoutConstants.QUALITY = 1;
+              if (options.nodeRepulsion != null) CoSEConstants.DEFAULT_REPULSION_STRENGTH = FDLayoutConstants.DEFAULT_REPULSION_STRENGTH = options.nodeRepulsion;
+              if (options.idealEdgeLength != null) CoSEConstants.DEFAULT_EDGE_LENGTH = FDLayoutConstants.DEFAULT_EDGE_LENGTH = options.idealEdgeLength;
+              if (options.edgeElasticity != null) CoSEConstants.DEFAULT_SPRING_STRENGTH = FDLayoutConstants.DEFAULT_SPRING_STRENGTH = options.edgeElasticity;
+              if (options.nestingFactor != null) CoSEConstants.PER_LEVEL_IDEAL_EDGE_LENGTH_FACTOR = FDLayoutConstants.PER_LEVEL_IDEAL_EDGE_LENGTH_FACTOR = options.nestingFactor;
+              if (options.gravity != null) CoSEConstants.DEFAULT_GRAVITY_STRENGTH = FDLayoutConstants.DEFAULT_GRAVITY_STRENGTH = options.gravity;
+              if (options.numIter != null) CoSEConstants.MAX_ITERATIONS = FDLayoutConstants.MAX_ITERATIONS = options.numIter;
+              if (options.gravityRange != null) CoSEConstants.DEFAULT_GRAVITY_RANGE_FACTOR = FDLayoutConstants.DEFAULT_GRAVITY_RANGE_FACTOR = options.gravityRange;
+              if (options.gravityCompound != null) CoSEConstants.DEFAULT_COMPOUND_GRAVITY_STRENGTH = FDLayoutConstants.DEFAULT_COMPOUND_GRAVITY_STRENGTH = options.gravityCompound;
+              if (options.gravityRangeCompound != null) CoSEConstants.DEFAULT_COMPOUND_GRAVITY_RANGE_FACTOR = FDLayoutConstants.DEFAULT_COMPOUND_GRAVITY_RANGE_FACTOR = options.gravityRangeCompound;
+              if (options.initialEnergyOnIncremental != null) CoSEConstants.DEFAULT_COOLING_FACTOR_INCREMENTAL = FDLayoutConstants.DEFAULT_COOLING_FACTOR_INCREMENTAL = options.initialEnergyOnIncremental;
+              if (options.quality == "draft") LayoutConstants.QUALITY = 0;
+              else if (options.quality == "proof") LayoutConstants.QUALITY = 2;
+              else LayoutConstants.QUALITY = 1;
               CoSEConstants.NODE_DIMENSIONS_INCLUDE_LABELS = FDLayoutConstants.NODE_DIMENSIONS_INCLUDE_LABELS = LayoutConstants.NODE_DIMENSIONS_INCLUDE_LABELS = options.nodeDimensionsIncludeLabels;
               CoSEConstants.DEFAULT_INCREMENTAL = FDLayoutConstants.DEFAULT_INCREMENTAL = LayoutConstants.DEFAULT_INCREMENTAL = !options.randomize;
               CoSEConstants.ANIMATE = FDLayoutConstants.ANIMATE = LayoutConstants.ANIMATE = options.animate;

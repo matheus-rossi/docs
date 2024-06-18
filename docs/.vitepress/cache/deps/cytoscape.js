@@ -1,4 +1,4 @@
-import "./chunk-Y2F7D3TJ.js";
+import "./chunk-BUSYA2B4.js";
 
 // node_modules/cytoscape/dist/cytoscape.esm.mjs
 function _typeof(obj) {
@@ -19,16 +19,13 @@ function _defineProperties(target, props) {
     var descriptor = props[i];
     descriptor.enumerable = descriptor.enumerable || false;
     descriptor.configurable = true;
-    if ("value" in descriptor)
-      descriptor.writable = true;
+    if ("value" in descriptor) descriptor.writable = true;
     Object.defineProperty(target, descriptor.key, descriptor);
   }
 }
 function _createClass(Constructor, protoProps, staticProps) {
-  if (protoProps)
-    _defineProperties(Constructor.prototype, protoProps);
-  if (staticProps)
-    _defineProperties(Constructor, staticProps);
+  if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+  if (staticProps) _defineProperties(Constructor, staticProps);
   Object.defineProperty(Constructor, "prototype", {
     writable: false
   });
@@ -51,13 +48,11 @@ function _slicedToArray(arr, i) {
   return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
 }
 function _arrayWithHoles(arr) {
-  if (Array.isArray(arr))
-    return arr;
+  if (Array.isArray(arr)) return arr;
 }
 function _iterableToArrayLimit(arr, i) {
   var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"];
-  if (_i == null)
-    return;
+  if (_i == null) return;
   var _arr = [];
   var _n = true;
   var _d = false;
@@ -65,41 +60,31 @@ function _iterableToArrayLimit(arr, i) {
   try {
     for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) {
       _arr.push(_s.value);
-      if (i && _arr.length === i)
-        break;
+      if (i && _arr.length === i) break;
     }
   } catch (err) {
     _d = true;
     _e = err;
   } finally {
     try {
-      if (!_n && _i["return"] != null)
-        _i["return"]();
+      if (!_n && _i["return"] != null) _i["return"]();
     } finally {
-      if (_d)
-        throw _e;
+      if (_d) throw _e;
     }
   }
   return _arr;
 }
 function _unsupportedIterableToArray(o, minLen) {
-  if (!o)
-    return;
-  if (typeof o === "string")
-    return _arrayLikeToArray(o, minLen);
+  if (!o) return;
+  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
   var n = Object.prototype.toString.call(o).slice(8, -1);
-  if (n === "Object" && o.constructor)
-    n = o.constructor.name;
-  if (n === "Map" || n === "Set")
-    return Array.from(o);
-  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n))
-    return _arrayLikeToArray(o, minLen);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return Array.from(o);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
 }
 function _arrayLikeToArray(arr, len) {
-  if (len == null || len > arr.length)
-    len = arr.length;
-  for (var i = 0, arr2 = new Array(len); i < len; i++)
-    arr2[i] = arr[i];
+  if (len == null || len > arr.length) len = arr.length;
+  for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
   return arr2;
 }
 function _nonIterableRest() {
@@ -109,18 +94,16 @@ function _createForOfIteratorHelper(o, allowArrayLike) {
   var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"];
   if (!it) {
     if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") {
-      if (it)
-        o = it;
+      if (it) o = it;
       var i = 0;
       var F = function() {
       };
       return {
         s: F,
         n: function() {
-          if (i >= o.length)
-            return {
-              done: true
-            };
+          if (i >= o.length) return {
+            done: true
+          };
           return {
             done: false,
             value: o[i++]
@@ -150,11 +133,9 @@ function _createForOfIteratorHelper(o, allowArrayLike) {
     },
     f: function() {
       try {
-        if (!normalCompletion && it.return != null)
-          it.return();
+        if (!normalCompletion && it.return != null) it.return();
       } finally {
-        if (didErr)
-          throw err;
+        if (didErr) throw err;
       }
     }
   };
@@ -346,16 +327,11 @@ var hsl2tuple = function hsl2tuple2(hsl) {
   var ret;
   var h, s, l, a, r, g, b;
   function hue2rgb(p3, q2, t) {
-    if (t < 0)
-      t += 1;
-    if (t > 1)
-      t -= 1;
-    if (t < 1 / 6)
-      return p3 + (q2 - p3) * 6 * t;
-    if (t < 1 / 2)
-      return q2;
-    if (t < 2 / 3)
-      return p3 + (q2 - p3) * (2 / 3 - t) * 6;
+    if (t < 0) t += 1;
+    if (t > 1) t -= 1;
+    if (t < 1 / 6) return p3 + (q2 - p3) * 6 * t;
+    if (t < 1 / 2) return q2;
+    if (t < 2 / 3) return p3 + (q2 - p3) * (2 / 3 - t) * 6;
     return p3;
   }
   var m = new RegExp("^" + hsla + "$").exec(hsl);
@@ -1400,10 +1376,8 @@ var defineSearch = function defineSearch2(params) {
     };
     while (Q.length !== 0) {
       var _ret = _loop();
-      if (_ret === "continue")
-        continue;
-      if (_ret === "break")
-        break;
+      if (_ret === "continue") continue;
+      if (_ret === "break") break;
     }
     var connectedEles = cy.collection();
     for (var _i = 0; _i < connectedNodes.length; _i++) {
@@ -2920,8 +2894,7 @@ var pointInsidePolygonPoints = function pointInsidePolygonPoints2(x2, y2, points
       x22 = points[(i + 1 - points.length / 2) * 2];
       y22 = points[(i + 1 - points.length / 2) * 2 + 1];
     }
-    if (x1 == x2 && x22 == x2)
-      ;
+    if (x1 == x2 && x22 == x2) ;
     else if (x1 >= x2 && x2 >= x22 || x1 <= x2 && x2 <= x22) {
       y3 = (x2 - x1) / (x22 - x1) * (y22 - y1) + y1;
       if (y3 > y2) {
@@ -3438,10 +3411,8 @@ var elesfn$n = {
         var id2 = _node.id();
         options2.root = _node;
         var _currDegree = this.degreeCentrality(options2);
-        if (maxIndegree < _currDegree.indegree)
-          maxIndegree = _currDegree.indegree;
-        if (maxOutdegree < _currDegree.outdegree)
-          maxOutdegree = _currDegree.outdegree;
+        if (maxIndegree < _currDegree.indegree) maxIndegree = _currDegree.indegree;
+        if (maxOutdegree < _currDegree.outdegree) maxOutdegree = _currDegree.outdegree;
         indegrees[id2] = _currDegree.indegree;
         outdegrees[id2] = _currDegree.outdegree;
       }
@@ -4036,8 +4007,7 @@ var haveMatricesConverged = function haveMatricesConverged2(v12, v22, sensitivit
 };
 var seenBefore = function seenBefore2(node, medoids, n) {
   for (var i = 0; i < n; i++) {
-    if (node === medoids[i])
-      return true;
+    if (node === medoids[i]) return true;
   }
   return false;
 };
@@ -4131,8 +4101,7 @@ var kMedoids = function kMedoids2(options2) {
   var curCost;
   var minCosts = new Array(opts.k);
   if (opts.testMode) {
-    if (typeof opts.testCentroids === "number")
-      ;
+    if (typeof opts.testCentroids === "number") ;
     else if (_typeof(opts.testCentroids) === "object") {
       medoids = opts.testCentroids;
     } else {
@@ -4374,10 +4343,8 @@ var mergeClosest = function mergeClosest2(clusters, index, dists, mins, opts) {
     } else if (opts.linkage === "mean") {
       dist3 = (dists[c1.key][cur.key] * c1.size + dists[c2.key][cur.key] * c2.size) / (c1.size + c2.size);
     } else {
-      if (opts.mode === "dendrogram")
-        dist3 = getDist3(cur.value, c1.value);
-      else
-        dist3 = getDist3(cur.value[0], c1.value[0]);
+      if (opts.mode === "dendrogram") dist3 = getDist3(cur.value, c1.value);
+      else dist3 = getDist3(cur.value[0], c1.value[0]);
     }
     dists[c1.key][cur.key] = dists[cur.key][c1.key] = dist3;
   }
@@ -4399,20 +4366,16 @@ var mergeClosest = function mergeClosest2(clusters, index, dists, mins, opts) {
   return true;
 };
 var getAllChildren = function getAllChildren2(root2, arr, cy) {
-  if (!root2)
-    return;
+  if (!root2) return;
   if (root2.value) {
     arr.push(root2.value);
   } else {
-    if (root2.left)
-      getAllChildren2(root2.left, arr);
-    if (root2.right)
-      getAllChildren2(root2.right, arr);
+    if (root2.left) getAllChildren2(root2.left, arr);
+    if (root2.right) getAllChildren2(root2.right, arr);
   }
 };
 var buildDendrogram = function buildDendrogram2(root2, cy) {
-  if (!root2)
-    return "";
+  if (!root2) return "";
   if (root2.left && root2.right) {
     var leftStr = buildDendrogram2(root2.left, cy);
     var rightStr = buildDendrogram2(root2.right, cy);
@@ -4442,34 +4405,27 @@ var buildDendrogram = function buildDendrogram2(root2, cy) {
   }
 };
 var buildClustersFromTree = function buildClustersFromTree2(root2, k, cy) {
-  if (!root2)
-    return [];
+  if (!root2) return [];
   var left = [], right = [], leaves = [];
   if (k === 0) {
-    if (root2.left)
-      getAllChildren(root2.left, left);
-    if (root2.right)
-      getAllChildren(root2.right, right);
+    if (root2.left) getAllChildren(root2.left, left);
+    if (root2.right) getAllChildren(root2.right, right);
     leaves = left.concat(right);
     return [cy.collection(leaves)];
   } else if (k === 1) {
     if (root2.value) {
       return [cy.collection(root2.value)];
     } else {
-      if (root2.left)
-        getAllChildren(root2.left, left);
-      if (root2.right)
-        getAllChildren(root2.right, right);
+      if (root2.left) getAllChildren(root2.left, left);
+      if (root2.right) getAllChildren(root2.right, right);
       return [cy.collection(left), cy.collection(right)];
     }
   } else {
     if (root2.value) {
       return [cy.collection(root2.value)];
     } else {
-      if (root2.left)
-        left = buildClustersFromTree2(root2.left, k - 1, cy);
-      if (root2.right)
-        right = buildClustersFromTree2(root2.right, k - 1, cy);
+      if (root2.left) left = buildClustersFromTree2(root2.left, k - 1, cy);
+      if (root2.right) right = buildClustersFromTree2(root2.right, k - 1, cy);
       return left.concat(right);
     }
   }
@@ -4523,8 +4479,7 @@ var hierarchicalClustering = function hierarchicalClustering2(options2) {
   var retClusters;
   if (opts.mode === "dendrogram") {
     retClusters = buildClustersFromTree(clusters[0], opts.dendrogramDepth, cy);
-    if (opts.addDendrogram)
-      buildDendrogram(clusters[0], cy);
+    if (opts.addDendrogram) buildDendrogram(clusters[0], cy);
   } else {
     retClusters = new Array(clusters.length);
     clusters.forEach(function(cluster2, i2) {
@@ -4801,8 +4756,7 @@ var elesfn$k = {
     var oddIn;
     var oddOut;
     var startVertex;
-    if (root2)
-      startVertex = string(root2) ? this.filter(root2)[0].id() : root2[0].id();
+    if (root2) startVertex = string(root2) ? this.filter(root2)[0].id() : root2[0].id();
     var nodes3 = {};
     var edges3 = {};
     if (directed) {
@@ -4814,22 +4768,17 @@ var elesfn$k = {
           var d1 = ind - outd;
           var d2 = outd - ind;
           if (d1 == 1) {
-            if (oddIn)
-              dflag = true;
-            else
-              oddIn = id2;
+            if (oddIn) dflag = true;
+            else oddIn = id2;
           } else if (d2 == 1) {
-            if (oddOut)
-              dflag = true;
-            else
-              oddOut = id2;
+            if (oddOut) dflag = true;
+            else oddOut = id2;
           } else if (d2 > 1 || d1 > 1) {
             dflag = true;
           }
           nodes3[id2] = [];
           ele.outgoers().forEach(function(e) {
-            if (e.isEdge())
-              nodes3[id2].push(e.id());
+            if (e.isEdge()) nodes3[id2].push(e.id());
           });
         } else {
           edges3[id2] = [void 0, ele.target().id()];
@@ -4841,12 +4790,9 @@ var elesfn$k = {
         if (ele.isNode()) {
           var d2 = ele.degree(true);
           if (d2 % 2) {
-            if (!oddIn)
-              oddIn = id2;
-            else if (!oddOut)
-              oddOut = id2;
-            else
-              dflag = true;
+            if (!oddIn) oddIn = id2;
+            else if (!oddOut) oddOut = id2;
+            else dflag = true;
           }
           nodes3[id2] = [];
           ele.connectedEdges().forEach(function(e) {
@@ -4861,8 +4807,7 @@ var elesfn$k = {
       found: false,
       trail: void 0
     };
-    if (dflag)
-      return result;
+    if (dflag) return result;
     else if (oddOut && oddIn) {
       if (directed) {
         if (startVertex && oddOut != startVertex) {
@@ -4877,8 +4822,7 @@ var elesfn$k = {
         }
       }
     } else {
-      if (!startVertex)
-        startVertex = eles[0].id();
+      if (!startVertex) startVertex = eles[0].id();
     }
     var walk = function walk2(v) {
       var currentNode = v;
@@ -4962,8 +4906,7 @@ var hopcroftTarjanBiconnected = function hopcroftTarjanBiconnected2() {
     components2.push(component2);
   };
   var biconnectedSearch = function biconnectedSearch2(root2, currentNode, parent4) {
-    if (root2 === parent4)
-      edgeCount += 1;
+    if (root2 === parent4) edgeCount += 1;
     nodes3[currentNode] = {
       id: id2,
       low: id2++,
@@ -5098,8 +5041,7 @@ var STATE_PENDING = 0;
 var STATE_FULFILLED = 1;
 var STATE_REJECTED = 2;
 var api = function api2(executor) {
-  if (!(this instanceof api2))
-    return new api2(executor);
+  if (!(this instanceof api2)) return new api2(executor);
   this.id = "Thenable/1.0.7";
   this.state = STATE_PENDING;
   this.fulfillValue = void 0;
@@ -5109,8 +5051,7 @@ var api = function api2(executor) {
   this.proxy = {
     then: this.then.bind(this)
   };
-  if (typeof executor === "function")
-    executor.call(this, this.fulfill.bind(this), this.reject.bind(this));
+  if (typeof executor === "function") executor.call(this, this.fulfill.bind(this), this.reject.bind(this));
 };
 api.prototype = {
   /*  promise resolving methods  */
@@ -5139,14 +5080,11 @@ var deliver = function deliver2(curr, state, name, value) {
   return curr;
 };
 var execute = function execute2(curr) {
-  if (curr.state === STATE_FULFILLED)
-    execute_handlers(curr, "onFulfilled", curr.fulfillValue);
-  else if (curr.state === STATE_REJECTED)
-    execute_handlers(curr, "onRejected", curr.rejectReason);
+  if (curr.state === STATE_FULFILLED) execute_handlers(curr, "onFulfilled", curr.fulfillValue);
+  else if (curr.state === STATE_REJECTED) execute_handlers(curr, "onRejected", curr.rejectReason);
 };
 var execute_handlers = function execute_handlers2(curr, name, value) {
-  if (curr[name].length === 0)
-    return;
+  if (curr[name].length === 0) return;
   var handlers = curr[name];
   curr[name] = [];
   var func = function func2() {
@@ -5154,10 +5092,8 @@ var execute_handlers = function execute_handlers2(curr, name, value) {
       handlers[i](value);
     }
   };
-  if (typeof setImmediate === "function")
-    setImmediate(func);
-  else
-    setTimeout(func, 0);
+  if (typeof setImmediate === "function") setImmediate(func);
+  else setTimeout(func, 0);
 };
 var resolver = function resolver2(cb, next, method) {
   return function(value) {
@@ -5197,19 +5133,16 @@ var resolve = function resolve2(promise4, x2) {
         /*  resolvePromise  */
         /*  [Promises/A+ 2.3.3.3.1]  */
         function(y2) {
-          if (resolved)
-            return;
+          if (resolved) return;
           resolved = true;
           if (y2 === x2)
             promise4.reject(new TypeError("circular thenable chain"));
-          else
-            resolve2(promise4, y2);
+          else resolve2(promise4, y2);
         },
         /*  rejectPromise  */
         /*  [Promises/A+ 2.3.3.3.2]  */
         function(r) {
-          if (resolved)
-            return;
+          if (resolved) return;
           resolved = true;
           promise4.reject(r);
         }
@@ -7376,8 +7309,7 @@ var Selector = function Selector2(selector) {
   this.compoundCount = 0;
   this.edgeCount = 0;
   this.length = 0;
-  if (selector == null || string(selector) && selector.match(/^\s*$/))
-    ;
+  if (selector == null || string(selector) && selector.match(/^\s*$/)) ;
   else if (elementOrCollection(selector)) {
     this.addQuery({
       checks: [{
@@ -11170,8 +11102,7 @@ elesfn$1.restore = function() {
     var _private = _ele2._private;
     var _data3 = _private.data;
     _ele2.clearTraversalCache();
-    if (!addToPool2 && !_private.removed)
-      ;
+    if (!addToPool2 && !_private.removed) ;
     else if (_data3.id === void 0) {
       _data3.id = uuid();
     } else if (number$1(_data3.id)) {
@@ -11523,8 +11454,7 @@ var corefn$9 = {
     return elements;
   },
   remove: function remove(collection4) {
-    if (elementOrCollection(collection4))
-      ;
+    if (elementOrCollection(collection4)) ;
     else if (string(collection4)) {
       var selector = collection4;
       collection4 = this.$(selector);
@@ -14891,8 +14821,7 @@ styfn$1.parseImpl = function(name, value, propIsBypass, propIsFlat) {
     };
   }
   var data4, mapData;
-  if (!valueIsString || propIsFlat || value.length < 7 || value[1] !== "a")
-    ;
+  if (!valueIsString || propIsFlat || value.length < 7 || value[1] !== "a") ;
   else if (value.length >= 7 && value[0] === "d" && (data4 = new RegExp(types.data.regex).exec(value))) {
     if (propIsBypass) {
       return false;
@@ -15077,8 +15006,7 @@ styfn$1.parseImpl = function(name, value, propIsBypass, propIsFlat) {
   } else if (type.propList) {
     var props = [];
     var propsStr = "" + value;
-    if (propsStr === "none")
-      ;
+    if (propsStr === "none") ;
     else {
       var propsSplit = propsStr.split(/\s*,\s*|\s+/);
       for (var _i2 = 0; _i2 < propsSplit.length; _i2++) {
@@ -15765,10 +15693,8 @@ var corefn$1 = {
     };
   },
   multiClickDebounceTime: function multiClickDebounceTime(_int) {
-    if (_int)
-      this._private.multiClickDebounceTime = _int;
-    else
-      return this._private.multiClickDebounceTime;
+    if (_int) this._private.multiClickDebounceTime = _int;
+    else return this._private.multiClickDebounceTime;
     return this;
   }
 };
@@ -15984,8 +15910,7 @@ extend(corefn, {
   },
   destroy: function destroy() {
     var cy = this;
-    if (cy.destroyed())
-      return;
+    if (cy.destroyed()) return;
     cy.stopAnimationLoop();
     cy.destroyRenderer();
     this.emit("destroy");
@@ -16020,8 +15945,7 @@ extend(corefn, {
   },
   window: function window2() {
     var container2 = this._private.container;
-    if (container2 == null)
-      return _window;
+    if (container2 == null) return _window;
     var ownerDocument = this._private.container.ownerDocument;
     if (ownerDocument === void 0 || ownerDocument == null) {
       return _window;
@@ -18592,8 +18516,7 @@ BRp$d.calculateArrowAngles = function(edge) {
   dispY *= -1;
   if (isSegments) {
     var pts2 = rs.allpts;
-    if (pts2.length / 2 % 2 === 0)
-      ;
+    if (pts2.length / 2 % 2 === 0) ;
     else if (!rs.isRound) {
       var i2 = pts2.length / 2 - 1;
       var i3 = i2 + 2;
@@ -18718,26 +18641,23 @@ var calcCornerArc = function calcCornerArc2(previousPoint, currentPoint, nextPoi
   lastPoint = currentPoint;
 };
 function drawPreparedRoundCorner(ctx, roundCorner) {
-  if (roundCorner.radius === 0)
-    ctx.lineTo(roundCorner.cx, roundCorner.cy);
-  else
-    ctx.arc(roundCorner.cx, roundCorner.cy, roundCorner.radius, roundCorner.startAngle, roundCorner.endAngle, roundCorner.counterClockwise);
+  if (roundCorner.radius === 0) ctx.lineTo(roundCorner.cx, roundCorner.cy);
+  else ctx.arc(roundCorner.cx, roundCorner.cy, roundCorner.radius, roundCorner.startAngle, roundCorner.endAngle, roundCorner.counterClockwise);
 }
 function getRoundCorner(previousPoint, currentPoint, nextPoint, radiusMax) {
   var isArcRadius = arguments.length > 4 && arguments[4] !== void 0 ? arguments[4] : true;
-  if (radiusMax === 0 || currentPoint.radius === 0)
-    return {
-      cx: currentPoint.x,
-      cy: currentPoint.y,
-      radius: 0,
-      startX: currentPoint.x,
-      startY: currentPoint.y,
-      stopX: currentPoint.x,
-      stopY: currentPoint.y,
-      startAngle: void 0,
-      endAngle: void 0,
-      counterClockwise: void 0
-    };
+  if (radiusMax === 0 || currentPoint.radius === 0) return {
+    cx: currentPoint.x,
+    cy: currentPoint.y,
+    radius: 0,
+    startX: currentPoint.x,
+    startY: currentPoint.y,
+    stopX: currentPoint.x,
+    stopY: currentPoint.y,
+    startAngle: void 0,
+    endAngle: void 0,
+    counterClockwise: void 0
+  };
   calcCornerArc(previousPoint, currentPoint, nextPoint, radiusMax, isArcRadius);
   return {
     cx: x,
@@ -19872,8 +19792,7 @@ BRp$9.recalculateEdgeLabelProjections = function(edge) {
     source: edge.pstyle("source-label").strValue,
     target: edge.pstyle("target-label").strValue
   };
-  if (content.mid || content.source || content.target)
-    ;
+  if (content.mid || content.source || content.target) ;
   else {
     return;
   }
@@ -20081,8 +20000,7 @@ BRp$9.getLabelText = function(ele, prefix) {
   if (!text) {
     return "";
   }
-  if (textTransform == "none")
-    ;
+  if (textTransform == "none") ;
   else if (textTransform == "uppercase") {
     text = text.toUpperCase();
   } else if (textTransform == "lowercase") {
@@ -21109,10 +21027,8 @@ BRp$3.load = function() {
     select[2] = pos[0];
     select[3] = pos[1];
     if (preventDefault2) {
-      if (e.stopPropagation)
-        e.stopPropagation();
-      if (e.preventDefault)
-        e.preventDefault();
+      if (e.stopPropagation) e.stopPropagation();
+      if (e.preventDefault) e.preventDefault();
       return false;
     }
   }, false);
@@ -21194,8 +21110,7 @@ BRp$3.load = function() {
           });
         } else {
           clickTimeout = setTimeout(function() {
-            if (didDoubleClick)
-              return;
+            if (didDoubleClick) return;
             triggerEvents(down, ["oneclick", "onetap", "voneclick"], e, {
               x: pos[0],
               y: pos[1]
@@ -21213,8 +21128,7 @@ BRp$3.load = function() {
       }
       if (near == down && !r.dragData.didDrag && !r.hoverData.selecting) {
         if (near != null && near._private.selectable) {
-          if (r.hoverData.dragging)
-            ;
+          if (r.hoverData.dragging) ;
           else if (cy.selectionType() === "additive" || multSelKeyDown) {
             if (near.selected()) {
               near.unselect(["tapunselect"]);
@@ -21487,8 +21401,7 @@ BRp$3.load = function() {
       if (cy.boxSelectionEnabled()) {
         e.preventDefault();
       }
-    } else if (e.touches[1])
-      ;
+    } else if (e.touches[1]) ;
     else if (e.touches[0]) {
       var nears = r.findNearestElements(now2[0], now2[1], true, true);
       var near = nears[0];
@@ -22029,10 +21942,8 @@ BRp$3.load = function() {
     if (e.touches[2]) {
       r.data.bgActivePosistion = void 0;
       r.redrawHint("select", true);
-    } else if (e.touches[1])
-      ;
-    else if (e.touches[0])
-      ;
+    } else if (e.touches[1]) ;
+    else if (e.touches[0]) ;
     else if (!e.touches[0]) {
       r.data.bgActivePosistion = void 0;
       r.redrawHint("select", true);
@@ -22088,8 +21999,7 @@ BRp$3.load = function() {
           });
         } else {
           touchTimeout = setTimeout(function() {
-            if (didDoubleTouch)
-              return;
+            if (didDoubleTouch) return;
             triggerEvents(start, ["onetap", "voneclick"], e, {
               x: now2[0],
               y: now2[1]
@@ -22663,8 +22573,7 @@ BRp$1.startRenderLoop = function() {
     if (r.destroyed) {
       return;
     }
-    if (cy.batching())
-      ;
+    if (cy.batching()) ;
     else if (r.requestedFrame && !r.skipFrame) {
       beforeRenderCallbacks(r, true, requestTime);
       var startTime = performanceNow();
@@ -24388,8 +24297,7 @@ CRp$8.drawArrowhead = function(context, edge, prefix, x2, y2, angle2, opacity) {
   var edgeWidth = edge.pstyle("width").pfValue;
   var pArrowWidth = edge.pstyle(prefix + "-arrow-width");
   var arrowWidth = pArrowWidth.value === "match-line" ? edgeWidth : pArrowWidth.pfValue;
-  if (pArrowWidth.units === "%")
-    arrowWidth *= edgeWidth;
+  if (pArrowWidth.units === "%") arrowWidth *= edgeWidth;
   var edgeOpacity = edge.pstyle("opacity").value;
   if (opacity === void 0) {
     opacity = edgeOpacity;
@@ -24507,8 +24415,7 @@ CRp$7.drawInscribedImage = function(context, img, node, index, nodeOpacity) {
   var imgOpacity = getIndexedStyle(node, "background-image-opacity", "value", index) * nodeOpacity;
   var smooth = getIndexedStyle(node, "background-image-smoothing", "value", index);
   var cornerRadius = node.pstyle("corner-radius").value;
-  if (cornerRadius !== "auto")
-    cornerRadius = node.pstyle("corner-radius").pfValue;
+  if (cornerRadius !== "auto") cornerRadius = node.pstyle("corner-radius").pfValue;
   var imgW = img.width || img.cachedW;
   var imgH = img.height || img.cachedH;
   if (null == imgW || null == imgH) {
@@ -24726,10 +24633,8 @@ function roundRect(ctx, x2, y2, width2, height2) {
   ctx.lineTo(x2, y2 + radius2);
   ctx.quadraticCurveTo(x2, y2, x2 + radius2, y2);
   ctx.closePath();
-  if (stroke)
-    ctx.stroke();
-  else
-    ctx.fill();
+  if (stroke) ctx.stroke();
+  else ctx.fill();
 }
 CRp$6.getTextAngle = function(ele, prefix) {
   var theta;
@@ -24887,8 +24792,7 @@ CRp$6.drawText = function(context, ele, prefix) {
       var lineHeight = getPrefixedProperty(rscratch, "labelLineHeight", prefix);
       var halfTextW = textW / 2;
       var justification = this.getLabelJustification(ele);
-      if (justification === "auto")
-        ;
+      if (justification === "auto") ;
       else if (halign === "left") {
         if (justification === "left") {
           textX += -textW;
@@ -24998,8 +24902,7 @@ CRp$5.drawNode = function(context, node, shiftToOriginWithBb) {
   var outlineOpacity = node.pstyle("outline-opacity").value * eleOpacity;
   var outlineOffset = node.pstyle("outline-offset").value;
   var cornerRadius = node.pstyle("corner-radius").value;
-  if (cornerRadius !== "auto")
-    cornerRadius = node.pstyle("corner-radius").pfValue;
+  if (cornerRadius !== "auto") cornerRadius = node.pstyle("corner-radius").pfValue;
   var setupShapeColor = function setupShapeColor2() {
     var bgOpy = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : bgOpacity;
     r.eleFillStyle(context, node, bgOpy);
@@ -25181,10 +25084,8 @@ CRp$5.drawNode = function(context, node, shiftToOriginWithBb) {
       }
       var shape = r.getNodeShape(node);
       var bWidth = borderWidth;
-      if (borderPosition === "inside")
-        bWidth = 0;
-      if (borderPosition === "outside")
-        bWidth *= 2;
+      if (borderPosition === "inside") bWidth = 0;
+      if (borderPosition === "outside") bWidth *= 2;
       var scaleX = (nodeWidth + bWidth + (outlineWidth + outlineOffset)) / nodeWidth;
       var scaleY = (nodeHeight + bWidth + (outlineWidth + outlineOffset)) / nodeHeight;
       var sWidth = nodeWidth * scaleX;
@@ -25512,8 +25413,7 @@ CRp$4.createGradientStyleFor = function(context, shapeStyleName, ele, fill, opac
       }
     }
   }
-  if (!gradientStyle)
-    return null;
+  if (!gradientStyle) return null;
   var hasPositions = positions2.length === colors2.length;
   var length = colors2.length;
   for (var i = 0; i < length; i++) {
@@ -25523,8 +25423,7 @@ CRp$4.createGradientStyleFor = function(context, shapeStyleName, ele, fill, opac
 };
 CRp$4.gradientFillStyle = function(context, ele, fill, opacity) {
   var gradientStyle = this.createGradientStyleFor(context, "background", ele, fill, opacity);
-  if (!gradientStyle)
-    return null;
+  if (!gradientStyle) return null;
   context.fillStyle = gradientStyle;
 };
 CRp$4.colorFillStyle = function(context, r, g, b, a) {
@@ -25541,8 +25440,7 @@ CRp$4.eleFillStyle = function(context, ele, opacity) {
 };
 CRp$4.gradientStrokeStyle = function(context, ele, fill, opacity) {
   var gradientStyle = this.createGradientStyleFor(context, "line", ele, fill, opacity);
-  if (!gradientStyle)
-    return null;
+  if (!gradientStyle) return null;
   context.strokeStyle = gradientStyle;
 };
 CRp$4.colorStrokeStyle = function(context, r, g, b, a) {

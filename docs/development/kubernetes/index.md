@@ -4,7 +4,9 @@
 
 ![K8S](./k8s.png)
 
+:::tip
 [K8s - Official Docs](https://kubernetes.io/pt-br/docs/concepts/overview/what-is-kubernetes/)
+::::
 
 Kubernetes is a portable, extensible, open source platform for managing containerized workloads and services, 
 that facilitates both declarative configuration and automation. 
@@ -14,13 +16,27 @@ It has a large, rapidly growing ecosystem. Kubernetes services, support, and too
 
 Components of K8s and examples on how to declare them via manifests in k8s.
 
+:::info
 [Components - Docs](components/index.md)
+:::
 
 ### Concepts
 
 Important concepts about kubernetes.
 
+:::info
 [Concepts - Docs](concepts/index.md)
+:::
+
+## Kubectl
+
+### Useful commands
+
+Useful and tested kubectl commands
+
+:::info
+[Kubectl - Docs](kubectl/index.md)
+:::
 
 ## K3D
 

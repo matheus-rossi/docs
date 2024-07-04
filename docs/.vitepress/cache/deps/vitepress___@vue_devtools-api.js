@@ -1,9 +1,3 @@
-import {
-  Fragment,
-  isReactive,
-  isRef,
-  toRaw
-} from "./chunk-BJ3OZQ3N.js";
 import "./chunk-BUSYA2B4.js";
 
 // node_modules/@vue/devtools-shared/dist/index.js
@@ -36,12 +30,12 @@ var __toESM = (mod, isNodeMode, target2) => (target2 = mod != null ? __create(__
   mod
 ));
 var init_esm_shims = __esm({
-  "../../node_modules/.pnpm/tsup@8.1.0_@microsoft+api-extractor@7.43.0_@types+node@20.14.2__@swc+core@1.5.29_postcss@8.4.38_typescript@5.4.5/node_modules/tsup/assets/esm_shims.js"() {
+  "../../node_modules/.pnpm/tsup@8.1.0_@microsoft+api-extractor@7.43.0_@types+node@20.14.9__@swc+core@1.5.29_postcss@8.4.38_typescript@5.5.2/node_modules/tsup/assets/esm_shims.js"() {
     "use strict";
   }
 });
 var require_rfdc = __commonJS({
-  "../../node_modules/.pnpm/rfdc@1.3.1/node_modules/rfdc/index.js"(exports, module) {
+  "../../node_modules/.pnpm/rfdc@1.4.1/node_modules/rfdc/index.js"(exports, module) {
     "use strict";
     init_esm_shims();
     module.exports = rfdc2;
@@ -54,17 +48,27 @@ var require_rfdc = __commonJS({
     function rfdc2(opts) {
       opts = opts || {};
       if (opts.circles) return rfdcCircles(opts);
+      const constructorHandlers = /* @__PURE__ */ new Map();
+      constructorHandlers.set(Date, (o) => new Date(o));
+      constructorHandlers.set(Map, (o, fn) => new Map(cloneArray(Array.from(o), fn)));
+      constructorHandlers.set(Set, (o, fn) => new Set(cloneArray(Array.from(o), fn)));
+      if (opts.constructorHandlers) {
+        for (const handler2 of opts.constructorHandlers) {
+          constructorHandlers.set(handler2[0], handler2[1]);
+        }
+      }
+      let handler = null;
       return opts.proto ? cloneProto : clone;
       function cloneArray(a, fn) {
-        var keys = Object.keys(a);
-        var a2 = new Array(keys.length);
-        for (var i = 0; i < keys.length; i++) {
-          var k = keys[i];
-          var cur = a[k];
+        const keys = Object.keys(a);
+        const a2 = new Array(keys.length);
+        for (let i = 0; i < keys.length; i++) {
+          const k = keys[i];
+          const cur = a[k];
           if (typeof cur !== "object" || cur === null) {
             a2[k] = cur;
-          } else if (cur instanceof Date) {
-            a2[k] = new Date(cur);
+          } else if (cur.constructor !== Object && (handler = constructorHandlers.get(cur.constructor))) {
+            a2[k] = handler(cur, fn);
           } else if (ArrayBuffer.isView(cur)) {
             a2[k] = copyBuffer(cur);
           } else {
@@ -75,22 +79,18 @@ var require_rfdc = __commonJS({
       }
       function clone(o) {
         if (typeof o !== "object" || o === null) return o;
-        if (o instanceof Date) return new Date(o);
         if (Array.isArray(o)) return cloneArray(o, clone);
-        if (o instanceof Map) return new Map(cloneArray(Array.from(o), clone));
-        if (o instanceof Set) return new Set(cloneArray(Array.from(o), clone));
-        var o2 = {};
-        for (var k in o) {
+        if (o.constructor !== Object && (handler = constructorHandlers.get(o.constructor))) {
+          return handler(o, clone);
+        }
+        const o2 = {};
+        for (const k in o) {
           if (Object.hasOwnProperty.call(o, k) === false) continue;
-          var cur = o[k];
+          const cur = o[k];
           if (typeof cur !== "object" || cur === null) {
             o2[k] = cur;
-          } else if (cur instanceof Date) {
-            o2[k] = new Date(cur);
-          } else if (cur instanceof Map) {
-            o2[k] = new Map(cloneArray(Array.from(cur), clone));
-          } else if (cur instanceof Set) {
-            o2[k] = new Set(cloneArray(Array.from(cur), clone));
+          } else if (cur.constructor !== Object && (handler = constructorHandlers.get(cur.constructor))) {
+            o2[k] = handler(cur, clone);
           } else if (ArrayBuffer.isView(cur)) {
             o2[k] = copyBuffer(cur);
           } else {
@@ -101,21 +101,17 @@ var require_rfdc = __commonJS({
       }
       function cloneProto(o) {
         if (typeof o !== "object" || o === null) return o;
-        if (o instanceof Date) return new Date(o);
         if (Array.isArray(o)) return cloneArray(o, cloneProto);
-        if (o instanceof Map) return new Map(cloneArray(Array.from(o), cloneProto));
-        if (o instanceof Set) return new Set(cloneArray(Array.from(o), cloneProto));
-        var o2 = {};
-        for (var k in o) {
-          var cur = o[k];
+        if (o.constructor !== Object && (handler = constructorHandlers.get(o.constructor))) {
+          return handler(o, cloneProto);
+        }
+        const o2 = {};
+        for (const k in o) {
+          const cur = o[k];
           if (typeof cur !== "object" || cur === null) {
             o2[k] = cur;
-          } else if (cur instanceof Date) {
-            o2[k] = new Date(cur);
-          } else if (cur instanceof Map) {
-            o2[k] = new Map(cloneArray(Array.from(cur), cloneProto));
-          } else if (cur instanceof Set) {
-            o2[k] = new Set(cloneArray(Array.from(cur), cloneProto));
+          } else if (cur.constructor !== Object && (handler = constructorHandlers.get(cur.constructor))) {
+            o2[k] = handler(cur, cloneProto);
           } else if (ArrayBuffer.isView(cur)) {
             o2[k] = copyBuffer(cur);
           } else {
@@ -126,23 +122,33 @@ var require_rfdc = __commonJS({
       }
     }
     function rfdcCircles(opts) {
-      var refs = [];
-      var refsNew = [];
+      const refs = [];
+      const refsNew = [];
+      const constructorHandlers = /* @__PURE__ */ new Map();
+      constructorHandlers.set(Date, (o) => new Date(o));
+      constructorHandlers.set(Map, (o, fn) => new Map(cloneArray(Array.from(o), fn)));
+      constructorHandlers.set(Set, (o, fn) => new Set(cloneArray(Array.from(o), fn)));
+      if (opts.constructorHandlers) {
+        for (const handler2 of opts.constructorHandlers) {
+          constructorHandlers.set(handler2[0], handler2[1]);
+        }
+      }
+      let handler = null;
       return opts.proto ? cloneProto : clone;
       function cloneArray(a, fn) {
-        var keys = Object.keys(a);
-        var a2 = new Array(keys.length);
-        for (var i = 0; i < keys.length; i++) {
-          var k = keys[i];
-          var cur = a[k];
+        const keys = Object.keys(a);
+        const a2 = new Array(keys.length);
+        for (let i = 0; i < keys.length; i++) {
+          const k = keys[i];
+          const cur = a[k];
           if (typeof cur !== "object" || cur === null) {
             a2[k] = cur;
-          } else if (cur instanceof Date) {
-            a2[k] = new Date(cur);
+          } else if (cur.constructor !== Object && (handler = constructorHandlers.get(cur.constructor))) {
+            a2[k] = handler(cur, fn);
           } else if (ArrayBuffer.isView(cur)) {
             a2[k] = copyBuffer(cur);
           } else {
-            var index = refs.indexOf(cur);
+            const index = refs.indexOf(cur);
             if (index !== -1) {
               a2[k] = refsNew[index];
             } else {
@@ -154,28 +160,24 @@ var require_rfdc = __commonJS({
       }
       function clone(o) {
         if (typeof o !== "object" || o === null) return o;
-        if (o instanceof Date) return new Date(o);
         if (Array.isArray(o)) return cloneArray(o, clone);
-        if (o instanceof Map) return new Map(cloneArray(Array.from(o), clone));
-        if (o instanceof Set) return new Set(cloneArray(Array.from(o), clone));
-        var o2 = {};
+        if (o.constructor !== Object && (handler = constructorHandlers.get(o.constructor))) {
+          return handler(o, clone);
+        }
+        const o2 = {};
         refs.push(o);
         refsNew.push(o2);
-        for (var k in o) {
+        for (const k in o) {
           if (Object.hasOwnProperty.call(o, k) === false) continue;
-          var cur = o[k];
+          const cur = o[k];
           if (typeof cur !== "object" || cur === null) {
             o2[k] = cur;
-          } else if (cur instanceof Date) {
-            o2[k] = new Date(cur);
-          } else if (cur instanceof Map) {
-            o2[k] = new Map(cloneArray(Array.from(cur), clone));
-          } else if (cur instanceof Set) {
-            o2[k] = new Set(cloneArray(Array.from(cur), clone));
+          } else if (cur.constructor !== Object && (handler = constructorHandlers.get(cur.constructor))) {
+            o2[k] = handler(cur, clone);
           } else if (ArrayBuffer.isView(cur)) {
             o2[k] = copyBuffer(cur);
           } else {
-            var i = refs.indexOf(cur);
+            const i = refs.indexOf(cur);
             if (i !== -1) {
               o2[k] = refsNew[i];
             } else {
@@ -189,27 +191,23 @@ var require_rfdc = __commonJS({
       }
       function cloneProto(o) {
         if (typeof o !== "object" || o === null) return o;
-        if (o instanceof Date) return new Date(o);
         if (Array.isArray(o)) return cloneArray(o, cloneProto);
-        if (o instanceof Map) return new Map(cloneArray(Array.from(o), cloneProto));
-        if (o instanceof Set) return new Set(cloneArray(Array.from(o), cloneProto));
-        var o2 = {};
+        if (o.constructor !== Object && (handler = constructorHandlers.get(o.constructor))) {
+          return handler(o, cloneProto);
+        }
+        const o2 = {};
         refs.push(o);
         refsNew.push(o2);
-        for (var k in o) {
-          var cur = o[k];
+        for (const k in o) {
+          const cur = o[k];
           if (typeof cur !== "object" || cur === null) {
             o2[k] = cur;
-          } else if (cur instanceof Date) {
-            o2[k] = new Date(cur);
-          } else if (cur instanceof Map) {
-            o2[k] = new Map(cloneArray(Array.from(cur), cloneProto));
-          } else if (cur instanceof Set) {
-            o2[k] = new Set(cloneArray(Array.from(cur), cloneProto));
+          } else if (cur.constructor !== Object && (handler = constructorHandlers.get(cur.constructor))) {
+            o2[k] = handler(cur, cloneProto);
           } else if (ArrayBuffer.isView(cur)) {
             o2[k] = copyBuffer(cur);
           } else {
-            var i = refs.indexOf(cur);
+            const i = refs.indexOf(cur);
             if (i !== -1) {
               o2[k] = refsNew[i];
             } else {
@@ -250,6 +248,10 @@ function basename(filename, ext) {
     return baseNameWithExt.substring(0, extIndex);
   }
   return "";
+}
+var HTTP_URL_RE = /^https?:\/\//;
+function isUrlString(str) {
+  return str.startsWith("/") || HTTP_URL_RE.test(str);
 }
 var deepClone = (0, import_rfdc.default)({ circles: true });
 init_esm_shims();
@@ -550,7 +552,7 @@ var __toESM2 = (mod, isNodeMode, target21) => (target21 = mod != null ? __create
   mod
 ));
 var init_esm_shims2 = __esm2({
-  "../../node_modules/.pnpm/tsup@8.1.0_@microsoft+api-extractor@7.43.0_@types+node@20.14.2__@swc+core@1.5.29_postcss@8.4.38_typescript@5.4.5/node_modules/tsup/assets/esm_shims.js"() {
+  "../../node_modules/.pnpm/tsup@8.1.0_@microsoft+api-extractor@7.43.0_@types+node@20.14.9__@swc+core@1.5.29_postcss@8.4.38_typescript@5.5.2/node_modules/tsup/assets/esm_shims.js"() {
     "use strict";
   }
 });
@@ -2137,6 +2139,36 @@ init_esm_shims2();
 init_esm_shims2();
 init_esm_shims2();
 init_esm_shims2();
+init_esm_shims2();
+function isReadonly(value) {
+  return !!(value && value[
+    "__v_isReadonly"
+    /* IS_READONLY */
+  ]);
+}
+function isReactive(value) {
+  if (isReadonly(value)) {
+    return isReactive(value[
+      "__v_raw"
+      /* RAW */
+    ]);
+  }
+  return !!(value && value[
+    "__v_isReactive"
+    /* IS_REACTIVE */
+  ]);
+}
+function isRef(r) {
+  return !!(r && r.__v_isRef === true);
+}
+function toRaw(observed) {
+  const raw = observed && observed[
+    "__v_raw"
+    /* RAW */
+  ];
+  return raw ? toRaw(raw) : observed;
+}
+var Fragment = Symbol.for("v-fgt");
 function getComponentTypeName(options) {
   return options.name || options._componentTag || options.__VUE_DEVTOOLS_COMPONENT_GUSSED_NAME__ || options.__name;
 }
@@ -2440,6 +2472,7 @@ function selectComponentFn(e, cb) {
 }
 var inspectComponentHighLighterSelectFn = null;
 function cancelInspectComponentHighLighter() {
+  unhighlight();
   window.removeEventListener("mouseover", inspectFn);
   window.removeEventListener("click", inspectComponentHighLighterSelectFn, true);
   inspectComponentHighLighterSelectFn = null;
@@ -2612,18 +2645,38 @@ function onDevToolsConnected(fn) {
     });
   });
 }
+var resolveIcon = (icon) => {
+  if (!icon)
+    return;
+  if (icon.startsWith("baseline-")) {
+    return `custom-ic-${icon}`;
+  }
+  if (icon.startsWith("i-") || isUrlString(icon))
+    return icon;
+  return `custom-ic-baseline-${icon}`;
+};
 function addCustomTab(tab) {
   const tabs = target.__VUE_DEVTOOLS_KIT_CUSTOM_TABS__;
   if (tabs.some((t) => t.name === tab.name))
     return;
-  tabs.push(tab);
+  tabs.push({
+    ...tab,
+    icon: resolveIcon(tab.icon)
+  });
   updateAllStates();
 }
 function addCustomCommand(action) {
   const commands = target.__VUE_DEVTOOLS_KIT_CUSTOM_COMMANDS__;
   if (commands.some((t) => t.id === action.id))
     return;
-  commands.push(action);
+  commands.push({
+    ...action,
+    icon: resolveIcon(action.icon),
+    children: action.children ? action.children.map((child) => ({
+      ...child,
+      icon: resolveIcon(child.icon)
+    })) : void 0
+  });
   updateAllStates();
 }
 function removeCustomCommand(actionId) {
@@ -2680,7 +2733,7 @@ function getActiveInspectors() {
       id: options.id,
       label: options.label,
       logo: descriptor.logo,
-      icon: `i-ic-baseline-${(_a24 = options == null ? void 0 : options.icon) == null ? void 0 : _a24.replace(/_/g, "-")}`,
+      icon: `custom-ic-baseline-${(_a24 = options == null ? void 0 : options.icon) == null ? void 0 : _a24.replace(/_/g, "-")}`,
       packageName: descriptor.packageName,
       homepage: descriptor.homepage
     };

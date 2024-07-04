@@ -26673,7 +26673,7 @@ sheetfn.appendToStyle = function(style3) {
   }
   return style3;
 };
-var version = "3.29.2";
+var version = "3.29.1";
 var cytoscape = function cytoscape2(options2) {
   if (options2 === void 0) {
     options2 = {};

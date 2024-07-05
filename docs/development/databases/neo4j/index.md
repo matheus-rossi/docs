@@ -205,3 +205,16 @@ Define values during merge
    SET p.born = 2006
 RETURN p
 ```
+
+You can use MERGE to create nodes or relationships:
+```cypher
+MERGE (p:Person {name: 'Michael Caine'})
+MERGE (m:Movie {title: 'The Cider House Rules'})
+MERGE (p)-[:ACTED_IN]->(m)
+```
+
+Another way your can create these nodes and relationship is as follows:
+```cypher
+MERGE (p:Person {name: 'Michael Caine'})-[:ACTED_IN]->(m:Movie {title: 'The Cider House Rules'})
+RETURN p, m
+```

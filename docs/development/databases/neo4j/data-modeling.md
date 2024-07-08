@@ -36,4 +36,5 @@ The instance model is just the model data with actual data.
 * Profile (Execution Plan)
  * `PROFILE MATCH (p:Person)-[:ACTED_IN]-() WHERE p.born < '1950' RETURN p.name`
 * Limit the number of labels for a node to 4.
+* You also want to avoid labeling your nodes to represent hierarchies.
 

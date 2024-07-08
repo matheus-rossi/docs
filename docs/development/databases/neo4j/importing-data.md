@@ -4,7 +4,7 @@
 How to choose the better way to ingest data into neo4j...
 :::
 
-![Importing Data](./Importing-data.png){data-zoomable}
+![Importing Data](./importing-data.png){data-zoomable}
 Click on image to zoom
 
 ## Data Modeler

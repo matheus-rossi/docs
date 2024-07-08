@@ -249,3 +249,11 @@ To remove a label you use the REMOVE clause. Run this code:
 REMOVE p:Developer
 RETURN p
 ```
+
+### Counting
+
+```cypher
+ MATCH (u:User)-[:RATED]-(m:Movie)
+ WHERE m.title = 'Apollo 13'
+RETURN count(*) AS `Number of reviewers`
+```

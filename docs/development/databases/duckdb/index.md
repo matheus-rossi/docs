@@ -6,8 +6,8 @@
 
 DuckDB is an in-process SQL OLAP database management system.
 
-## Installation
-
-:::tip WIP
-Work In Progress
+## Read Delta
+::: tip
+Be sure you are using duckdb >= 1.0
 :::
+

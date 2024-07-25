@@ -55,6 +55,112 @@ documents
 ```
 
 ## Vector Search
+:::tip
+Engine and Methods recommendations.
+
+[OpenSearch Docs](https://opensearch.org/docs/latest/search-plugins/vector-search/#engine-recommendations)
+:::
+
+### Create
+
+```python
+document_body_vector = {
+  "settings": {
+    "index": {
+      "knn": True,
+      "knn.algo_param.ef_search": 100
+    }
+  },
+  "mappings": {
+    "properties": {
+      "embedding": {
+        "type": "knn_vector",
+        "dimension": 1536, # embedding model size
+        "method": {
+          "name": "hnsw",
+          "space_type": "l2",
+          "engine": "nmslib",
+          "parameters": {
+            "ef_construction": 128,
+            "m": 24
+          }
+        }
+      }
+    }
+  }
+}
+
+try:
+    response = client.indices.create(
+        index='INDEX_NAME',
+        body=document_body_vector
+    )
+    print(f"Created index: {response}")
+except Exception as e:
+    print(f"Error creating index: {e}")
+```
+
+### Insert
+
+Example:
+
+```python
+_embeddings = {
+    "cat": embeddings.embed_query("cat"),
+    "tiger": embeddings.embed_query("tiger"),
+    "dog": embeddings.embed_query("dog"),
+    "train": embeddings.embed_query("train"),
+    "airplane": embeddings.embed_query("airplane")
+}
+
+documents = [
+    {"name": "cat", "embedding": _embeddings["cat"]},
+    {"name": "tiger", "embedding": _embeddings["tiger"]},
+    {"name": "dog", "embedding": _embeddings["dog"]},
+    {"name": "train", "embedding": _embeddings["train"]},
+    {"name": "airplane", "embedding": _embeddings["airplane"]}
+]
+
+try:
+    for doc in documents:
+        response = client.index(
+            index='zoomcamp-db-vector',
+            body=doc,
+            refresh=True
+        )
+        print(f"Indexed document ID: {response['_id']}")
+except Exception as e:
+    print(f"Error indexing document: {e}")
+```
+
+### Query
+
+```python
+query_vector = documents[0].get('embedding') # your vector to use in similarity search
+
+# k-NN search request
+knn_search_query = {
+  "size": 5,
+  "query": {
+    "knn": {
+      "embedding": {
+        "vector": query_vector,
+        "k": 3
+      }
+    }
+  }
+}
+
+try:
+    response = client.search(
+        index='zoomcamp-db-vector',
+        body=knn_search_query
+    )
+    for hit in response['hits']['hits']:
+        print(f"Document ID: {hit['_id']}, Score: {hit['_score']}, Name: {hit['_source']['name']}")
+except Exception as e:
+    print(f"Error during k-NN search: {e}")
+```
 
 ## K-NN Search
 

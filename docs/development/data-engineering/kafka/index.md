@@ -33,6 +33,18 @@ Kafka EcoSystem
 [Topic Tale](https://topictale.com/ksqldb/how-to-get-started/)
 :::
 
+## Ksql CLI
+```shell
+$ ./bin/ksql --help
+```
+
+```shell
+--execute <execute>, -e <execute>
+# Execute one or more SQL statements and quit.
+
+--file <scriptFile>, -f <scriptFile>
+# Execute commands from a file and exit.
+```
 
 ### Queries (Pull vs Push)
 

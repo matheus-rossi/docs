@@ -54,7 +54,7 @@ curl -sSL https://install.python-poetry.org | python3 -
 ```
 
 Poetry commands
-```bash
+```shell
 # Create new project
 poetry new my-folder --name my-package
 
@@ -75,4 +75,9 @@ poetry env use python3.7
 
 ## If above command fails, try this
 poetry env use $(pyenv which python)
+```
+
+Generate requirements.txt
+```shell
+poetry export --without-hashes --format=requirements.txt > requirements.txt
 ```

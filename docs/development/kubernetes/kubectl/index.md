@@ -1,8 +1,7 @@
  # Kubectl
 
- ## Copying files from pod to local system
-
-To copy files from a pod to the local system use:
+## Copy file from local to pod
+Now, to copy files from the local system to a pod:
 
  ```bash
 # syntax
@@ -12,9 +11,8 @@ kubectl cp -n <namespace> <source> <pod-name>:<path>
 kubectl cp -n ksql ./file.sql ksql-pod-asd1234:/home/appuser
  ```
 
- ## Copy file from pod to local
-
-Now, to copy files from the local system to a pod:
+## Copying files from pod to local system
+To copy files from a pod to the local system use:
 
  ```bash
 # syntax

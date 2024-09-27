@@ -24,7 +24,7 @@ jobs:
       - run: yarn install --frozen-lockfile
       - name: Build
         run: yarn docs:build
-      - uses: actions/configure-pages@5.0.0
+      - uses: actions/configure-pages@v5.0.0
       - uses: actions/upload-pages-artifact@v3.0.1
         with:
           path: docs/.vitepress/dist

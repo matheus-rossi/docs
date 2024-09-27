@@ -5,7 +5,64 @@
 Python is a programming language that lets you work quickly
 and integrate systems more effectively.
 
-Best practices for installing and creating virtual enviroments to work with python.
+Best practices for installing and creating virtual environments to work with Python.
+
+---
+
+# New tools
+:::tip TIP
+I've been experimenting with UV recently, so this is still a WIP.
+:::
+
+## UV
+
+An extremely fast Python package and project manager, written in Rust.
+
+![UV](./uv-comparison.png)
+
+[Github](https://github.com/astral-sh/uv)
+
+### Install
+```sh
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+### Manage Python
+```sh
+# show installed version
+uv python list
+
+# install python version
+uv python install 3.11.9
+```
+
+### Manage Project and Env
+```sh
+# Init project
+uv init
+
+# Create virtual env with specific python version
+uv venv edai-0001 --python 3.11.9
+
+# Activate virtual env
+source edai-0001/bin/activate
+```
+
+### Install Packages
+```sh
+uv add package
+```
+
+### Run Python
+```sh
+uv run script.py
+```
+
+
+# Consolidated tools
+:::tip TIP
+How most of my projects used to be structured.
+:::
 
 ## PyEnv
 

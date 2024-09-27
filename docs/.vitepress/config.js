@@ -22,6 +22,14 @@ export default withMermaid(
             link: 'development/index.md',
             collapsed: false,
             items: [
+              { 
+                text: 'AI', 
+                collapsed: true,
+                items: [
+                  { text: 'Agents', link: 'development/ai/agents/langgraph/index.md' },
+                  { text: 'LLM', link: 'development/ai/llm/index.md' },
+                ]
+              },
               {
                 text: 'CI / CD', 
                 link: '',
@@ -105,13 +113,6 @@ export default withMermaid(
                 ]
               },
               { text: 'Git', link: 'development/git/index.md' },
-              { 
-                text: 'IA', 
-                collapsed: true,
-                items: [
-                  { text: 'LLM', link: 'development/ia/llm/index.md' },
-                ]
-              },
               { text: 'Terraform', link: 'development/iac/terraform/index.md' },
               { text: 'Kubernetes', link: 'development/kubernetes/index.md' },
               { text: 'Linux', link: 'development/linux/index.md' },

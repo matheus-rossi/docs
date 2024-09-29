@@ -3,23 +3,14 @@
 Work in progress
 :::
 
+# Useful terminal commands
+
+
 ## wget
 ```bash
 wget --quiet  https://sourceforge.net/projects/pentaho/files/Pentaho-9.2/server/pentaho-server-ce-9.2.0.0-290.zip/download -O pentaho.zip
 ```
-## route
 
-Sometimes you need to add a route to a specific network interface. Example:
-
-Your server ip range is 192.168.0.x and your home network is 192.168.0.x
-
-You connect to a vpn, but you change access your server, because it colides with your home network.
-
-```bash
-# x -> your server ip
-# utun3 -> your vpn interface
-sudo route add 192.168.0.x -interface utun3
-```
 ## nohup
 
 Execute process and exit.
@@ -28,29 +19,36 @@ Execute process and exit.
 nohup ./process.sh &
 ```
 
-## Useful Tools
+## Ctrl+R (Reverse Search)
+Press `Ctrl+R` to search through your command history. Type part of a command to find and reuse it.
 
-### GPING
-Ping, but with a graph. 
 
-![Gping](./gping.gif)
-
-[Project GitHub](https://github.com/orf/gping)
+## find
+Search for files in a directory hierarchy.
 
 ```bash
-brew install gping
-```
-Usage:
-
-```bash
-gping google.com -s --clear --watch-interval 1
+find /path/to/search -name "*.txt"
 ```
 
-### Bandwhich
-Show bandwidth usage, connection information, outgoing hosts and DNS queries in real-time
-
-![Bandwhich](./bandwhich.png)
+## grep
+Search for patterns in files or output.
 
 ```bash
-brew install bandwhich
+grep "pattern" file.txt
+grep -r "pattern" /path/to/directory
+```
+
+## ps
+Display information about active processes.
+
+```bash
+ps aux | grep "process_name"
+```
+
+## scp
+
+Securely copy files between hosts on a network.
+
+```bash
+scp file.txt user@remote:/path/to/destination
 ```

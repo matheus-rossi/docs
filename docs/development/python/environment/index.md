@@ -38,11 +38,11 @@ uv python install 3.11.9
 
 ### Manage Project and Env
 ```sh
-# Init project
-uv init
+# Init project and set  minimum supported Python version
+uv init --python 3.9
 
 # Create virtual env with specific python version
-uv venv --python 3.11.9
+uv venv --python 3.9.916
 
 # Activate virtual env
 source edai-0001/bin/activate

@@ -42,7 +42,7 @@ uv python install 3.11.9
 uv init
 
 # Create virtual env with specific python version
-uv venv edai-0001 --python 3.11.9
+uv venv --python 3.11.9
 
 # Activate virtual env
 source edai-0001/bin/activate

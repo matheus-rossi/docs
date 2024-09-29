@@ -6,23 +6,47 @@ Best blog about Python concurrency:
 [SuperFastPython](https://superfastpython.com/)
 :::
 
-## Multiprocessing
+## What to use?
 
-### Threads
+```python
+if io_bound:
+    if io_very_slow:
+        print("Use Asyncio")
+    else:
+        print("Use Threads")
+else:
+    print("Multi Processing")
+```
+
+## Multithreading
 
 Threading is a package that allows us to run multiple threads (tasks, function calls) at the same time. 
 
 ```python
+import logging
+from time import sleep
 from concurrent.futures import ThreadPoolExecutor
 
-tables = ['A', 'B', 'C']
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
-def load_data(table_name):
-    return True
+tables = {
+  'A': 1,
+  'B': 2,
+  'C': 5
+}
+
+def load_data(table):
+    table_name = table[0]
+    time_to_process = table[1]
+    logging.info(f"Loading data from { table_name }")
+    logging.info(f"Task will take { time_to_process } seconds")
+    sleep(time_to_process)
+    return time_to_process
 
 with ThreadPoolExecutor() as executor:
-    futures = [executor.submit(load_data, table_name) for table_name in tables]
+    futures = [executor.submit(load_data, table) for table in tables.items()]
     results = [future.result() for future in futures]
+    logging.info(results)
 ```
 
 ### Process
@@ -30,48 +54,70 @@ with ThreadPoolExecutor() as executor:
 Multiprocessing is a package that supports spawning processes using an API similar to the threading module. 
 
 ```python
-from concurrent.futures import ProcessPoolExecutor
 import os
+import logging
+from time import sleep
+from concurrent.futures import ProcessPoolExecutor, as_completed
 
-def square_numbers():
-    for i in range(100):
-        i * i
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
-processes = []
-num_processes = os.cpu_count()
+def square_numbers(process_number):
 
-with ProcessPoolExecutor() as executor:
-    for _ in range(num_processes):
-        executor.submit(square_numbers)
+    total = 0
+    for i in range(100000000):
+        total += i * i
+    
+    logging.info(f'Finished Process N {process_number}')
+    return total
+
+
+if __name__ == '__main__':
+    num_processes = os.cpu_count()
+
+    with ProcessPoolExecutor() as executor:
+        # Submit tasks and store the Future objects
+        futures = [executor.submit(square_numbers, i) for i in range(num_processes)]
+        
+        # Collect results as they complete
+        results = []
+        for future in as_completed(futures):
+            result = future.result()
+            results.append(result)
+            logging.info(f'Received result: {result}')
+
+    # All results are now available
+    logging.info(f'All results: {results}')
+    logging.info(f'Sum of all results: {sum(results)}')
 ```
 
-### Differences
+## Asyncio
 
-| Api | Number of threads | Number of processes | 
-| --- | --- | --- |
-| Threading | 10 | 1 |
-| Multiprocessing | 1 | 10 |
+Asyncio is a package that allows us to run multiple tasks at the same time.
 
-#### Thread
+```python
+import asyncio
+import logging
 
-* Uses native threads, not a native process.
-* Thread belongs to a process.
-* Shared memory, not inter-process communication.
-* Subject to the GIL, not true parallel execution.
-* Suited to IO-bound tasks, not CPU bound tasks.
-* Create 10s to 1,000s of threads, not really constrained.
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
-#### Process
+async def async_task(task_id, delay):
+    logging.info(f"Task {task_id} starting")
+    
+    await asyncio.sleep(delay)
+    logging.info(f"Task {task_id} completed after {delay} seconds")
+    
+    return delay
 
-* Uses native processes, not native threads.
-* Process has threads, and has child processes.
-* Heavyweight and slower to start, not lightweight and fast to start.
-* Inter-process communication, not shared memory.
-* Suited to CPU-bound tasks, probably not IO-bound tasks.
-* Create 10s of processes, not 100s or 1,000s of tasks.
+async def main():
+    tasks = [
+        async_task('A', 2),
+        async_task('B', 1),
+        async_task('C', 3)
+    ]
+    results = await asyncio.gather(*tasks)
+    logging.info(f"All tasks completed. Results: {results}")
 
-## Async
+if __name__ == '__main__':
+    asyncio.run(main())
 
-::: info WIP
-Work in progress
-:::
+```

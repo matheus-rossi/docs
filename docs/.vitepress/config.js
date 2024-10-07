@@ -100,6 +100,7 @@ export default withMermaid(
                   { text: 'Neo4j', link: 'development/databases/neo4j/index.md' },
                   { text: 'Open Search', link: 'development/databases/opensearch/index.md' },
                   { text: 'PostgreSQL', link: 'development/databases/postgresql/index.md' },
+                  { text: 'Redis', link: 'development/databases/redis/index.md' },
                   { text: 'SQL Server', link: 'development/databases/sql-server/index.md' },
                 ]
               },

@@ -28,14 +28,6 @@ It is designed for speed and space-efficiency.
 
 The new standard for DataFrames in Python (according to the docs).
 
-### DuckDB
-
-![DuckDB](./duckdb.png)
-
-[DuckDB Site](https://duckdb.org/)
-
-DuckDB is an in-process SQL OLAP database management system that is designed to support analytical query workloads. It is optimized for fast query performance and can be used with Python for data analysis.
-
 ### PySpark
 
 ![PySpark](./pyspark.png)

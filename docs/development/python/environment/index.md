@@ -9,12 +9,12 @@ Best practices for installing and creating virtual environments to work with Pyt
 
 ---
 
-# New tools
+## New tools
 :::tip TIP
 I've been experimenting with UV recently, so this is still a WIP.
 :::
 
-## UV
+### UV
 
 An extremely fast Python package and project manager, written in Rust.
 
@@ -22,12 +22,12 @@ An extremely fast Python package and project manager, written in Rust.
 
 [Github](https://github.com/astral-sh/uv)
 
-### Install
+#### Install
 ```sh
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
-### Manage Python
+#### Manage Python
 ```sh
 # show installed version
 uv python list
@@ -36,7 +36,7 @@ uv python list
 uv python install 3.11.9
 ```
 
-### Manage Project and Env
+#### Manage Project and Env
 ```sh
 # Init project and set  minimum supported Python version
 uv init --python 3.9
@@ -45,26 +45,36 @@ uv init --python 3.9
 uv venv --python 3.9.916
 
 # Activate virtual env
-source edai-0001/bin/activate
+source .venv/bin/activate
+
+# Deactivate virtual env
+deactivate
+
+# Add a package to the project
+uv add <package_name>
+
+# Remove Packages
+uv remove <package_name>
+
+# Sync dependencies with the lock file
+uv sync
+
+# Lock the current dependencies to a file
+uv lock
 ```
 
-### Install Packages
-```sh
-uv add package
-```
-
-### Run Python
+#### Run Python
 ```sh
 uv run script.py
 ```
 
 
-# Consolidated tools
+## Consolidated tools
 :::tip TIP
 How most of my projects used to be structured.
 :::
 
-## PyEnv
+### PyEnv
 
 ![PyEnv - Github](./pyenv.png)
 
@@ -97,7 +107,7 @@ pyenv local 3.9.11
 
 ```
 
-## Poetry
+### Poetry
 
 ![Poetry](./poetry.png)
 

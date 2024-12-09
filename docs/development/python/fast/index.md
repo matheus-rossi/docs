@@ -8,6 +8,15 @@ Best blog about Python concurrency:
 
 ## What to use?
 
+| Feature                            | Processes             | Threads              | Async                 |
+|------------------------------------|-----------------------|----------------------|-----------------------|
+| Optimize waiting periods           | Yes (preemptive)      | Yes (preemptive)     | Yes (cooperative)     |
+| Use all CPU cores                  | Yes                   | No                   | No                    |
+| Scalability                        | Low (ones/tens)       | Medium (hundreds)    | High (thousands+)     |
+| Use blocking std library functions | Yes                   | Yes                  | No                    |
+| GIL interference                   | No                    | Some                 | No                    |
+
+
 ```python
 if io_bound:
     if io_very_slow:

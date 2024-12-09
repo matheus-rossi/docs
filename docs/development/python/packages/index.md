@@ -28,6 +28,14 @@ It is designed for speed and space-efficiency.
 
 The new standard for DataFrames in Python (according to the docs).
 
+### DuckDB
+
+![DuckDB](./duckdb.png)
+
+[DuckDB Site](https://duckdb.org/)
+
+DuckDB is an in-process SQL OLAP database management system that is designed to support analytical query workloads. It is optimized for fast query performance and can be used with Python for data analysis.
+
 ### PySpark
 
 ![PySpark](./pyspark.png)
@@ -35,11 +43,6 @@ The new standard for DataFrames in Python (according to the docs).
 See apache spark section to learn more.
 
 [PySpark Section](../../data-engineering/spark/index.md)
-
-## Zip
-::: tip WIP
-Work in progress
-:::
 
 ## Scheduling
 
@@ -57,14 +60,6 @@ Airflow™ is a platform created by the community to programmatically author, sc
 
 See the [Airflow Section](../../data-engineering/airflow/index.md) to learn more.
 
-### Prefect
-::: tip WIP
-Work in progress
-:::
-### Dagster
-::: tip WIP
-Work in progress
-:::
 ## Http
 
 ![HTTP](./http.png)

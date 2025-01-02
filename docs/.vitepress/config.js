@@ -114,7 +114,15 @@ export default withMermaid(
                 ]
               },
               { text: 'Git', link: 'development/git/index.md' },
-              { text: 'Terraform', link: 'development/iac/terraform/index.md' },
+              { 
+                text: 'IaC', 
+                link: '',
+                collapsed: true,
+                items: [
+                  { text: 'Terraform', link: 'development/iac/terraform/index.md' },
+                  { text: 'Pulumi', link: 'development/iac/pulumi/index.md' },
+                ]
+              },
               { text: 'Kubernetes', link: 'development/kubernetes/index.md' },
               { text: 'Linux', link: 'development/linux/index.md' },
               { 

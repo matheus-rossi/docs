@@ -7,6 +7,7 @@ export default withMermaid(
       title: "Matheus's Wiki",
       description: "All my notes, links, and knowledge.",
       logo: '/favicon.ico',
+      ignoreDeadLinks: true,
       themeConfig: {
         search: {
           provider: 'local'

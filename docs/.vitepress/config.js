@@ -23,10 +23,10 @@ export default withMermaid(
             collapsed: false,
             items: [
               { 
-                text: 'AI', 
+                text: 'AI Engineering', 
                 collapsed: true,
                 items: [
-                  { text: 'Agents', link: 'development/ai/agents/langgraph/index.md' },
+                  { text: 'Agents', link: 'development/ai/agents/index.md' },
                   { text: 'LLM', link: 'development/ai/llm/index.md' },
                 ]
               },
@@ -74,6 +74,7 @@ export default withMermaid(
                   { text: 'Apache Airflow', link: 'development/data-engineering/airflow/index.md' },
                   { text: 'Apache Spark', link: 'development/data-engineering/spark/index.md' },
                   { text: 'Apache Kafka', link: 'development/data-engineering/kafka/index.md' },
+                  { text: 'Apache Pinot', link: 'development/data-engineering/pinot/index.md' },
                   { text: 'Concepts', link: 'development/data-engineering/concepts/index.md' },
                   { 
                     text: 'Data Lakehouse', 
@@ -110,7 +111,7 @@ export default withMermaid(
                 collapsed: true,
                 items: [
                   { text: 'Sap Hana', link: 'development/erp/sap-hana/index.md' },
-                  { text: 'Protheus', link: 'development/erp/protheus/index.md' },
+                  { text: 'Totvs Protheus', link: 'development/erp/protheus/index.md' },
                 ]
               },
               { text: 'Git', link: 'development/git/index.md' },

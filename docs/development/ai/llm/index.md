@@ -1,14 +1,5 @@
 # Large Language Models
 
-## LangChain
-![Lang Chain Logo](langchain-logo.png)
-
-LangChain is a framework for developing applications powered by LLMs.
-
-### Useful code
-
-[My Docs](./langchain/index.md)
-
 ## Ollama
 
 ![Ollama Logo](ollama.png)
@@ -17,7 +8,7 @@ LangChain is a framework for developing applications powered by LLMs.
 [Ollama Site](https://ollama.com/)<br>
 :::
 
-The easiest way to run open source models.
+The easiest way to run open source models locally.
 
 ### Installation
 With brew `brew install ollama` or direct download via [Link](https://ollama.com/download/)

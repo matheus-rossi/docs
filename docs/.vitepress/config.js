@@ -98,12 +98,12 @@ export default withMermaid(
                 link: '',
                 collapsed: true,
                 items: [
-                  { text: 'Duckdb', link: 'development/databases/duckdb/index.md' },
-                  { text: 'Neo4j', link: 'development/databases/neo4j/index.md' },
-                  { text: 'Open Search', link: 'development/databases/opensearch/index.md' },
-                  { text: 'PostgreSQL', link: 'development/databases/postgresql/index.md' },
-                  { text: 'Redis', link: 'development/databases/redis/index.md' },
-                  { text: 'SQL Server', link: 'development/databases/sql-server/index.md' },
+                  { text: 'Analytical - Duckdb', link: 'development/databases/duckdb/index.md' },
+                  { text: 'Graph - Neo4j', link: 'development/databases/neo4j/index.md' },
+                  { text: 'Key-Value - Redis', link: 'development/databases/redis/index.md' },
+                  { text: 'NoSQL - OpenSearch', link: 'development/databases/opensearch/index.md' },
+                  { text: 'Relational - PostgreSQL', link: 'development/databases/postgresql/index.md' },
+                  { text: 'Relational - SQL Server', link: 'development/databases/sql-server/index.md' },
                 ]
               },
               { text: 'Documentation', link: 'development/documentation/index.md' },
@@ -144,6 +144,7 @@ export default withMermaid(
                   { text: 'Salesforce', link: 'development/systems/salesforce/index.md' },
                 ]
               },
+              { text: 'Terminal', link: 'development/terminal/index.md' },
             ]
           },
           {

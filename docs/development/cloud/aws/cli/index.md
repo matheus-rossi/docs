@@ -6,6 +6,11 @@
 
 `aws configure list-profiles`
 
+### Create Profile
+
+With SSO
+`aws configure sso`
+
 ## Use Profile
 
 ```

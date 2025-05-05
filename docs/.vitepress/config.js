@@ -63,6 +63,10 @@ export default withMermaid(
                   { 
                     text: 'GCP',
                     link: 'development/cloud/gcp/index.md'
+                  },
+                  {
+                    text: 'Azure',
+                    link: 'development/cloud/azure/index.md'
                   }
                 ]
               },

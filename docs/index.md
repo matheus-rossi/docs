@@ -5,7 +5,7 @@ layout: home
 hero:
   name: "Matheus S. Rossi"
   text: "Wiki"
-  tagline: Almost everything a data engineer needs to know.
+  tagline: Data Engineering, AI Engineering, and more.
   image:
       src: /logo.png
       alt: VitePress

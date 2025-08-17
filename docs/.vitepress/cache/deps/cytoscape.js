@@ -276,6 +276,9 @@ var capitalize = function capitalize2(str) {
   }
   return str.charAt(0).toUpperCase() + str.substring(1);
 };
+var endsWith = function endsWith2(string3, suffix) {
+  return string3.slice(-1 * suffix.length) === suffix;
+};
 var number2 = "(?:[-+]?(?:(?:\\d+|\\d*\\.\\d+)(?:[Ee][+-]?\\d+)?))";
 var rgba = "rgb[a]?\\((" + number2 + "[%]?)\\s*,\\s*(" + number2 + "[%]?)\\s*,\\s*(" + number2 + "[%]?)(?:\\s*,\\s*(" + number2 + "))?\\)";
 var rgbaNoBackRefs = "rgb[a]?\\((?:" + number2 + "[%]?)\\s*,\\s*(?:" + number2 + "[%]?)\\s*,\\s*(?:" + number2 + "[%]?)(?:\\s*,\\s*(?:" + number2 + "))?\\)";
@@ -1028,6 +1031,34 @@ var hashStringsArray = function hashStringsArray2(strs) {
   }
   return hash;
 };
+function rotatePoint(x2, y2, centerX, centerY, angleDegrees) {
+  var angleRadians = angleDegrees * Math.PI / 180;
+  var rotatedX = Math.cos(angleRadians) * (x2 - centerX) - Math.sin(angleRadians) * (y2 - centerY) + centerX;
+  var rotatedY = Math.sin(angleRadians) * (x2 - centerX) + Math.cos(angleRadians) * (y2 - centerY) + centerY;
+  return {
+    x: rotatedX,
+    y: rotatedY
+  };
+}
+var movePointByBoxAspect = function movePointByBoxAspect2(x2, y2, boxX, boxY, skewX, skewY) {
+  return {
+    x: (x2 - boxX) * skewX + boxX,
+    y: (y2 - boxY) * skewY + boxY
+  };
+};
+function rotatePosAndSkewByBox(pos, box, angleDegrees) {
+  if (angleDegrees === 0) return pos;
+  var centerX = (box.x1 + box.x2) / 2;
+  var centerY = (box.y1 + box.y2) / 2;
+  var skewX = box.w / box.h;
+  var skewY = 1 / skewX;
+  var rotated = rotatePoint(pos.x, pos.y, centerX, centerY, angleDegrees);
+  var skewed = movePointByBoxAspect(rotated.x, rotated.y, centerX, centerY, skewX, skewY);
+  return {
+    x: skewed.x,
+    y: skewed.y
+  };
+}
 var warningsEnabled = true;
 var warnSupported = console.warn != null;
 var traceSupported = console.trace != null;
@@ -2474,6 +2505,7 @@ var elesfn$p = {
     return ret;
   }
 };
+var _Math$hypot;
 var copyPosition = function copyPosition2(p2) {
   return {
     x: p2.x,
@@ -2693,16 +2725,6 @@ var clearBoundingBox = function clearBoundingBox2(bb) {
   bb.w = 0;
   bb.h = 0;
 };
-var shiftBoundingBox = function shiftBoundingBox2(bb, dx, dy) {
-  return {
-    x1: bb.x1 + dx,
-    x2: bb.x2 + dx,
-    y1: bb.y1 + dy,
-    y2: bb.y2 + dy,
-    w: bb.w,
-    h: bb.h
-  };
-};
 var updateBoundingBox = function updateBoundingBox2(bb1, bb2) {
   bb1.x1 = Math.min(bb1.x1, bb2.x1);
   bb1.x2 = Math.max(bb1.x2, bb2.x2);
@@ -2796,6 +2818,106 @@ var pointInBoundingBox = function pointInBoundingBox2(bb, pt) {
 var boundingBoxInBoundingBox = function boundingBoxInBoundingBox2(bb1, bb2) {
   return inBoundingBox(bb1, bb2.x1, bb2.y1) && inBoundingBox(bb1, bb2.x2, bb2.y2);
 };
+var hypot = (_Math$hypot = Math.hypot) !== null && _Math$hypot !== void 0 ? _Math$hypot : function(x2, y2) {
+  return Math.sqrt(x2 * x2 + y2 * y2);
+};
+function inflatePolygon(polygon2, d) {
+  if (polygon2.length < 3) {
+    throw new Error("Need at least 3 vertices");
+  }
+  var add3 = function add4(a, b) {
+    return {
+      x: a.x + b.x,
+      y: a.y + b.y
+    };
+  };
+  var sub = function sub2(a, b) {
+    return {
+      x: a.x - b.x,
+      y: a.y - b.y
+    };
+  };
+  var scale2 = function scale3(v, s) {
+    return {
+      x: v.x * s,
+      y: v.y * s
+    };
+  };
+  var cross = function cross2(u, v) {
+    return u.x * v.y - u.y * v.x;
+  };
+  var normalize3 = function normalize4(v) {
+    var len = hypot(v.x, v.y);
+    return len === 0 ? {
+      x: 0,
+      y: 0
+    } : {
+      x: v.x / len,
+      y: v.y / len
+    };
+  };
+  var signedArea = function signedArea2(pts3) {
+    var A = 0;
+    for (var i2 = 0; i2 < pts3.length; i2++) {
+      var p3 = pts3[i2], q2 = pts3[(i2 + 1) % pts3.length];
+      A += p3.x * q2.y - q2.x * p3.y;
+    }
+    return A / 2;
+  };
+  var intersectLines = function intersectLines2(p1, p22, p3, p4) {
+    var r = sub(p22, p1);
+    var s = sub(p4, p3);
+    var denom = cross(r, s);
+    if (Math.abs(denom) < 1e-9) {
+      return add3(p1, scale2(r, 0.5));
+    }
+    var t = cross(sub(p3, p1), s) / denom;
+    return add3(p1, scale2(r, t));
+  };
+  var pts2 = polygon2.map(function(p3) {
+    return {
+      x: p3.x,
+      y: p3.y
+    };
+  });
+  if (signedArea(pts2) < 0) pts2.reverse();
+  var n = pts2.length;
+  var normals = [];
+  for (var i = 0; i < n; i++) {
+    var p2 = pts2[i], q = pts2[(i + 1) % n];
+    var edge = sub(q, p2);
+    var out = normalize3({
+      x: edge.y,
+      y: -edge.x
+    });
+    normals.push(out);
+  }
+  var offsetEdges = normals.map(function(nrm, i2) {
+    var p1 = add3(pts2[i2], scale2(nrm, d));
+    var p22 = add3(pts2[(i2 + 1) % n], scale2(nrm, d));
+    return {
+      p1,
+      p2: p22
+    };
+  });
+  var inflated = [];
+  for (var _i2 = 0; _i2 < n; _i2++) {
+    var prevEdge = offsetEdges[(_i2 - 1 + n) % n];
+    var currEdge = offsetEdges[_i2];
+    var ip = intersectLines(prevEdge.p1, prevEdge.p2, currEdge.p1, currEdge.p2);
+    inflated.push(ip);
+  }
+  return inflated;
+}
+function miterBox(pts2, centerX, centerY, width2, height2, strokeWidth) {
+  var tpts = transformPoints(pts2, centerX, centerY, width2, height2);
+  var offsetPoints = inflatePolygon(tpts, strokeWidth);
+  var bb = makeBoundingBox();
+  offsetPoints.forEach(function(pt) {
+    return expandBoundingBoxByPoint(bb, pt.x, pt.y);
+  });
+  return bb;
+}
 var roundRectangleIntersectLine = function roundRectangleIntersectLine2(x2, y2, nodeX, nodeY, width2, height2, padding) {
   var radius2 = arguments.length > 7 && arguments[7] !== void 0 ? arguments[7] : "auto";
   var cornerRadius = radius2 === "auto" ? getRoundRectangleRadius(width2, height2) : radius2;
@@ -3238,6 +3360,24 @@ var finiteLinesIntersect = function finiteLinesIntersect2(x1, y1, x2, y2, x3, y3
     }
   }
 };
+var transformPoints = function transformPoints2(points, centerX, centerY, width2, height2) {
+  var ret = [];
+  var halfW = width2 / 2;
+  var halfH = height2 / 2;
+  var x2 = centerX;
+  var y2 = centerY;
+  ret.push({
+    x: x2 + halfW * points[0],
+    y: y2 + halfH * points[1]
+  });
+  for (var i = 1; i < points.length / 2; i++) {
+    ret.push({
+      x: x2 + halfW * points[i * 2],
+      y: y2 + halfH * points[i * 2 + 1]
+    });
+  }
+  return ret;
+};
 var polygonIntersectLine = function polygonIntersectLine2(x2, y2, basePoints, centerX, centerY, width2, height2, padding) {
   var intersections = [];
   var intersection2;
@@ -3262,12 +3402,12 @@ var polygonIntersectLine = function polygonIntersectLine2(x2, y2, basePoints, ce
     points = basePoints;
   }
   var currentX, currentY, nextX, nextY;
-  for (var _i2 = 0; _i2 < points.length / 2; _i2++) {
-    currentX = points[_i2 * 2];
-    currentY = points[_i2 * 2 + 1];
-    if (_i2 < points.length / 2 - 1) {
-      nextX = points[(_i2 + 1) * 2];
-      nextY = points[(_i2 + 1) * 2 + 1];
+  for (var _i3 = 0; _i3 < points.length / 2; _i3++) {
+    currentX = points[_i3 * 2];
+    currentY = points[_i3 * 2 + 1];
+    if (_i3 < points.length / 2 - 1) {
+      nextX = points[(_i3 + 1) * 2];
+      nextY = points[(_i3 + 1) * 2 + 1];
     } else {
       nextX = points[0];
       nextY = points[1];
@@ -3307,11 +3447,11 @@ var roundPolygonIntersectLine = function roundPolygonIntersectLine2(x2, y2, base
   if (intersections.length > 2) {
     var lowestIntersection = [intersections[0], intersections[1]];
     var lowestSquaredDistance = Math.pow(lowestIntersection[0] - x2, 2) + Math.pow(lowestIntersection[1] - y2, 2);
-    for (var _i3 = 1; _i3 < intersections.length / 2; _i3++) {
-      var squaredDistance = Math.pow(intersections[_i3 * 2] - x2, 2) + Math.pow(intersections[_i3 * 2 + 1] - y2, 2);
+    for (var _i4 = 1; _i4 < intersections.length / 2; _i4++) {
+      var squaredDistance = Math.pow(intersections[_i4 * 2] - x2, 2) + Math.pow(intersections[_i4 * 2 + 1] - y2, 2);
       if (squaredDistance <= lowestSquaredDistance) {
-        lowestIntersection[0] = intersections[_i3 * 2];
-        lowestIntersection[1] = intersections[_i3 * 2 + 1];
+        lowestIntersection[0] = intersections[_i4 * 2];
+        lowestIntersection[1] = intersections[_i4 * 2 + 1];
         lowestSquaredDistance = squaredDistance;
       }
     }
@@ -3347,17 +3487,17 @@ var fitPolygonToSquare = function fitPolygonToSquare2(points) {
   }
   var sx = 2 / (maxX - minX);
   var sy = 2 / (maxY - minY);
-  for (var _i4 = 0; _i4 < sides; _i4++) {
-    x2 = points[2 * _i4] = points[2 * _i4] * sx;
-    y2 = points[2 * _i4 + 1] = points[2 * _i4 + 1] * sy;
+  for (var _i5 = 0; _i5 < sides; _i5++) {
+    x2 = points[2 * _i5] = points[2 * _i5] * sx;
+    y2 = points[2 * _i5 + 1] = points[2 * _i5 + 1] * sy;
     minX = Math.min(minX, x2);
     maxX = Math.max(maxX, x2);
     minY = Math.min(minY, y2);
     maxY = Math.max(maxY, y2);
   }
   if (minY < -1) {
-    for (var _i5 = 0; _i5 < sides; _i5++) {
-      y2 = points[2 * _i5 + 1] = points[2 * _i5 + 1] + (-1 - minY);
+    for (var _i6 = 0; _i6 < sides; _i6++) {
+      y2 = points[2 * _i6 + 1] = points[2 * _i6 + 1] + (-1 - minY);
     }
   }
   return points;
@@ -3394,6 +3534,70 @@ var getBarrelCurveConstants = function getBarrelCurveConstants2(width2, height2)
     ctrlPtOffsetPct: 0.05
   };
 };
+function satPolygonIntersection(poly1, poly2) {
+  function getAxes(polygon2) {
+    var axes2 = [];
+    for (var i = 0; i < polygon2.length; i++) {
+      var p1 = polygon2[i];
+      var p2 = polygon2[(i + 1) % polygon2.length];
+      var edge = {
+        x: p2.x - p1.x,
+        y: p2.y - p1.y
+      };
+      var normal = {
+        x: -edge.y,
+        y: edge.x
+      };
+      var length = Math.sqrt(normal.x * normal.x + normal.y * normal.y);
+      axes2.push({
+        x: normal.x / length,
+        y: normal.y / length
+      });
+    }
+    return axes2;
+  }
+  function project(polygon2, axis2) {
+    var min4 = Infinity;
+    var max5 = -Infinity;
+    var _iterator = _createForOfIteratorHelper(polygon2), _step;
+    try {
+      for (_iterator.s(); !(_step = _iterator.n()).done; ) {
+        var point = _step.value;
+        var projection2 = point.x * axis2.x + point.y * axis2.y;
+        min4 = Math.min(min4, projection2);
+        max5 = Math.max(max5, projection2);
+      }
+    } catch (err) {
+      _iterator.e(err);
+    } finally {
+      _iterator.f();
+    }
+    return {
+      min: min4,
+      max: max5
+    };
+  }
+  function overlaps(proj12, proj22) {
+    return !(proj12.max < proj22.min || proj22.max < proj12.min);
+  }
+  var axes = [].concat(_toConsumableArray(getAxes(poly1)), _toConsumableArray(getAxes(poly2)));
+  var _iterator2 = _createForOfIteratorHelper(axes), _step2;
+  try {
+    for (_iterator2.s(); !(_step2 = _iterator2.n()).done; ) {
+      var axis = _step2.value;
+      var proj1 = project(poly1, axis);
+      var proj2 = project(poly2, axis);
+      if (!overlaps(proj1, proj2)) {
+        return false;
+      }
+    }
+  } catch (err) {
+    _iterator2.e(err);
+  } finally {
+    _iterator2.f();
+  }
+  return true;
+}
 var pageRankDefaults = defaults$g({
   dampingFactor: 0.8,
   precision: 1e-6,
@@ -8895,40 +9099,38 @@ var updateBoundsFromOutline = function updateBoundsFromOutline2(bounds2, ele) {
   }
   var outlineOpacity = ele.pstyle("outline-opacity").value;
   var outlineWidth = ele.pstyle("outline-width").value;
-  if (outlineOpacity > 0 && outlineWidth > 0) {
-    var outlineOffset = ele.pstyle("outline-offset").value;
-    var nodeShape = ele.pstyle("shape").value;
-    var outlineSize = outlineWidth + outlineOffset;
-    var scaleX = (bounds2.w + outlineSize * 2) / bounds2.w;
-    var scaleY = (bounds2.h + outlineSize * 2) / bounds2.h;
-    var xOffset = 0;
-    var yOffset = 0;
-    if (["diamond", "pentagon", "round-triangle"].includes(nodeShape)) {
-      scaleX = (bounds2.w + outlineSize * 2.4) / bounds2.w;
-      yOffset = -outlineSize / 3.6;
-    } else if (["concave-hexagon", "rhomboid", "right-rhomboid"].includes(nodeShape)) {
-      scaleX = (bounds2.w + outlineSize * 2.4) / bounds2.w;
-    } else if (nodeShape === "star") {
-      scaleX = (bounds2.w + outlineSize * 2.8) / bounds2.w;
-      scaleY = (bounds2.h + outlineSize * 2.6) / bounds2.h;
-      yOffset = -outlineSize / 3.8;
-    } else if (nodeShape === "triangle") {
-      scaleX = (bounds2.w + outlineSize * 2.8) / bounds2.w;
-      scaleY = (bounds2.h + outlineSize * 2.4) / bounds2.h;
-      yOffset = -outlineSize / 1.4;
-    } else if (nodeShape === "vee") {
-      scaleX = (bounds2.w + outlineSize * 4.4) / bounds2.w;
-      scaleY = (bounds2.h + outlineSize * 3.8) / bounds2.h;
-      yOffset = -outlineSize * 0.5;
-    }
-    var hDelta = bounds2.h * scaleY - bounds2.h;
-    var wDelta = bounds2.w * scaleX - bounds2.w;
-    expandBoundingBoxSides(bounds2, [Math.ceil(hDelta / 2), Math.ceil(wDelta / 2)]);
-    if (xOffset != 0 || yOffset !== 0) {
-      var oBounds = shiftBoundingBox(bounds2, xOffset, yOffset);
-      updateBoundingBox(bounds2, oBounds);
-    }
+  var outlineOffset = ele.pstyle("outline-offset").value;
+  var expansion = outlineWidth + outlineOffset;
+  updateBoundsFromMiter(bounds2, ele, outlineOpacity, expansion, "outside", expansion / 2);
+};
+var updateBoundsFromMiter = function updateBoundsFromMiter2(bounds2, ele, opacity, expansionSize, expansionPosition, useFallbackValue) {
+  if (opacity === 0 || expansionSize <= 0 || expansionPosition === "inside") {
+    return;
   }
+  var cy = ele.cy();
+  var shape = ele.pstyle("shape").value;
+  var rshape = cy.renderer().nodeShapes[shape];
+  var _ele$position = ele.position(), x2 = _ele$position.x, y2 = _ele$position.y;
+  var w = ele.width();
+  var h = ele.height();
+  if (rshape.hasMiterBounds) {
+    if (expansionPosition === "center") {
+      expansionSize /= 2;
+    }
+    var mbb = rshape.miterBounds(x2, y2, w, h, expansionSize);
+    updateBoundsFromBox(bounds2, mbb);
+  } else if (useFallbackValue != null && useFallbackValue > 0) {
+    expandBoundingBoxSides(bounds2, [useFallbackValue, useFallbackValue, useFallbackValue, useFallbackValue]);
+  }
+};
+var updateBoundsFromMiterBorder = function updateBoundsFromMiterBorder2(bounds2, ele) {
+  if (ele.cy().headless()) {
+    return;
+  }
+  var borderOpacity = ele.pstyle("border-opacity").value;
+  var borderWidth = ele.pstyle("border-width").pfValue;
+  var borderPosition = ele.pstyle("border-position").value;
+  updateBoundsFromMiter(bounds2, ele, borderOpacity, borderWidth, borderPosition);
 };
 var boundingBoxImpl = function boundingBoxImpl2(ele, options2) {
   var cy = ele._private.cy;
@@ -8983,8 +9185,14 @@ var boundingBoxImpl = function boundingBoxImpl2(ele, options2) {
       ey1 = y2 - halfH;
       ey2 = y2 + halfH;
       updateBounds(bounds2, ex1, ey1, ex2, ey2);
-      if (styleEnabled2 && options2.includeOutlines) {
+      if (styleEnabled2) {
         updateBoundsFromOutline(bounds2, ele);
+      }
+      if (styleEnabled2 && options2.includeOutlines && !headless2) {
+        updateBoundsFromOutline(bounds2, ele);
+      }
+      if (styleEnabled2) {
+        updateBoundsFromMiterBorder(bounds2, ele);
       }
     } else if (isEdge2 && options2.includeEdges) {
       if (styleEnabled2 && !headless2) {
@@ -9017,7 +9225,7 @@ var boundingBoxImpl = function boundingBoxImpl2(ele, options2) {
             }
             updateBounds(bounds2, ex1 - wHalf, ey1 - wHalf, ex2 + wHalf, ey2 + wHalf);
           }
-        } else if (curveStyle === "bezier" || curveStyle === "unbundled-bezier" || curveStyle.endsWith("segments") || curveStyle.endsWith("taxi")) {
+        } else if (curveStyle === "bezier" || curveStyle === "unbundled-bezier" || endsWith(curveStyle, "segments") || endsWith(curveStyle, "taxi")) {
           var pts2;
           switch (curveStyle) {
             case "bezier":
@@ -9368,7 +9576,15 @@ var defineDimFns = function defineDimFns2(opts) {
     if (ele) {
       if (styleEnabled2) {
         var dim = ele[opts.name]();
-        var border = ele.pstyle("border-width").pfValue;
+        var borderPos = ele.pstyle("border-position").value;
+        var border;
+        if (borderPos === "center") {
+          border = ele.pstyle("border-width").pfValue;
+        } else if (borderPos === "outside") {
+          border = 2 * ele.pstyle("border-width").pfValue;
+        } else {
+          border = 0;
+        }
         var padding = 2 * ele.padding();
         return dim + border + padding;
       } else {
@@ -13120,12 +13336,13 @@ styfn$8.updateStyleHints = function(ele) {
     _p.targetLabelStyleKey = combineHashesArray(hashArrays(sk.commonLabel, targetLabelKeys));
   }
   if (isNode2) {
-    var _p$styleKeys = _p.styleKeys, nodeBody = _p$styleKeys.nodeBody, nodeBorder = _p$styleKeys.nodeBorder, nodeOutline = _p$styleKeys.nodeOutline, backgroundImage = _p$styleKeys.backgroundImage, compound = _p$styleKeys.compound, pie = _p$styleKeys.pie;
-    var nodeKeys = [nodeBody, nodeBorder, nodeOutline, backgroundImage, compound, pie].filter(function(k) {
+    var _p$styleKeys = _p.styleKeys, nodeBody = _p$styleKeys.nodeBody, nodeBorder = _p$styleKeys.nodeBorder, nodeOutline = _p$styleKeys.nodeOutline, backgroundImage = _p$styleKeys.backgroundImage, compound = _p$styleKeys.compound, pie = _p$styleKeys.pie, stripe = _p$styleKeys.stripe;
+    var nodeKeys = [nodeBody, nodeBorder, nodeOutline, backgroundImage, compound, pie, stripe].filter(function(k) {
       return k != null;
     }).reduce(hashArrays, [DEFAULT_HASH_SEED, DEFAULT_HASH_SEED_ALT]);
     _p.nodeKey = combineHashesArray(nodeKeys);
     _p.hasPie = pie != null && pie[0] !== DEFAULT_HASH_SEED && pie[1] !== DEFAULT_HASH_SEED_ALT;
+    _p.hasStripe = stripe != null && stripe[0] !== DEFAULT_HASH_SEED && stripe[1] !== DEFAULT_HASH_SEED_ALT;
   }
   return oldStyleKey !== _p.styleKey;
 };
@@ -13142,6 +13359,7 @@ styfn$8.clearStyleHints = function(ele) {
   _p.targetLabelStyleKey = null;
   _p.nodeKey = null;
   _p.hasPie = null;
+  _p.hasStripe = null;
 };
 styfn$8.applyParsedProperty = function(ele, parsedProp) {
   var self2 = this;
@@ -14012,6 +14230,12 @@ var styfn$2 = {};
     axisDirection: {
       enums: ["horizontal", "leftward", "rightward", "vertical", "upward", "downward", "auto"]
     },
+    axisDirectionExplicit: {
+      enums: ["leftward", "rightward", "upward", "downward"]
+    },
+    axisDirectionPrimary: {
+      enums: ["horizontal", "vertical"]
+    },
     paddingRelativeTo: {
       enums: ["width", "height", "average", "min", "max"]
     },
@@ -14050,6 +14274,9 @@ var styfn$2 = {};
     bgContainment: {
       enums: ["inside", "over"],
       multiple: true
+    },
+    boxSelection: {
+      enums: ["contain", "overlap", "none"]
     },
     color: {
       color: true
@@ -14112,7 +14339,7 @@ var styfn$2 = {};
       enums: ["whitespace", "anywhere"]
     },
     textBackgroundShape: {
-      enums: ["rectangle", "roundrectangle", "round-rectangle"]
+      enums: ["rectangle", "roundrectangle", "round-rectangle", "circle"]
     },
     nodeShape: {
       enums: ["rectangle", "roundrectangle", "round-rectangle", "cutrectangle", "cut-rectangle", "bottomroundrectangle", "bottom-round-rectangle", "barrel", "ellipse", "triangle", "round-triangle", "square", "pentagon", "round-pentagon", "hexagon", "round-hexagon", "concavehexagon", "concave-hexagon", "heptagon", "round-heptagon", "octagon", "round-octagon", "tag", "round-tag", "star", "diamond", "round-diamond", "vee", "rhomboid", "right-rhomboid", "polygon"]
@@ -14449,6 +14676,10 @@ var styfn$2 = {};
   }, {
     name: "text-justification",
     type: t.justification
+  }, {
+    name: "box-select-labels",
+    type: t.bool,
+    triggersBounds: diff2.any
   }];
   var behavior = [{
     name: "events",
@@ -14457,6 +14688,10 @@ var styfn$2 = {};
   }, {
     name: "text-events",
     type: t.bool,
+    triggersZOrder: diff2.any
+  }, {
+    name: "box-selection",
+    type: t.boxSelection,
     triggersZOrder: diff2.any
   }];
   var visibility = [{
@@ -14915,6 +15150,14 @@ var styfn$2 = {};
     name: "pie-size",
     type: t.sizeMaybePercent
   });
+  pie.push({
+    name: "pie-hole",
+    type: t.sizeMaybePercent
+  });
+  pie.push({
+    name: "pie-start-angle",
+    type: t.angle
+  });
   for (var i = 1; i <= styfn$2.pieBackgroundN; i++) {
     pie.push({
       name: "pie-" + i + "-background-color",
@@ -14926,6 +15169,30 @@ var styfn$2 = {};
     });
     pie.push({
       name: "pie-" + i + "-background-opacity",
+      type: t.zeroOneNumber
+    });
+  }
+  var stripe = [];
+  styfn$2.stripeBackgroundN = 16;
+  stripe.push({
+    name: "stripe-size",
+    type: t.sizeMaybePercent
+  });
+  stripe.push({
+    name: "stripe-direction",
+    type: t.axisDirectionPrimary
+  });
+  for (var _i = 1; _i <= styfn$2.stripeBackgroundN; _i++) {
+    stripe.push({
+      name: "stripe-" + _i + "-background-color",
+      type: t.color
+    });
+    stripe.push({
+      name: "stripe-" + _i + "-background-size",
+      type: t.percent
+    });
+    stripe.push({
+      name: "stripe-" + _i + "-background-opacity",
       type: t.zeroOneNumber
     });
   }
@@ -14955,7 +15222,7 @@ var styfn$2 = {};
       });
     });
   }, {});
-  var props = styfn$2.properties = [].concat(behavior, transition, visibility, overlay, underlay, ghost, commonLabel, labelDimensions, mainLabel, sourceLabel, targetLabel, nodeBody, nodeBorder, nodeOutline, backgroundImage, pie, compound, edgeLine, edgeArrow, core3);
+  var props = styfn$2.properties = [].concat(behavior, transition, visibility, overlay, underlay, ghost, commonLabel, labelDimensions, mainLabel, sourceLabel, targetLabel, nodeBody, nodeBorder, nodeOutline, backgroundImage, pie, stripe, compound, edgeLine, edgeArrow, core3);
   var propGroups = styfn$2.propertyGroups = {
     // common to all eles
     behavior,
@@ -14976,6 +15243,7 @@ var styfn$2 = {};
     nodeOutline,
     backgroundImage,
     pie,
+    stripe,
     compound,
     // edge props
     edgeLine,
@@ -15029,12 +15297,12 @@ var styfn$2 = {};
   styfn$2.propertyNames = props.map(function(p2) {
     return p2.name;
   });
-  for (var _i = 0; _i < props.length; _i++) {
-    var prop = props[_i];
+  for (var _i2 = 0; _i2 < props.length; _i2++) {
+    var prop = props[_i2];
     props[prop.name] = prop;
   }
-  for (var _i2 = 0; _i2 < aliases.length; _i2++) {
-    var alias = aliases[_i2];
+  for (var _i3 = 0; _i3 < aliases.length; _i3++) {
+    var alias = aliases[_i3];
     var pointsToProp = props[alias.pointsTo];
     var aliasProp = {
       name: alias.name,
@@ -15072,6 +15340,7 @@ styfn$2.getDefaultProperties = function() {
     "text-justification": "auto",
     "line-height": 1,
     "color": "#000",
+    "box-selection": "contain",
     "text-outline-color": "#000",
     "text-outline-width": 0,
     "text-outline-opacity": 1,
@@ -15128,6 +15397,7 @@ styfn$2.getDefaultProperties = function() {
     "transition-duration": 0,
     "transition-delay": 0,
     "transition-timing-function": "linear",
+    "box-select-labels": "no",
     // node props
     "background-blacken": 0,
     "background-color": "#999",
@@ -15191,7 +15461,9 @@ styfn$2.getDefaultProperties = function() {
     "min-height-bias-bottom": 0
   }, {
     // node pie bg
-    "pie-size": "100%"
+    "pie-size": "100%",
+    "pie-hole": 0,
+    "pie-start-angle": "0deg"
   }, [{
     name: "pie-{{i}}-background-color",
     value: "black"
@@ -15203,6 +15475,26 @@ styfn$2.getDefaultProperties = function() {
     value: 1
   }].reduce(function(css, prop2) {
     for (var i2 = 1; i2 <= styfn$2.pieBackgroundN; i2++) {
+      var name2 = prop2.name.replace("{{i}}", i2);
+      var val2 = prop2.value;
+      css[name2] = val2;
+    }
+    return css;
+  }, {}), {
+    // node stripes bg
+    "stripe-size": "100%",
+    "stripe-direction": "horizontal"
+  }, [{
+    name: "stripe-{{i}}-background-color",
+    value: "black"
+  }, {
+    name: "stripe-{{i}}-background-size",
+    value: "0%"
+  }, {
+    name: "stripe-{{i}}-background-opacity",
+    value: 1
+  }].reduce(function(css, prop2) {
+    for (var i2 = 1; i2 <= styfn$2.stripeBackgroundN; i2++) {
       var name2 = prop2.name.replace("{{i}}", i2);
       var val2 = prop2.value;
       css[name2] = val2;
@@ -15720,6 +16012,9 @@ styfn.cssRule = function(name, value) {
     this[i].properties[property.name] = property;
     if (property.name.match(/pie-(\d+)-background-size/) && property.value) {
       this._private.hasPie = true;
+    }
+    if (property.name.match(/stripe-(\d+)-background-size/) && property.value) {
+      this._private.hasStripe = true;
     }
     if (property.mapped) {
       this[i].mappedProperties.push(property);
@@ -16700,6 +16995,8 @@ var defaults$7 = {
   // whether to fit the viewport to the graph
   directed: false,
   // whether the tree is directed downwards (or edges can point in any direction if false)
+  direction: "downward",
+  // determines the direction in which the tree structure is drawn.  The possible values are 'downward', 'upward', 'rightward', or 'leftward'.
   padding: 30,
   // padding on fit
   circle: false,
@@ -16763,13 +17060,7 @@ BreadthFirstLayout.prototype.run = function() {
   var directed = options2.directed;
   var maximal = options2.acyclic || options2.maximal || options2.maximalAdjustments > 0;
   var hasBoundingBox = !!options2.boundingBox;
-  var cyExtent = cy.extent();
-  var bb = makeBoundingBox(hasBoundingBox ? options2.boundingBox : {
-    x1: cyExtent.x1,
-    y1: cyExtent.y1,
-    w: cyExtent.w,
-    h: cyExtent.h
-  });
+  var bb = makeBoundingBox(hasBoundingBox ? options2.boundingBox : structuredClone(cy.extent()));
   var roots;
   if (elementOrCollection(options2.roots)) {
     roots = options2.roots;
@@ -17013,7 +17304,7 @@ BreadthFirstLayout.prototype.run = function() {
   var maxDepthSize = depths.reduce(function(max5, eles2) {
     return Math.max(max5, eles2.length);
   }, 0);
-  var getPosition = function getPosition2(ele2) {
+  var getPositionTopBottom = function getPositionTopBottom2(ele2) {
     var _getInfo2 = getInfo(ele2), depth = _getInfo2.depth, index = _getInfo2.index;
     if (options2.circle) {
       var radiusStepSize = Math.min(bb.w / 2 / depthsLen, bb.h / 2 / depthsLen);
@@ -17043,6 +17334,18 @@ BreadthFirstLayout.prototype.run = function() {
       };
       return epos;
     }
+  };
+  var rotateDegrees = {
+    "downward": 0,
+    "leftward": 90,
+    "upward": 180,
+    "rightward": -90
+  };
+  if (Object.keys(rotateDegrees).indexOf(options2.direction) === -1) {
+    error("Invalid direction '".concat(options2.direction, "' specified for breadthfirst layout. Valid values are: ").concat(Object.keys(rotateDegrees).join(", ")));
+  }
+  var getPosition = function getPosition2(ele2) {
+    return rotatePosAndSkewByBox(getPositionTopBottom(ele2), bb, rotateDegrees[options2.direction]);
   };
   eles.nodes().layoutPositions(this, options2, getPosition);
   return this;
@@ -17706,8 +18009,8 @@ var getScaleInBoundsFn = function getScaleInBoundsFn2(layoutInfo, options2, node
   return function(ele, i) {
     var lnode = layoutInfo.layoutNodes[layoutInfo.idToIndex[ele.data("id")]];
     if (options2.boundingBox) {
-      var pctX = (lnode.positionX - coseBB.x1) / coseBB.w;
-      var pctY = (lnode.positionY - coseBB.y1) / coseBB.h;
+      var pctX = coseBB.w === 0 ? 0.5 : (lnode.positionX - coseBB.x1) / coseBB.w;
+      var pctY = coseBB.h === 0 ? 0.5 : (lnode.positionY - coseBB.y1) / coseBB.h;
       return {
         x: bb.x1 + pctX * bb.w,
         y: bb.y1 + pctY * bb.h
@@ -18519,7 +18822,7 @@ BRp$f.registerArrowShapes = function() {
       y: yTranslated
     };
   };
-  var transformPoints = function transformPoints2(pts2, size3, angle2, translation) {
+  var transformPoints3 = function transformPoints4(pts2, size3, angle2, translation) {
     var retPts = [];
     for (var i = 0; i < pts2.length; i += 2) {
       var x2 = pts2[i];
@@ -18547,13 +18850,13 @@ BRp$f.registerArrowShapes = function() {
       name,
       points: [-0.15, -0.3, 0.15, -0.3, 0.15, 0.3, -0.15, 0.3],
       collide: function collide(x2, y2, size3, angle2, translation, padding) {
-        var points = pointsToArr(transformPoints(this.points, size3 + 2 * padding, angle2, translation));
+        var points = pointsToArr(transformPoints3(this.points, size3 + 2 * padding, angle2, translation));
         var inside = pointInsidePolygonPoints(x2, y2, points);
         return inside;
       },
       roughCollide: bbCollide,
       draw: function draw(context, size3, angle2, translation) {
-        var points = transformPoints(this.points, size3, angle2, translation);
+        var points = transformPoints3(this.points, size3, angle2, translation);
         renderer3.arrowShapeImpl("polygon")(context, points);
       },
       spacing: function spacing(edge) {
@@ -18578,7 +18881,7 @@ BRp$f.registerArrowShapes = function() {
     controlPoint: [0, -0.15],
     roughCollide: bbCollide,
     draw: function draw(context, size3, angle2, translation, edgeWidth) {
-      var ptsTrans = transformPoints(this.points, size3, angle2, translation);
+      var ptsTrans = transformPoints3(this.points, size3, angle2, translation);
       var ctrlPt = this.controlPoint;
       var ctrlPtTrans = transform7(ctrlPt[0], ctrlPt[1], size3, angle2, translation);
       renderer3.arrowShapeImpl(this.name)(context, ptsTrans, ctrlPtTrans);
@@ -18591,14 +18894,14 @@ BRp$f.registerArrowShapes = function() {
     points: [0, 0, 0.15, -0.3, -0.15, -0.3, 0, 0],
     pointsTee: [-0.15, -0.4, -0.15, -0.5, 0.15, -0.5, 0.15, -0.4],
     collide: function collide(x2, y2, size3, angle2, translation, edgeWidth, padding) {
-      var triPts = pointsToArr(transformPoints(this.points, size3 + 2 * padding, angle2, translation));
-      var teePts = pointsToArr(transformPoints(this.pointsTee, size3 + 2 * padding, angle2, translation));
+      var triPts = pointsToArr(transformPoints3(this.points, size3 + 2 * padding, angle2, translation));
+      var teePts = pointsToArr(transformPoints3(this.pointsTee, size3 + 2 * padding, angle2, translation));
       var inside = pointInsidePolygonPoints(x2, y2, triPts) || pointInsidePolygonPoints(x2, y2, teePts);
       return inside;
     },
     draw: function draw(context, size3, angle2, translation, edgeWidth) {
-      var triPts = transformPoints(this.points, size3, angle2, translation);
-      var teePts = transformPoints(this.pointsTee, size3, angle2, translation);
+      var triPts = transformPoints3(this.points, size3, angle2, translation);
+      var teePts = transformPoints3(this.pointsTee, size3, angle2, translation);
       renderer3.arrowShapeImpl(this.name)(context, triPts, teePts);
     }
   });
@@ -18608,11 +18911,11 @@ BRp$f.registerArrowShapes = function() {
     collide: function collide(x2, y2, size3, angle2, translation, edgeWidth, padding) {
       var t = translation;
       var circleInside = Math.pow(t.x - x2, 2) + Math.pow(t.y - y2, 2) <= Math.pow((size3 + 2 * padding) * this.radius, 2);
-      var triPts = pointsToArr(transformPoints(this.points, size3 + 2 * padding, angle2, translation));
+      var triPts = pointsToArr(transformPoints3(this.points, size3 + 2 * padding, angle2, translation));
       return pointInsidePolygonPoints(x2, y2, triPts) || circleInside;
     },
     draw: function draw(context, size3, angle2, translation, edgeWidth) {
-      var triPts = transformPoints(this.pointsTr, size3, angle2, translation);
+      var triPts = transformPoints3(this.pointsTr, size3, angle2, translation);
       renderer3.arrowShapeImpl(this.name)(context, triPts, translation.x, translation.y, this.radius * size3);
     },
     spacing: function spacing(edge) {
@@ -18643,14 +18946,14 @@ BRp$f.registerArrowShapes = function() {
       return p2;
     },
     collide: function collide(x2, y2, size3, angle2, translation, edgeWidth, padding) {
-      var triPts = pointsToArr(transformPoints(this.points, size3 + 2 * padding, angle2, translation));
-      var teePts = pointsToArr(transformPoints(this.crossLinePts(size3, edgeWidth), size3 + 2 * padding, angle2, translation));
+      var triPts = pointsToArr(transformPoints3(this.points, size3 + 2 * padding, angle2, translation));
+      var teePts = pointsToArr(transformPoints3(this.crossLinePts(size3, edgeWidth), size3 + 2 * padding, angle2, translation));
       var inside = pointInsidePolygonPoints(x2, y2, triPts) || pointInsidePolygonPoints(x2, y2, teePts);
       return inside;
     },
     draw: function draw(context, size3, angle2, translation, edgeWidth) {
-      var triPts = transformPoints(this.points, size3, angle2, translation);
-      var crossLinePts = transformPoints(this.crossLinePts(size3, edgeWidth), size3, angle2, translation);
+      var triPts = transformPoints3(this.points, size3, angle2, translation);
+      var crossLinePts = transformPoints3(this.crossLinePts(size3, edgeWidth), size3, angle2, translation);
       renderer3.arrowShapeImpl(this.name)(context, triPts, crossLinePts);
     }
   });
@@ -18961,6 +19264,8 @@ BRp$e.findNearestElements = function(x2, y2, interactiveElementsOnly, isTouch) {
 };
 BRp$e.getAllInBox = function(x1, y1, x2, y2) {
   var eles = this.getCachedZSortedEles().interactive;
+  var zoom2 = this.cy.zoom();
+  var labelThreshold = 2 / zoom2;
   var box = [];
   var x1c = Math.min(x1, x2);
   var x2c = Math.max(x1, x2);
@@ -18976,42 +19281,209 @@ BRp$e.getAllInBox = function(x1, y1, x2, y2) {
     x2,
     y2
   });
+  var selectionBox = [{
+    x: boxBb.x1,
+    y: boxBb.y1
+  }, {
+    x: boxBb.x2,
+    y: boxBb.y1
+  }, {
+    x: boxBb.x2,
+    y: boxBb.y2
+  }, {
+    x: boxBb.x1,
+    y: boxBb.y2
+  }];
+  var boxEdges = [[selectionBox[0], selectionBox[1]], [selectionBox[1], selectionBox[2]], [selectionBox[2], selectionBox[3]], [selectionBox[3], selectionBox[0]]];
+  function preprop(obj, name, pre) {
+    return getPrefixedProperty(obj, name, pre);
+  }
+  function getRotatedLabelBox(ele2, prefix) {
+    var _p2 = ele2._private;
+    var th = labelThreshold;
+    var prefixDash = "";
+    ele2.boundingBox();
+    var bb = _p2.labelBounds["main"];
+    if (!bb) {
+      return null;
+    }
+    var lx = preprop(_p2.rscratch, "labelX", prefix);
+    var ly = preprop(_p2.rscratch, "labelY", prefix);
+    var theta = preprop(_p2.rscratch, "labelAngle", prefix);
+    var ox = ele2.pstyle(prefixDash + "text-margin-x").pfValue;
+    var oy = ele2.pstyle(prefixDash + "text-margin-y").pfValue;
+    var lx1 = bb.x1 - th - ox;
+    var lx2 = bb.x2 + th - ox;
+    var ly1 = bb.y1 - th - oy;
+    var ly2 = bb.y2 + th - oy;
+    if (theta) {
+      var cos2 = Math.cos(theta);
+      var sin2 = Math.sin(theta);
+      var rotate2 = function rotate3(x3, y3) {
+        x3 = x3 - lx;
+        y3 = y3 - ly;
+        return {
+          x: x3 * cos2 - y3 * sin2 + lx,
+          y: x3 * sin2 + y3 * cos2 + ly
+        };
+      };
+      return [rotate2(lx1, ly1), rotate2(lx2, ly1), rotate2(lx2, ly2), rotate2(lx1, ly2)];
+    } else {
+      return [{
+        x: lx1,
+        y: ly1
+      }, {
+        x: lx2,
+        y: ly1
+      }, {
+        x: lx2,
+        y: ly2
+      }, {
+        x: lx1,
+        y: ly2
+      }];
+    }
+  }
+  function doLinesIntersect(p1, p2, q1, q2) {
+    function ccw(a, b2, c) {
+      return (c.y - a.y) * (b2.x - a.x) > (b2.y - a.y) * (c.x - a.x);
+    }
+    return ccw(p1, q1, q2) !== ccw(p2, q1, q2) && ccw(p1, p2, q1) !== ccw(p1, p2, q2);
+  }
   for (var e = 0; e < eles.length; e++) {
     var ele = eles[e];
     if (ele.isNode()) {
       var node = ele;
+      var textEvents = node.pstyle("text-events").strValue === "yes";
+      var nodeBoxSelectMode = node.pstyle("box-selection").strValue;
+      var labelBoxSelectEnabled = node.pstyle("box-select-labels").strValue === "yes";
+      if (nodeBoxSelectMode === "none") {
+        continue;
+      }
+      var includeLabels = (nodeBoxSelectMode === "overlap" || labelBoxSelectEnabled) && textEvents;
       var nodeBb = node.boundingBox({
         includeNodes: true,
         includeEdges: false,
-        includeLabels: false
+        includeLabels
       });
-      if (boundingBoxesIntersect(boxBb, nodeBb) && !boundingBoxInBoundingBox(nodeBb, boxBb)) {
-        box.push(node);
+      if (nodeBoxSelectMode === "contain") {
+        var selected = false;
+        if (labelBoxSelectEnabled && textEvents) {
+          var rotatedLabelBox = getRotatedLabelBox(node);
+          if (rotatedLabelBox && satPolygonIntersection(rotatedLabelBox, selectionBox)) {
+            box.push(node);
+            selected = true;
+          }
+        }
+        if (!selected && boundingBoxInBoundingBox(boxBb, nodeBb)) {
+          box.push(node);
+        }
+      } else if (nodeBoxSelectMode === "overlap") {
+        if (boundingBoxesIntersect(boxBb, nodeBb)) {
+          var nodeBodyBb = node.boundingBox({
+            includeNodes: true,
+            includeEdges: true,
+            includeLabels: false,
+            includeMainLabels: false,
+            includeSourceLabels: false,
+            includeTargetLabels: false
+          });
+          var nodeBodyCorners = [{
+            x: nodeBodyBb.x1,
+            y: nodeBodyBb.y1
+          }, {
+            x: nodeBodyBb.x2,
+            y: nodeBodyBb.y1
+          }, {
+            x: nodeBodyBb.x2,
+            y: nodeBodyBb.y2
+          }, {
+            x: nodeBodyBb.x1,
+            y: nodeBodyBb.y2
+          }];
+          if (satPolygonIntersection(nodeBodyCorners, selectionBox)) {
+            box.push(node);
+          } else {
+            var _rotatedLabelBox = getRotatedLabelBox(node);
+            if (_rotatedLabelBox && satPolygonIntersection(_rotatedLabelBox, selectionBox)) {
+              box.push(node);
+            }
+          }
+        }
       }
     } else {
       var edge = ele;
       var _p = edge._private;
       var rs = _p.rscratch;
-      if (rs.startX != null && rs.startY != null && !inBoundingBox(boxBb, rs.startX, rs.startY)) {
+      var edgeBoxSelectMode = edge.pstyle("box-selection").strValue;
+      if (edgeBoxSelectMode === "none") {
         continue;
       }
-      if (rs.endX != null && rs.endY != null && !inBoundingBox(boxBb, rs.endX, rs.endY)) {
-        continue;
-      }
-      if (rs.edgeType === "bezier" || rs.edgeType === "multibezier" || rs.edgeType === "self" || rs.edgeType === "compound" || rs.edgeType === "segments" || rs.edgeType === "haystack") {
-        var pts2 = _p.rstyle.bezierPts || _p.rstyle.linePts || _p.rstyle.haystackPts;
-        var allInside = true;
-        for (var i = 0; i < pts2.length; i++) {
-          if (!pointInBoundingBox(boxBb, pts2[i])) {
-            allInside = false;
-            break;
-          }
+      if (edgeBoxSelectMode === "contain") {
+        if (rs.startX != null && rs.startY != null && !inBoundingBox(boxBb, rs.startX, rs.startY)) {
+          continue;
         }
-        if (allInside) {
+        if (rs.endX != null && rs.endY != null && !inBoundingBox(boxBb, rs.endX, rs.endY)) {
+          continue;
+        }
+        if (rs.edgeType === "bezier" || rs.edgeType === "multibezier" || rs.edgeType === "self" || rs.edgeType === "compound" || rs.edgeType === "segments" || rs.edgeType === "haystack") {
+          var pts2 = _p.rstyle.bezierPts || _p.rstyle.linePts || _p.rstyle.haystackPts;
+          var allInside = true;
+          for (var i = 0; i < pts2.length; i++) {
+            if (!pointInBoundingBox(boxBb, pts2[i])) {
+              allInside = false;
+              break;
+            }
+          }
+          if (allInside) {
+            box.push(edge);
+          }
+        } else if (rs.edgeType === "straight") {
           box.push(edge);
         }
-      } else if (rs.edgeType === "haystack" || rs.edgeType === "straight") {
-        box.push(edge);
+      } else if (edgeBoxSelectMode === "overlap") {
+        var _selected = false;
+        if (rs.startX != null && rs.startY != null && rs.endX != null && rs.endY != null && (inBoundingBox(boxBb, rs.startX, rs.startY) || inBoundingBox(boxBb, rs.endX, rs.endY))) {
+          box.push(edge);
+          _selected = true;
+        } else if (!_selected && rs.edgeType === "haystack") {
+          var haystackPts = _p.rstyle.haystackPts;
+          for (var _i = 0; _i < haystackPts.length; _i++) {
+            if (pointInBoundingBox(boxBb, haystackPts[_i])) {
+              box.push(edge);
+              _selected = true;
+              break;
+            }
+          }
+        }
+        if (!_selected) {
+          var _pts = _p.rstyle.bezierPts || _p.rstyle.linePts || _p.rstyle.haystackPts;
+          if ((!_pts || _pts.length < 2) && rs.edgeType === "straight") {
+            if (rs.startX != null && rs.startY != null && rs.endX != null && rs.endY != null) {
+              _pts = [{
+                x: rs.startX,
+                y: rs.startY
+              }, {
+                x: rs.endX,
+                y: rs.endY
+              }];
+            }
+          }
+          if (!_pts || _pts.length < 2) continue;
+          for (var _i2 = 0; _i2 < _pts.length - 1; _i2++) {
+            var segStart = _pts[_i2];
+            var segEnd = _pts[_i2 + 1];
+            for (var b = 0; b < boxEdges.length; b++) {
+              var _boxEdges$b = _slicedToArray(boxEdges[b], 2), boxStart = _boxEdges$b[0], boxEnd = _boxEdges$b[1];
+              if (doLinesIntersect(segStart, segEnd, boxStart, boxEnd)) {
+                box.push(edge);
+                _selected = true;
+                break;
+              }
+            }
+            if (_selected) break;
+          }
+        }
       }
     }
   }
@@ -19802,7 +20274,7 @@ BRp$c.findEdgeControlPoints = function(edges3) {
       haystackEdges.push(edge);
       continue;
     }
-    var edgeIsUnbundled = curveStyle === "unbundled-bezier" || curveStyle.endsWith("segments") || curveStyle === "straight" || curveStyle === "straight-triangle" || curveStyle.endsWith("taxi");
+    var edgeIsUnbundled = curveStyle === "unbundled-bezier" || endsWith(curveStyle, "segments") || curveStyle === "straight" || curveStyle === "straight-triangle" || endsWith(curveStyle, "taxi");
     var edgeIsBezier = curveStyle === "unbundled-bezier" || curveStyle === "bezier";
     var src = _p.source;
     var tgt = _p.target;
@@ -19880,7 +20352,7 @@ BRp$c.findEdgeControlPoints = function(edges3) {
       var _edge = pairInfo.eles[_i2];
       var rs = _edge[0]._private.rscratch;
       var _curveStyle = _edge.pstyle("curve-style").value;
-      var _edgeIsUnbundled = _curveStyle === "unbundled-bezier" || _curveStyle.endsWith("segments") || _curveStyle.endsWith("taxi");
+      var _edgeIsUnbundled = _curveStyle === "unbundled-bezier" || endsWith(_curveStyle, "segments") || endsWith(_curveStyle, "taxi");
       var edgeIsSwapped = !src2.same(_edge.source());
       if (!pairInfo.calculatedIntersection && src2 !== tgt2 && (pairInfo.hasBezier || pairInfo.hasUnbundled)) {
         pairInfo.calculatedIntersection = true;
@@ -19900,8 +20372,8 @@ BRp$c.findEdgeControlPoints = function(edges3) {
           y1: srcPos.y,
           y2: tgtPos.y
         };
-        var dy = Math.abs(tgtOutside[1] - srcOutside[1]);
-        var dx = Math.abs(tgtOutside[0] - srcOutside[0]);
+        var dy = tgtOutside[1] - srcOutside[1];
+        var dx = tgtOutside[0] - srcOutside[0];
         var l = Math.sqrt(dx * dx + dy * dy);
         if (number$1(l) && l >= AVOID_IMPOSSIBLE_BEZIER_CONSTANT_L) ;
         else {
@@ -20065,6 +20537,7 @@ BRp$b.manualEndptToPx = function(node, prop) {
   }
 };
 BRp$b.findEndpoints = function(edge) {
+  var _ref, _tgtManEndpt$pfValue, _ref2, _srcManEndpt$pfValue;
   var r = this;
   var intersect2;
   var source = edge.source()[0];
@@ -20080,7 +20553,7 @@ BRp$b.findEndpoints = function(edge) {
   var curveStyle = edge.pstyle("curve-style").value;
   var rs = edge._private.rscratch;
   var et = rs.edgeType;
-  var taxi = curveStyle === "taxi";
+  var taxi = endsWith(curveStyle, "taxi");
   var self2 = et === "self" || et === "compound";
   var bezier = et === "bezier" || et === "multibezier" || self2;
   var multi = et !== "bezier";
@@ -20100,14 +20573,16 @@ BRp$b.findEndpoints = function(edge) {
   var p2;
   var p1_i;
   var p2_i;
+  var tgtManEndptPt = (_ref = (tgtManEndpt === null || tgtManEndpt === void 0 || (_tgtManEndpt$pfValue = tgtManEndpt.pfValue) === null || _tgtManEndpt$pfValue === void 0 ? void 0 : _tgtManEndpt$pfValue.length) === 2 ? tgtManEndpt.pfValue : null) !== null && _ref !== void 0 ? _ref : [0, 0];
+  var srcManEndptPt = (_ref2 = (srcManEndpt === null || srcManEndpt === void 0 || (_srcManEndpt$pfValue = srcManEndpt.pfValue) === null || _srcManEndpt$pfValue === void 0 ? void 0 : _srcManEndpt$pfValue.length) === 2 ? srcManEndpt.pfValue : null) !== null && _ref2 !== void 0 ? _ref2 : [0, 0];
   if (bezier) {
     var cpStart = [rs.ctrlpts[0], rs.ctrlpts[1]];
     var cpEnd = multi ? [rs.ctrlpts[rs.ctrlpts.length - 2], rs.ctrlpts[rs.ctrlpts.length - 1]] : cpStart;
     p1 = cpEnd;
     p2 = cpStart;
   } else if (lines) {
-    var srcArrowFromPt = !segments ? [tgtPos.x, tgtPos.y] : rs.segpts.slice(0, 2);
-    var tgtArrowFromPt = !segments ? [srcPos.x, srcPos.y] : rs.segpts.slice(rs.segpts.length - 2);
+    var srcArrowFromPt = !segments ? [tgtPos.x + tgtManEndptPt[0], tgtPos.y + tgtManEndptPt[1]] : rs.segpts.slice(0, 2);
+    var tgtArrowFromPt = !segments ? [srcPos.x + srcManEndptPt[0], srcPos.y + srcManEndptPt[1]] : rs.segpts.slice(rs.segpts.length - 2);
     p1 = tgtArrowFromPt;
     p2 = srcArrowFromPt;
   }
@@ -21337,6 +21812,16 @@ BRp$3.load = function() {
     var draggedElements = r.dragData.possibleDragElements;
     r.hoverData.mdownPos = pos;
     r.hoverData.mdownGPos = gpos;
+    var makeEvent = function makeEvent2(type) {
+      return {
+        originalEvent: e,
+        type,
+        position: {
+          x: pos[0],
+          y: pos[1]
+        }
+      };
+    };
     var checkForTaphold = function checkForTaphold2() {
       r.hoverData.tapholdCancelled = false;
       clearTimeout(r.hoverData.tapholdTimeout);
@@ -21346,23 +21831,9 @@ BRp$3.load = function() {
         } else {
           var ele = r.hoverData.down;
           if (ele) {
-            ele.emit({
-              originalEvent: e,
-              type: "taphold",
-              position: {
-                x: pos[0],
-                y: pos[1]
-              }
-            });
+            ele.emit(makeEvent("taphold"));
           } else {
-            cy.emit({
-              originalEvent: e,
-              type: "taphold",
-              position: {
-                x: pos[0],
-                y: pos[1]
-              }
-            });
+            cy.emit(makeEvent("taphold"));
           }
         }
       }, r.tapholdDuration);
@@ -21393,16 +21864,6 @@ BRp$3.load = function() {
       {
         if (near != null) {
           if (r.nodeIsGrabbable(near)) {
-            var makeEvent = function makeEvent2(type) {
-              return {
-                originalEvent: e,
-                type,
-                position: {
-                  x: pos[0],
-                  y: pos[1]
-                }
-              };
-            };
             var triggerGrab = function triggerGrab2(ele) {
               ele.emit(makeEvent("grab"));
             };
@@ -21502,17 +21963,20 @@ BRp$3.load = function() {
       x: pos[0],
       y: pos[1]
     });
+    var makeEvent = function makeEvent2(type) {
+      return {
+        originalEvent: e,
+        type,
+        position: {
+          x: pos[0],
+          y: pos[1]
+        }
+      };
+    };
     var goIntoBoxMode = function goIntoBoxMode2() {
       r.data.bgActivePosistion = void 0;
       if (!r.hoverData.selecting) {
-        cy.emit({
-          originalEvent: e,
-          type: "boxstart",
-          position: {
-            x: pos[0],
-            y: pos[1]
-          }
-        });
+        cy.emit(makeEvent("boxstart"));
       }
       select[4] = 1;
       r.hoverData.selecting = true;
@@ -21521,14 +21985,7 @@ BRp$3.load = function() {
     };
     if (r.hoverData.which === 3) {
       if (isOverThresholdDrag) {
-        var cxtEvt = {
-          originalEvent: e,
-          type: "cxtdrag",
-          position: {
-            x: pos[0],
-            y: pos[1]
-          }
-        };
+        var cxtEvt = makeEvent("cxtdrag");
         if (down) {
           down.emit(cxtEvt);
         } else {
@@ -21537,25 +21994,11 @@ BRp$3.load = function() {
         r.hoverData.cxtDragged = true;
         if (!r.hoverData.cxtOver || near !== r.hoverData.cxtOver) {
           if (r.hoverData.cxtOver) {
-            r.hoverData.cxtOver.emit({
-              originalEvent: e,
-              type: "cxtdragout",
-              position: {
-                x: pos[0],
-                y: pos[1]
-              }
-            });
+            r.hoverData.cxtOver.emit(makeEvent("cxtdragout"));
           }
           r.hoverData.cxtOver = near;
           if (near) {
-            near.emit({
-              originalEvent: e,
-              type: "cxtdragover",
-              position: {
-                x: pos[0],
-                y: pos[1]
-              }
-            });
+            near.emit(makeEvent("cxtdragover"));
           }
         }
       }
@@ -21577,7 +22020,7 @@ BRp$3.load = function() {
           };
         }
         cy.panBy(deltaP);
-        cy.emit("dragpan");
+        cy.emit(makeEvent("dragpan"));
         r.hoverData.dragged = true;
       }
       pos = r.projectIntoViewport(e.clientX, e.clientY);
@@ -21624,11 +22067,11 @@ BRp$3.load = function() {
           if (cy.boxSelectionEnabled() && multSelKeyDown) {
             if (down && down.grabbed()) {
               freeDraggedElements(draggedElements);
-              down.emit("freeon");
-              draggedElements.emit("free");
+              down.emit(makeEvent("freeon"));
+              draggedElements.emit(makeEvent("free"));
               if (r.dragData.didDrag) {
-                down.emit("dragfreeon");
-                draggedElements.emit("dragfree");
+                down.emit(makeEvent("dragfreeon"));
+                draggedElements.emit(makeEvent("dragfree"));
               }
             }
             goIntoBoxMode();
@@ -21659,7 +22102,7 @@ BRp$3.load = function() {
               }
             }
             r.hoverData.draggingEles = true;
-            draggedElements.silentShift(totalShift).emit("position drag");
+            draggedElements.silentShift(totalShift).emit(makeEvent("position")).emit(makeEvent("drag"));
             r.redrawHint("drag", true);
             r.redraw();
           }
@@ -21703,29 +22146,25 @@ BRp$3.load = function() {
     if (down) {
       down.unactivate();
     }
-    if (r.hoverData.which === 3) {
-      var cxtEvt = {
+    var makeEvent = function makeEvent2(type) {
+      return {
         originalEvent: e,
-        type: "cxttapend",
+        type,
         position: {
           x: pos[0],
           y: pos[1]
         }
       };
+    };
+    if (r.hoverData.which === 3) {
+      var cxtEvt = makeEvent("cxttapend");
       if (down) {
         down.emit(cxtEvt);
       } else {
         cy.emit(cxtEvt);
       }
       if (!r.hoverData.cxtDragged) {
-        var cxtTap = {
-          originalEvent: e,
-          type: "cxttap",
-          position: {
-            x: pos[0],
-            y: pos[1]
-          }
-        };
+        var cxtTap = makeEvent("cxttap");
         if (down) {
           down.emit(cxtTap);
         } else {
@@ -21798,24 +22237,17 @@ BRp$3.load = function() {
         if (box.length > 0) {
           r.redrawHint("eles", true);
         }
-        cy.emit({
-          type: "boxend",
-          originalEvent: e,
-          position: {
-            x: pos[0],
-            y: pos[1]
-          }
-        });
+        cy.emit(makeEvent("boxend"));
         var eleWouldBeSelected = function eleWouldBeSelected2(ele) {
           return ele.selectable() && !ele.selected();
         };
         if (cy.selectionType() === "additive") {
-          box.emit("box").stdFilter(eleWouldBeSelected).select().emit("boxselect");
+          box.emit(makeEvent("box")).stdFilter(eleWouldBeSelected).select().emit(makeEvent("boxselect"));
         } else {
           if (!multSelKeyDown) {
             cy.$(isSelected).unmerge(box).unselect();
           }
-          box.emit("box").stdFilter(eleWouldBeSelected).select().emit("boxselect");
+          box.emit(makeEvent("box")).stdFilter(eleWouldBeSelected).select().emit(makeEvent("boxselect"));
         }
         r.redraw();
       }
@@ -21831,11 +22263,11 @@ BRp$3.load = function() {
         var downWasGrabbed = down && down.grabbed();
         freeDraggedElements(draggedElements);
         if (downWasGrabbed) {
-          down.emit("freeon");
-          draggedElements.emit("free");
+          down.emit(makeEvent("freeon"));
+          draggedElements.emit(makeEvent("free"));
           if (r.dragData.didDrag) {
-            down.emit("dragfreeon");
-            draggedElements.emit("dragfree");
+            down.emit(makeEvent("dragfreeon"));
+            draggedElements.emit(makeEvent("dragfree"));
           }
         }
       }
@@ -21853,7 +22285,60 @@ BRp$3.load = function() {
     r.hoverData.mdownGPos = null;
     r.hoverData.which = null;
   }, false);
+  var wheelDeltas = [];
+  var wheelDeltaN = 4;
+  var inaccurateScrollDevice;
+  var inaccurateScrollFactor = 1e5;
+  var allAreDivisibleBy = function allAreDivisibleBy2(list, factor) {
+    for (var i = 0; i < list.length; i++) {
+      if (list[i] % factor !== 0) {
+        return false;
+      }
+    }
+    return true;
+  };
+  var allAreSameMagnitude = function allAreSameMagnitude2(list) {
+    var firstMag = Math.abs(list[0]);
+    for (var i = 1; i < list.length; i++) {
+      if (Math.abs(list[i]) !== firstMag) {
+        return false;
+      }
+    }
+    return true;
+  };
   var wheelHandler = function wheelHandler2(e) {
+    var clamp = false;
+    var delta = e.deltaY;
+    if (delta == null) {
+      if (e.wheelDeltaY != null) {
+        delta = e.wheelDeltaY / 4;
+      } else if (e.wheelDelta != null) {
+        delta = e.wheelDelta / 4;
+      }
+    }
+    if (delta === 0) {
+      return;
+    }
+    if (inaccurateScrollDevice == null) {
+      if (wheelDeltas.length >= wheelDeltaN) {
+        var wds = wheelDeltas;
+        inaccurateScrollDevice = allAreDivisibleBy(wds, 5);
+        if (!inaccurateScrollDevice) {
+          var firstMag = Math.abs(wds[0]);
+          inaccurateScrollDevice = allAreSameMagnitude(wds) && firstMag > 5;
+        }
+        if (inaccurateScrollDevice) {
+          for (var i = 0; i < wds.length; i++) {
+            inaccurateScrollFactor = Math.min(Math.abs(wds[i]), inaccurateScrollFactor);
+          }
+        }
+      } else {
+        wheelDeltas.push(delta);
+        clamp = true;
+      }
+    } else if (inaccurateScrollDevice) {
+      inaccurateScrollFactor = Math.min(Math.abs(delta), inaccurateScrollFactor);
+    }
     if (r.scrollingPage) {
       return;
     }
@@ -21876,12 +22361,13 @@ BRp$3.load = function() {
         r.redraw();
       }, 150);
       var diff2;
-      if (e.deltaY != null) {
-        diff2 = e.deltaY / -250;
-      } else if (e.wheelDeltaY != null) {
-        diff2 = e.wheelDeltaY / 1e3;
-      } else {
-        diff2 = e.wheelDelta / 1e3;
+      if (clamp && Math.abs(delta) > 5) {
+        delta = signum(delta) * 5;
+      }
+      diff2 = delta / -250;
+      if (inaccurateScrollDevice) {
+        diff2 /= inaccurateScrollFactor;
+        diff2 *= 3;
       }
       diff2 = diff2 * r.wheelSensitivity;
       var needsWheelFix = e.deltaMode === 1;
@@ -21899,7 +22385,14 @@ BRp$3.load = function() {
           y: rpos[1]
         }
       });
-      cy.emit(e.type === "gesturechange" ? "pinchzoom" : "scrollzoom");
+      cy.emit({
+        type: e.type === "gesturechange" ? "pinchzoom" : "scrollzoom",
+        originalEvent: e,
+        position: {
+          x: pos[0],
+          y: pos[1]
+        }
+      });
     }
   };
   r.registerBinding(r.container, "wheel", wheelHandler, true);
@@ -21982,6 +22475,16 @@ BRp$3.load = function() {
       now[4] = pos[0];
       now[5] = pos[1];
     }
+    var makeEvent = function makeEvent2(type) {
+      return {
+        originalEvent: e,
+        type,
+        position: {
+          x: now[0],
+          y: now[1]
+        }
+      };
+    };
     if (e.touches[1]) {
       r.touchData.singleTouchMoved = true;
       freeDraggedElements(r.dragData.touchDragEles);
@@ -22007,34 +22510,13 @@ BRp$3.load = function() {
         var near1 = r.findNearestElement(now[0], now[1], true, true);
         var near2 = r.findNearestElement(now[2], now[3], true, true);
         if (near1 && near1.isNode()) {
-          near1.activate().emit({
-            originalEvent: e,
-            type: "cxttapstart",
-            position: {
-              x: now[0],
-              y: now[1]
-            }
-          });
+          near1.activate().emit(makeEvent("cxttapstart"));
           r.touchData.start = near1;
         } else if (near2 && near2.isNode()) {
-          near2.activate().emit({
-            originalEvent: e,
-            type: "cxttapstart",
-            position: {
-              x: now[0],
-              y: now[1]
-            }
-          });
+          near2.activate().emit(makeEvent("cxttapstart"));
           r.touchData.start = near2;
         } else {
-          cy.emit({
-            originalEvent: e,
-            type: "cxttapstart",
-            position: {
-              x: now[0],
-              y: now[1]
-            }
-          });
+          cy.emit(makeEvent("cxttapstart"));
         }
         if (r.touchData.start) {
           r.touchData.start._private.grabbed = false;
@@ -22076,16 +22558,6 @@ BRp$3.load = function() {
             });
           }
           setGrabTarget(near);
-          var makeEvent = function makeEvent2(type) {
-            return {
-              originalEvent: e,
-              type,
-              position: {
-                x: now[0],
-                y: now[1]
-              }
-            };
-          };
           near.emit(makeEvent("grabon"));
           if (selectedNodes) {
             selectedNodes.forEach(function(n) {
@@ -22155,6 +22627,16 @@ BRp$3.load = function() {
       now[4] = pos[0];
       now[5] = pos[1];
     }
+    var makeEvent = function makeEvent2(type) {
+      return {
+        originalEvent: e,
+        type,
+        position: {
+          x: now[0],
+          y: now[1]
+        }
+      };
+    };
     var startGPos = r.touchData.startGPosition;
     var isOverThresholdDrag;
     if (capture && e.touches[0] && startGPos) {
@@ -22183,14 +22665,7 @@ BRp$3.load = function() {
         r.touchData.cxt = false;
         r.data.bgActivePosistion = void 0;
         r.redrawHint("select", true);
-        var cxtEvt = {
-          originalEvent: e,
-          type: "cxttapend",
-          position: {
-            x: now[0],
-            y: now[1]
-          }
-        };
+        var cxtEvt = makeEvent("cxttapend");
         if (r.touchData.start) {
           r.touchData.start.unactivate().emit(cxtEvt);
           r.touchData.start = null;
@@ -22200,14 +22675,7 @@ BRp$3.load = function() {
       }
     }
     if (capture && r.touchData.cxt) {
-      var cxtEvt = {
-        originalEvent: e,
-        type: "cxtdrag",
-        position: {
-          x: now[0],
-          y: now[1]
-        }
-      };
+      var cxtEvt = makeEvent("cxtdrag");
       r.data.bgActivePosistion = void 0;
       r.redrawHint("select", true);
       if (r.touchData.start) {
@@ -22222,25 +22690,11 @@ BRp$3.load = function() {
       var near = r.findNearestElement(now[0], now[1], true, true);
       if (!r.touchData.cxtOver || near !== r.touchData.cxtOver) {
         if (r.touchData.cxtOver) {
-          r.touchData.cxtOver.emit({
-            originalEvent: e,
-            type: "cxtdragout",
-            position: {
-              x: now[0],
-              y: now[1]
-            }
-          });
+          r.touchData.cxtOver.emit(makeEvent("cxtdragout"));
         }
         r.touchData.cxtOver = near;
         if (near) {
-          near.emit({
-            originalEvent: e,
-            type: "cxtdragover",
-            position: {
-              x: now[0],
-              y: now[1]
-            }
-          });
+          near.emit(makeEvent("cxtdragover"));
         }
       }
     } else if (capture && e.touches[2] && cy.boxSelectionEnabled()) {
@@ -22248,14 +22702,7 @@ BRp$3.load = function() {
       r.data.bgActivePosistion = void 0;
       this.lastThreeTouch = +/* @__PURE__ */ new Date();
       if (!r.touchData.selecting) {
-        cy.emit({
-          originalEvent: e,
-          type: "boxstart",
-          position: {
-            x: now[0],
-            y: now[1]
-          }
-        });
+        cy.emit(makeEvent("boxstart"));
       }
       r.touchData.selecting = true;
       r.touchData.didSelect = true;
@@ -22310,11 +22757,11 @@ BRp$3.load = function() {
           freeDraggedElements(draggedEles);
           r.redrawHint("drag", true);
           r.redrawHint("eles", true);
-          _start.unactivate().emit("freeon");
-          draggedEles.emit("free");
+          _start.unactivate().emit(makeEvent("freeon"));
+          draggedEles.emit(makeEvent("free"));
           if (r.dragData.didDrag) {
-            _start.emit("dragfreeon");
-            draggedEles.emit("dragfree");
+            _start.emit(makeEvent("dragfreeon"));
+            draggedEles.emit(makeEvent("dragfree"));
           }
         }
         cy.viewport({
@@ -22322,7 +22769,7 @@ BRp$3.load = function() {
           pan: pan2,
           cancelOnFailedZoom: true
         });
-        cy.emit("pinchzoom");
+        cy.emit(makeEvent("pinchzoom"));
         distance1 = distance2;
         f1x1 = f1x2;
         f1y1 = f1y2;
@@ -22382,7 +22829,7 @@ BRp$3.load = function() {
             }
           }
           r.hoverData.draggingEles = true;
-          draggedEles.silentShift(totalShift).emit("position drag");
+          draggedEles.silentShift(totalShift).emit(makeEvent("position")).emit(makeEvent("drag"));
           r.redrawHint("drag", true);
           if (r.touchData.startPosition[0] == earlier[0] && r.touchData.startPosition[1] == earlier[1]) {
             r.redrawHint("eles", true);
@@ -22406,24 +22853,10 @@ BRp$3.load = function() {
         });
         if ((!start || !start.grabbed()) && near != last2) {
           if (last2) {
-            last2.emit({
-              originalEvent: e,
-              type: "tapdragout",
-              position: {
-                x: now[0],
-                y: now[1]
-              }
-            });
+            last2.emit(makeEvent("tapdragout"));
           }
           if (near) {
-            near.emit({
-              originalEvent: e,
-              type: "tapdragover",
-              position: {
-                x: now[0],
-                y: now[1]
-              }
-            });
+            near.emit(makeEvent("tapdragover"));
           }
         }
         r.touchData.last = near;
@@ -22447,14 +22880,14 @@ BRp$3.load = function() {
               x: disp[0] * zoom2,
               y: disp[1] * zoom2
             });
-            cy.emit("dragpan");
+            cy.emit(makeEvent("dragpan"));
           } else if (isOverThresholdDrag) {
             r.swipePanning = true;
             cy.panBy({
               x: dx * zoom2,
               y: dy * zoom2
             });
-            cy.emit("dragpan");
+            cy.emit(makeEvent("dragpan"));
             if (start) {
               start.unactivate();
               r.redrawHint("select", true);
@@ -22518,33 +22951,29 @@ BRp$3.load = function() {
       now[4] = pos[0];
       now[5] = pos[1];
     }
-    if (start) {
-      start.unactivate();
-    }
-    var ctxTapend;
-    if (r.touchData.cxt) {
-      ctxTapend = {
+    var makeEvent = function makeEvent2(type) {
+      return {
         originalEvent: e,
-        type: "cxttapend",
+        type,
         position: {
           x: now[0],
           y: now[1]
         }
       };
+    };
+    if (start) {
+      start.unactivate();
+    }
+    var ctxTapend;
+    if (r.touchData.cxt) {
+      ctxTapend = makeEvent("cxttapend");
       if (start) {
         start.emit(ctxTapend);
       } else {
         cy.emit(ctxTapend);
       }
       if (!r.touchData.cxtDragged) {
-        var ctxTap = {
-          originalEvent: e,
-          type: "cxttap",
-          position: {
-            x: now[0],
-            y: now[1]
-          }
-        };
+        var ctxTap = makeEvent("cxttap");
         if (start) {
           start.emit(ctxTap);
         } else {
@@ -22568,18 +22997,11 @@ BRp$3.load = function() {
       select[3] = void 0;
       select[4] = 0;
       r.redrawHint("select", true);
-      cy.emit({
-        type: "boxend",
-        originalEvent: e,
-        position: {
-          x: now[0],
-          y: now[1]
-        }
-      });
+      cy.emit(makeEvent("boxend"));
       var eleWouldBeSelected = function eleWouldBeSelected2(ele) {
         return ele.selectable() && !ele.selected();
       };
-      box.emit("box").stdFilter(eleWouldBeSelected).select().emit("boxselect");
+      box.emit(makeEvent("box")).stdFilter(eleWouldBeSelected).select().emit(makeEvent("boxselect"));
       if (box.nonempty()) {
         r.redrawHint("eles", true);
       }
@@ -22603,11 +23025,11 @@ BRp$3.load = function() {
         r.redrawHint("drag", true);
         r.redrawHint("eles", true);
         if (startWasGrabbed) {
-          start.emit("freeon");
-          draggedEles.emit("free");
+          start.emit(makeEvent("freeon"));
+          draggedEles.emit(makeEvent("free"));
           if (r.dragData.didDrag) {
-            start.emit("dragfreeon");
-            draggedEles.emit("dragfree");
+            start.emit(makeEvent("dragfreeon"));
+            draggedEles.emit(makeEvent("dragfree"));
           }
         }
         triggerEvents(start, ["touchend", "tapend", "vmouseup", "tapdragout"], e, {
@@ -22791,6 +23213,10 @@ BRp$2.generatePolygon = function(name, points) {
     },
     checkPoint: function checkPoint(x2, y2, padding, width2, height2, centerX, centerY, cornerRadius) {
       return pointInsidePolygon(x2, y2, this.points, centerX, centerY, width2, height2, [0, -1], padding);
+    },
+    hasMiterBounds: name !== "rectangle",
+    miterBounds: function miterBounds(centerX, centerY, width2, height2, strokeWidth, strokePosition) {
+      return miterBox(this.points, centerX, centerY, width2, height2, strokeWidth);
     }
   };
 };
@@ -24547,7 +24973,7 @@ function circleTriangle(context, trianglePoints, rx, ry, r) {
     context.closePath();
   }
 }
-function circle(context, rx, ry, r) {
+function circle$1(context, rx, ry, r) {
   context.arc(rx, ry, r, 0, Math.PI * 2, false);
 }
 CRp$b.arrowShapeImpl = function(name) {
@@ -24557,7 +24983,7 @@ CRp$b.arrowShapeImpl = function(name) {
     "triangle-tee": triangleTee,
     "circle-triangle": circleTriangle,
     "triangle-cross": triangleTee,
-    "circle": circle
+    "circle": circle$1
   }))[name];
 };
 var CRp$a = {};
@@ -25298,22 +25724,29 @@ CRp$7.setupTextStyle = function(context, ele) {
   this.colorFillStyle(context, color[0], color[1], color[2], opacity);
   this.colorStrokeStyle(context, outlineColor[0], outlineColor[1], outlineColor[2], outlineOpacity);
 };
+function circle(ctx, x2, y2, width2, height2) {
+  var diameter = Math.min(width2, height2);
+  var radius2 = diameter / 2;
+  var centerX = x2 + width2 / 2;
+  var centerY = y2 + height2 / 2;
+  ctx.beginPath();
+  ctx.arc(centerX, centerY, radius2, 0, Math.PI * 2);
+  ctx.closePath();
+}
 function roundRect(ctx, x2, y2, width2, height2) {
   var radius2 = arguments.length > 5 && arguments[5] !== void 0 ? arguments[5] : 5;
-  var stroke = arguments.length > 6 ? arguments[6] : void 0;
+  var r = Math.min(radius2, width2 / 2, height2 / 2);
   ctx.beginPath();
-  ctx.moveTo(x2 + radius2, y2);
-  ctx.lineTo(x2 + width2 - radius2, y2);
-  ctx.quadraticCurveTo(x2 + width2, y2, x2 + width2, y2 + radius2);
-  ctx.lineTo(x2 + width2, y2 + height2 - radius2);
-  ctx.quadraticCurveTo(x2 + width2, y2 + height2, x2 + width2 - radius2, y2 + height2);
-  ctx.lineTo(x2 + radius2, y2 + height2);
-  ctx.quadraticCurveTo(x2, y2 + height2, x2, y2 + height2 - radius2);
-  ctx.lineTo(x2, y2 + radius2);
-  ctx.quadraticCurveTo(x2, y2, x2 + radius2, y2);
+  ctx.moveTo(x2 + r, y2);
+  ctx.lineTo(x2 + width2 - r, y2);
+  ctx.quadraticCurveTo(x2 + width2, y2, x2 + width2, y2 + r);
+  ctx.lineTo(x2 + width2, y2 + height2 - r);
+  ctx.quadraticCurveTo(x2 + width2, y2 + height2, x2 + width2 - r, y2 + height2);
+  ctx.lineTo(x2 + r, y2 + height2);
+  ctx.quadraticCurveTo(x2, y2 + height2, x2, y2 + height2 - r);
+  ctx.lineTo(x2, y2 + r);
+  ctx.quadraticCurveTo(x2, y2, x2 + r, y2);
   ctx.closePath();
-  if (stroke) ctx.stroke();
-  else ctx.fill();
 }
 CRp$7.getTextAngle = function(ele, prefix) {
   var theta;
@@ -25392,9 +25825,18 @@ CRp$7.drawText = function(context, ele, prefix) {
     var textBorderWidth = ele.pstyle("text-border-width").pfValue;
     var backgroundPadding = ele.pstyle("text-background-padding").pfValue;
     var styleShape = ele.pstyle("text-background-shape").strValue;
-    var rounded = styleShape.indexOf("round") === 0;
+    var rounded = styleShape === "round-rectangle" || styleShape === "roundrectangle";
+    var circled = styleShape === "circle";
     var roundRadius = 2;
     if (backgroundOpacity > 0 || textBorderWidth > 0 && borderOpacity > 0) {
+      var textFill = context.fillStyle;
+      var textStroke = context.strokeStyle;
+      var textLineWidth = context.lineWidth;
+      var textBackgroundColor = ele.pstyle("text-background-color").value;
+      var textBorderColor = ele.pstyle("text-border-color").value;
+      var textBorderStyle = ele.pstyle("text-border-style").value;
+      var doFill = backgroundOpacity > 0;
+      var doStroke = textBorderWidth > 0 && borderOpacity > 0;
       var bgX = textX - backgroundPadding;
       switch (halign) {
         case "left":
@@ -25407,23 +25849,11 @@ CRp$7.drawText = function(context, ele, prefix) {
       var bgY = textY - textH - backgroundPadding;
       var bgW = textW + 2 * backgroundPadding;
       var bgH = textH + 2 * backgroundPadding;
-      if (backgroundOpacity > 0) {
-        var textFill = context.fillStyle;
-        var textBackgroundColor = ele.pstyle("text-background-color").value;
-        context.fillStyle = "rgba(" + textBackgroundColor[0] + "," + textBackgroundColor[1] + "," + textBackgroundColor[2] + "," + backgroundOpacity * parentOpacity + ")";
-        if (rounded) {
-          roundRect(context, bgX, bgY, bgW, bgH, roundRadius);
-        } else {
-          context.fillRect(bgX, bgY, bgW, bgH);
-        }
-        context.fillStyle = textFill;
+      if (doFill) {
+        context.fillStyle = "rgba(".concat(textBackgroundColor[0], ",").concat(textBackgroundColor[1], ",").concat(textBackgroundColor[2], ",").concat(backgroundOpacity * parentOpacity, ")");
       }
-      if (textBorderWidth > 0 && borderOpacity > 0) {
-        var textStroke = context.strokeStyle;
-        var textLineWidth = context.lineWidth;
-        var textBorderColor = ele.pstyle("text-border-color").value;
-        var textBorderStyle = ele.pstyle("text-border-style").value;
-        context.strokeStyle = "rgba(" + textBorderColor[0] + "," + textBorderColor[1] + "," + textBorderColor[2] + "," + borderOpacity * parentOpacity + ")";
+      if (doStroke) {
+        context.strokeStyle = "rgba(".concat(textBorderColor[0], ",").concat(textBorderColor[1], ",").concat(textBorderColor[2], ",").concat(borderOpacity * parentOpacity, ")");
         context.lineWidth = textBorderWidth;
         if (context.setLineDash) {
           switch (textBorderStyle) {
@@ -25438,29 +25868,38 @@ CRp$7.drawText = function(context, ele, prefix) {
               context.setLineDash([]);
               break;
             case "solid":
+            default:
               context.setLineDash([]);
               break;
           }
         }
-        if (rounded) {
-          roundRect(context, bgX, bgY, bgW, bgH, roundRadius, "stroke");
-        } else {
-          context.strokeRect(bgX, bgY, bgW, bgH);
-        }
-        if (textBorderStyle === "double") {
-          var whiteWidth = textBorderWidth / 2;
-          if (rounded) {
-            roundRect(context, bgX + whiteWidth, bgY + whiteWidth, bgW - whiteWidth * 2, bgH - whiteWidth * 2, roundRadius, "stroke");
-          } else {
-            context.strokeRect(bgX + whiteWidth, bgY + whiteWidth, bgW - whiteWidth * 2, bgH - whiteWidth * 2);
-          }
-        }
-        if (context.setLineDash) {
-          context.setLineDash([]);
-        }
-        context.lineWidth = textLineWidth;
-        context.strokeStyle = textStroke;
       }
+      if (rounded) {
+        context.beginPath();
+        roundRect(context, bgX, bgY, bgW, bgH, roundRadius);
+      } else if (circled) {
+        context.beginPath();
+        circle(context, bgX, bgY, bgW, bgH);
+      } else {
+        context.beginPath();
+        context.rect(bgX, bgY, bgW, bgH);
+      }
+      if (doFill) context.fill();
+      if (doStroke) context.stroke();
+      if (doStroke && textBorderStyle === "double") {
+        var whiteWidth = textBorderWidth / 2;
+        context.beginPath();
+        if (rounded) {
+          roundRect(context, bgX + whiteWidth, bgY + whiteWidth, bgW - 2 * whiteWidth, bgH - 2 * whiteWidth, roundRadius);
+        } else {
+          context.rect(bgX + whiteWidth, bgY + whiteWidth, bgW - 2 * whiteWidth, bgH - 2 * whiteWidth);
+        }
+        context.stroke();
+      }
+      context.fillStyle = textFill;
+      context.strokeStyle = textStroke;
+      context.lineWidth = textLineWidth;
+      if (context.setLineDash) context.setLineDash([]);
     }
     var lineWidth = 2 * ele.pstyle("text-outline-width").pfValue;
     if (lineWidth > 0) {
@@ -25664,6 +26103,26 @@ CRp$6.drawNode = function(context, node, shiftToOriginWithBb) {
     var pieOpacity = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : eleOpacity;
     if (r.hasPie(node)) {
       r.drawPie(context, node, pieOpacity);
+      if (redrawShape) {
+        if (!usePaths) {
+          r.nodeShapes[r.getNodeShape(node)].draw(context, pos.x, pos.y, nodeWidth, nodeHeight, cornerRadius, rs);
+        }
+      }
+    }
+  };
+  var drawStripe = function drawStripe2() {
+    var redrawShape = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : false;
+    var stripeOpacity = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : eleOpacity;
+    if (r.hasStripe(node)) {
+      context.save();
+      if (usePaths) {
+        context.clip(rs.pathCache);
+      } else {
+        r.nodeShapes[r.getNodeShape(node)].draw(context, pos.x, pos.y, nodeWidth, nodeHeight, cornerRadius, rs);
+        context.clip();
+      }
+      r.drawStripe(context, node, stripeOpacity);
+      context.restore();
       if (redrawShape) {
         if (!usePaths) {
           r.nodeShapes[r.getNodeShape(node)].draw(context, pos.x, pos.y, nodeWidth, nodeHeight, cornerRadius, rs);
@@ -25897,6 +26356,7 @@ CRp$6.drawNode = function(context, node, shiftToOriginWithBb) {
     setupBorderColor(ghostOpacity * borderOpacity);
     drawBorder();
     drawPie(darkness !== 0 || borderWidth !== 0);
+    drawStripe(darkness !== 0 || borderWidth !== 0);
     drawImages(effGhostOpacity, false);
     darken(effGhostOpacity);
     context.translate(-gx, -gy);
@@ -25916,6 +26376,7 @@ CRp$6.drawNode = function(context, node, shiftToOriginWithBb) {
   setupBorderColor();
   drawBorder();
   drawPie(darkness !== 0 || borderWidth !== 0);
+  drawStripe(darkness !== 0 || borderWidth !== 0);
   drawImages(eleOpacity, false);
   darken();
   if (usePaths) {
@@ -25960,16 +26421,23 @@ CRp$6.hasPie = function(node) {
   node = node[0];
   return node._private.hasPie;
 };
+CRp$6.hasStripe = function(node) {
+  node = node[0];
+  return node._private.hasStripe;
+};
 CRp$6.drawPie = function(context, node, nodeOpacity, pos) {
   node = node[0];
   pos = pos || node.position();
   var cyStyle = node.cy().style();
   var pieSize = node.pstyle("pie-size");
+  var hole = node.pstyle("pie-hole");
+  var overallStartAngle = node.pstyle("pie-start-angle").pfValue;
   var x2 = pos.x;
   var y2 = pos.y;
   var nodeW = node.width();
   var nodeH = node.height();
   var radius2 = Math.min(nodeW, nodeH) / 2;
+  var holeRadius;
   var lastPercent = 0;
   var usePaths = this.usePaths();
   if (usePaths) {
@@ -25981,6 +26449,14 @@ CRp$6.drawPie = function(context, node, nodeOpacity, pos) {
   } else if (pieSize.pfValue !== void 0) {
     radius2 = pieSize.pfValue / 2;
   }
+  if (hole.units === "%") {
+    holeRadius = radius2 * hole.pfValue;
+  } else if (hole.pfValue !== void 0) {
+    holeRadius = hole.pfValue / 2;
+  }
+  if (holeRadius >= radius2) {
+    return;
+  }
   for (var i = 1; i <= cyStyle.pieBackgroundN; i++) {
     var size3 = node.pstyle("pie-" + i + "-background-size").value;
     var color = node.pstyle("pie-" + i + "-background-color").value;
@@ -25990,19 +26466,82 @@ CRp$6.drawPie = function(context, node, nodeOpacity, pos) {
       percent = 1 - lastPercent;
     }
     var angleStart = 1.5 * Math.PI + 2 * Math.PI * lastPercent;
+    angleStart += overallStartAngle;
     var angleDelta = 2 * Math.PI * percent;
     var angleEnd = angleStart + angleDelta;
     if (size3 === 0 || lastPercent >= 1 || lastPercent + percent > 1) {
       continue;
     }
+    if (holeRadius === 0) {
+      context.beginPath();
+      context.moveTo(x2, y2);
+      context.arc(x2, y2, radius2, angleStart, angleEnd);
+      context.closePath();
+    } else {
+      context.beginPath();
+      context.arc(x2, y2, radius2, angleStart, angleEnd);
+      context.arc(x2, y2, holeRadius, angleEnd, angleStart, true);
+      context.closePath();
+    }
+    this.colorFillStyle(context, color[0], color[1], color[2], opacity);
+    context.fill();
+    lastPercent += percent;
+  }
+};
+CRp$6.drawStripe = function(context, node, nodeOpacity, pos) {
+  node = node[0];
+  pos = pos || node.position();
+  var cyStyle = node.cy().style();
+  var x2 = pos.x;
+  var y2 = pos.y;
+  var nodeW = node.width();
+  var nodeH = node.height();
+  var lastPercent = 0;
+  var usePaths = this.usePaths();
+  context.save();
+  var direction = node.pstyle("stripe-direction").value;
+  var stripeSize = node.pstyle("stripe-size");
+  switch (direction) {
+    case "vertical":
+      break;
+    case "righward":
+      context.rotate(-Math.PI / 2);
+      break;
+  }
+  var stripeW = nodeW;
+  var stripeH = nodeH;
+  if (stripeSize.units === "%") {
+    stripeW = stripeW * stripeSize.pfValue;
+    stripeH = stripeH * stripeSize.pfValue;
+  } else if (stripeSize.pfValue !== void 0) {
+    stripeW = stripeSize.pfValue;
+    stripeH = stripeSize.pfValue;
+  }
+  if (usePaths) {
+    x2 = 0;
+    y2 = 0;
+  }
+  y2 -= stripeW / 2;
+  x2 -= stripeH / 2;
+  for (var i = 1; i <= cyStyle.stripeBackgroundN; i++) {
+    var size3 = node.pstyle("stripe-" + i + "-background-size").value;
+    var color = node.pstyle("stripe-" + i + "-background-color").value;
+    var opacity = node.pstyle("stripe-" + i + "-background-opacity").value * nodeOpacity;
+    var percent = size3 / 100;
+    if (percent + lastPercent > 1) {
+      percent = 1 - lastPercent;
+    }
+    if (size3 === 0 || lastPercent >= 1 || lastPercent + percent > 1) {
+      continue;
+    }
     context.beginPath();
-    context.moveTo(x2, y2);
-    context.arc(x2, y2, radius2, angleStart, angleEnd);
+    context.rect(x2, y2 + stripeH * lastPercent, stripeW, stripeH * percent);
     context.closePath();
     this.colorFillStyle(context, color[0], color[1], color[2], opacity);
     context.fill();
     lastPercent += percent;
   }
+  context.restore();
 };
 var CRp$5 = {};
 var motionBlurDelay = 100;
@@ -26575,11 +27114,35 @@ function getEffectivePanZoom(r) {
     }
   };
 }
+function getEffectiveZoom(r) {
+  var pixelRatio = r.pixelRatio;
+  var zoom2 = r.cy.zoom();
+  return zoom2 * pixelRatio;
+}
 function modelToRenderedPosition2(r, pan2, zoom2, x2, y2) {
   var rx = x2 * zoom2 + pan2.x;
   var ry = y2 * zoom2 + pan2.y;
   ry = Math.round(r.canvasHeight - ry);
   return [rx, ry];
+}
+function isSimpleShape(node) {
+  if (node.pstyle("background-fill").value !== "solid") return false;
+  if (node.pstyle("background-image").strValue !== "none") return false;
+  if (node.pstyle("border-width").value === 0) return true;
+  if (node.pstyle("border-opacity").value === 0) return true;
+  if (node.pstyle("border-style").value !== "solid") return false;
+  return true;
+}
+function arrayEqual(a1, a2) {
+  if (a1.length !== a2.length) {
+    return false;
+  }
+  for (var i = 0; i < a1.length; i++) {
+    if (a1[i] !== a2[i]) {
+      return false;
+    }
+  }
+  return true;
 }
 function toWebGLColor(color, opacity, outArray) {
   var r = color[0] / 255;
@@ -26859,34 +27422,6 @@ function projection(out, width2, height2) {
   out[8] = 1;
   return out;
 }
-var RENDER_TARGET = {
-  SCREEN: {
-    name: "screen",
-    screen: true
-  },
-  PICKING: {
-    name: "picking",
-    picking: true
-  }
-};
-var atlasCollectionDefaults = defaults$g({
-  texRows: 24
-});
-var renderDefaults = defaults$g({
-  collection: "default",
-  getKey: null,
-  // since render types (eg node-body, node-overlay) can share an atlas collection, its importeant their style keys don't collide
-  drawElement: null,
-  getBoundingBox: null,
-  getRotation: null,
-  getRotationPoint: null,
-  getRotationOffset: null,
-  isVisible: function isVisible() {
-    return true;
-  },
-  // this is an extra check for visibility in addition to ele.visible()
-  getPadding: 0
-});
 var Atlas = function() {
   function Atlas2(r, texSize, texRows, createTextureCanvas2) {
     _classCallCheck(this, Atlas2);
@@ -26943,7 +27478,6 @@ var Atlas = function() {
       if (this.locked) throw new Error("can't draw, atlas is locked");
       var texSize = this.texSize, texRows = this.texRows, texHeight = this.texHeight;
       var _this$getScale = this.getScale(bb), scale2 = _this$getScale.scale, texW = _this$getScale.texW, texH = _this$getScale.texH;
-      var locations = [null, null];
       var drawAt = function drawAt2(location, canvas) {
         if (doDrawing && canvas) {
           var context = canvas.context;
@@ -26957,6 +27491,7 @@ var Atlas = function() {
           context.restore();
         }
       };
+      var locations = [null, null];
       var drawNormal = function drawNormal2() {
         drawAt(_this.freePointer, _this.canvas);
         locations[0] = {
@@ -26966,7 +27501,7 @@ var Atlas = function() {
           h: texH
         };
         locations[1] = {
-          // indlude a second location with a width of 0, for convenience
+          // create a second location with a width of 0, for convenience
           x: _this.freePointer.x + texW,
           y: _this.freePointer.row * texHeight,
           w: 0,
@@ -27194,8 +27729,10 @@ var AtlasCollection = function() {
                   newAtlas = _this2._createAtlas();
                   newAtlases.push(newAtlas);
                 }
-                _this2._copyTextureToNewAtlas(key, atlas, newAtlas);
-                newStyleKeyToAtlas.set(key, newAtlas);
+                if (atlas.canvas) {
+                  _this2._copyTextureToNewAtlas(key, atlas, newAtlas);
+                  newStyleKeyToAtlas.set(key, newAtlas);
+                }
               }
             }
           } catch (err) {
@@ -27277,17 +27814,11 @@ var AtlasManager = function() {
     this.renderTypes = /* @__PURE__ */ new Map();
     this.collections = /* @__PURE__ */ new Map();
     this.typeAndIdToKey = /* @__PURE__ */ new Map();
-    this.batchAtlases = [];
   }
   return _createClass(AtlasManager2, [{
     key: "getAtlasSize",
     value: function getAtlasSize() {
       return this.atlasSize;
-    }
-  }, {
-    key: "getMaxAtlasesPerBatch",
-    value: function getMaxAtlasesPerBatch() {
-      return this.maxAtlasesPerBatch;
     }
   }, {
     key: "addAtlasCollection",
@@ -27348,6 +27879,7 @@ var AtlasManager = function() {
   }, {
     key: "invalidate",
     value: function invalidate(eles) {
+      var _this3 = this;
       var _ref2 = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {}, _ref2$forceRedraw = _ref2.forceRedraw, forceRedraw = _ref2$forceRedraw === void 0 ? false : _ref2$forceRedraw, _ref2$filterEle = _ref2.filterEle, filterEle = _ref2$filterEle === void 0 ? function() {
         return true;
       } : _ref2$filterEle, _ref2$filterType = _ref2.filterType, filterType = _ref2$filterType === void 0 ? function() {
@@ -27362,26 +27894,34 @@ var AtlasManager = function() {
           if (filterEle(ele)) {
             var _iterator4 = _createForOfIteratorHelper(this.renderTypes.values()), _step4;
             try {
-              for (_iterator4.s(); !(_step4 = _iterator4.n()).done; ) {
+              var _loop2 = function _loop22() {
                 var opts = _step4.value;
                 var renderType = opts.type;
                 if (filterType(renderType)) {
-                  var styleKey = opts.getKey(ele);
-                  var atlasCollection = this.collections.get(opts.collection);
+                  var atlasCollection = _this3.collections.get(opts.collection);
+                  var key = opts.getKey(ele);
+                  var keyArray = Array.isArray(key) ? key : [key];
                   if (forceRedraw) {
-                    atlasCollection.markKeyForGC(styleKey);
+                    keyArray.forEach(function(key2) {
+                      return atlasCollection.markKeyForGC(key2);
+                    });
                     runGCNow = true;
                   } else {
                     var id2 = opts.getID ? opts.getID(ele) : ele.id();
-                    var mapKey = this._key(renderType, id2);
-                    var oldStyleKey = this.typeAndIdToKey.get(mapKey);
-                    if (oldStyleKey !== void 0 && oldStyleKey !== styleKey) {
-                      this.typeAndIdToKey["delete"](mapKey);
-                      atlasCollection.markKeyForGC(oldStyleKey);
+                    var mapKey = _this3._key(renderType, id2);
+                    var oldKeyArray = _this3.typeAndIdToKey.get(mapKey);
+                    if (oldKeyArray !== void 0 && !arrayEqual(keyArray, oldKeyArray)) {
                       needGC = true;
+                      _this3.typeAndIdToKey["delete"](mapKey);
+                      oldKeyArray.forEach(function(oldKey) {
+                        return atlasCollection.markKeyForGC(oldKey);
+                      });
                     }
                   }
                 }
+              };
+              for (_iterator4.s(); !(_step4 = _iterator4.n()).done; ) {
+                _loop2();
               }
             } catch (err) {
               _iterator4.e(err);
@@ -27419,168 +27959,53 @@ var AtlasManager = function() {
     }
   }, {
     key: "getOrCreateAtlas",
-    value: function getOrCreateAtlas(ele, type, bb) {
+    value: function getOrCreateAtlas(ele, type, bb, styleKey) {
       var opts = this.renderTypes.get(type);
-      var styleKey = opts.getKey(ele);
-      if (!bb) bb = opts.getBoundingBox(ele);
       var atlasCollection = this.collections.get(opts.collection);
       var drawn = false;
       var atlas = atlasCollection.draw(styleKey, bb, function(context) {
-        opts.drawElement(context, ele, bb, true, true);
+        if (opts.drawClipped) {
+          context.save();
+          context.beginPath();
+          context.rect(0, 0, bb.w, bb.h);
+          context.clip();
+          opts.drawElement(context, ele, bb, true, true);
+          context.restore();
+        } else {
+          opts.drawElement(context, ele, bb, true, true);
+        }
         drawn = true;
       });
       if (drawn) {
         var id2 = opts.getID ? opts.getID(ele) : ele.id();
         var mapKey = this._key(type, id2);
-        this.typeAndIdToKey.set(mapKey, styleKey);
+        if (this.typeAndIdToKey.has(mapKey)) {
+          this.typeAndIdToKey.get(mapKey).push(styleKey);
+        } else {
+          this.typeAndIdToKey.set(mapKey, [styleKey]);
+        }
       }
       return atlas;
     }
   }, {
-    key: "startBatch",
-    value: function startBatch2() {
-      this.batchAtlases = [];
-    }
-  }, {
-    key: "getAtlasCount",
-    value: function getAtlasCount() {
-      return this.batchAtlases.length;
-    }
-  }, {
-    key: "getAtlases",
-    value: function getAtlases() {
-      return this.batchAtlases;
-    }
-  }, {
-    key: "canAddToCurrentBatch",
-    value: function canAddToCurrentBatch(ele, type) {
-      if (this.batchAtlases.length === this.maxAtlasesPerBatch) {
-        var opts = this.renderTypes.get(type);
-        var styleKey = opts.getKey(ele);
-        var atlasCollection = this.collections.get(opts.collection);
-        var atlas = atlasCollection.getAtlas(styleKey);
-        return Boolean(atlas) && this.batchAtlases.includes(atlas);
-      }
-      return true;
-    }
-  }, {
-    key: "getAtlasIndexForBatch",
-    value: function getAtlasIndexForBatch(atlas) {
-      var atlasID = this.batchAtlases.indexOf(atlas);
-      if (atlasID < 0) {
-        if (this.batchAtlases.length === this.maxAtlasesPerBatch) {
-          return;
-        }
-        this.batchAtlases.push(atlas);
-        atlasID = this.batchAtlases.length - 1;
-      }
-      return atlasID;
-    }
-  }, {
-    key: "getIndexArray",
-    value: function getIndexArray() {
-      return Array.from({
-        length: this.maxAtlasesPerBatch
-      }, function(v, i) {
-        return i;
-      });
-    }
-  }, {
     key: "getAtlasInfo",
     value: function getAtlasInfo(ele, type) {
+      var _this4 = this;
       var opts = this.renderTypes.get(type);
-      var bb = opts.getBoundingBox(ele);
-      var atlas = this.getOrCreateAtlas(ele, type, bb);
-      var index = this.getAtlasIndexForBatch(atlas);
-      if (index === void 0) {
-        return void 0;
-      }
-      var styleKey = opts.getKey(ele);
-      var _atlas$getOffsets3 = atlas.getOffsets(styleKey), _atlas$getOffsets4 = _slicedToArray(_atlas$getOffsets3, 2), tex1 = _atlas$getOffsets4[0], tex2 = _atlas$getOffsets4[1];
-      return {
-        index,
-        tex1,
-        tex2,
-        bb
-      };
-    }
-    /**
-     * matrix is expected to be a 9 element array
-     * this function follows same pattern as CRp.drawCachedElementPortion(...)
-     */
-  }, {
-    key: "setTransformMatrix",
-    value: function setTransformMatrix(ele, matrix, type, atlasInfo) {
-      var first2 = arguments.length > 4 && arguments[4] !== void 0 ? arguments[4] : true;
-      var opts = this.getRenderTypeOpts(type);
-      var padding = opts.getPadding ? opts.getPadding(ele) : 0;
-      if (atlasInfo) {
-        var bb = atlasInfo.bb, tex1 = atlasInfo.tex1, tex2 = atlasInfo.tex2;
-        var ratio = tex1.w / (tex1.w + tex2.w);
-        if (!first2) {
-          ratio = 1 - ratio;
-        }
-        var adjBB = this.getAdjustedBB(bb, padding, first2, ratio);
-        this._applyTransformMatrix(matrix, adjBB, opts, ele);
-      } else {
-        var _bb = opts.getBoundingBox(ele);
-        var _adjBB = this.getAdjustedBB(_bb, padding, true, 1);
-        this._applyTransformMatrix(matrix, _adjBB, opts, ele);
-      }
-    }
-  }, {
-    key: "_applyTransformMatrix",
-    value: function _applyTransformMatrix(matrix, adjBB, opts, ele) {
-      var x2, y2;
-      identity2(matrix);
-      var theta = opts.getRotation ? opts.getRotation(ele) : 0;
-      if (theta !== 0) {
-        var _opts$getRotationPoin = opts.getRotationPoint(ele), sx = _opts$getRotationPoin.x, sy = _opts$getRotationPoin.y;
-        translate(matrix, matrix, [sx, sy]);
-        rotate(matrix, matrix, theta);
-        var offset = opts.getRotationOffset(ele);
-        x2 = offset.x + adjBB.xOffset;
-        y2 = offset.y;
-      } else {
-        x2 = adjBB.x1;
-        y2 = adjBB.y1;
-      }
-      translate(matrix, matrix, [x2, y2]);
-      scale(matrix, matrix, [adjBB.w, adjBB.h]);
-    }
-    /**
-     * Adjusts a node or label BB to accomodate padding and split for wrapped textures.
-     * @param bb - the original bounding box
-     * @param padding - the padding to add to the bounding box
-     * @param first - whether this is the first part of a wrapped texture
-     * @param ratio - the ratio of the texture width of part of the text to the entire texture
-     */
-  }, {
-    key: "getAdjustedBB",
-    value: function getAdjustedBB(bb, padding, first2, ratio) {
-      var x1 = bb.x1, y1 = bb.y1, w = bb.w, h = bb.h;
-      if (padding) {
-        x1 -= padding;
-        y1 -= padding;
-        w += 2 * padding;
-        h += 2 * padding;
-      }
-      var xOffset = 0;
-      var adjW = w * ratio;
-      if (first2 && ratio < 1) {
-        w = adjW;
-      } else if (!first2 && ratio < 1) {
-        xOffset = w - adjW;
-        x1 += xOffset;
-        w = adjW;
-      }
-      return {
-        x1,
-        y1,
-        w,
-        h,
-        xOffset
-      };
+      var key = opts.getKey(ele);
+      var keyArray = Array.isArray(key) ? key : [key];
+      return keyArray.map(function(styleKey) {
+        var bb = opts.getBoundingBox(ele, styleKey);
+        var atlas = _this4.getOrCreateAtlas(ele, type, bb, styleKey);
+        var _atlas$getOffsets3 = atlas.getOffsets(styleKey), _atlas$getOffsets4 = _slicedToArray(_atlas$getOffsets3, 2), tex1 = _atlas$getOffsets4[0], tex2 = _atlas$getOffsets4[1];
+        return {
+          atlas,
+          tex: tex1,
+          tex1,
+          tex2,
+          bb
+        };
+      });
     }
   }, {
     key: "getDebugInfo",
@@ -27606,11 +28031,100 @@ var AtlasManager = function() {
     }
   }]);
 }();
+var AtlasBatchManager = function() {
+  function AtlasBatchManager2(globalOptions) {
+    _classCallCheck(this, AtlasBatchManager2);
+    this.globalOptions = globalOptions;
+    this.atlasSize = globalOptions.webglTexSize;
+    this.maxAtlasesPerBatch = globalOptions.webglTexPerBatch;
+    this.batchAtlases = [];
+  }
+  return _createClass(AtlasBatchManager2, [{
+    key: "getMaxAtlasesPerBatch",
+    value: function getMaxAtlasesPerBatch() {
+      return this.maxAtlasesPerBatch;
+    }
+  }, {
+    key: "getAtlasSize",
+    value: function getAtlasSize() {
+      return this.atlasSize;
+    }
+  }, {
+    key: "getIndexArray",
+    value: function getIndexArray() {
+      return Array.from({
+        length: this.maxAtlasesPerBatch
+      }, function(v, i) {
+        return i;
+      });
+    }
+  }, {
+    key: "startBatch",
+    value: function startBatch2() {
+      this.batchAtlases = [];
+    }
+  }, {
+    key: "getAtlasCount",
+    value: function getAtlasCount() {
+      return this.batchAtlases.length;
+    }
+  }, {
+    key: "getAtlases",
+    value: function getAtlases() {
+      return this.batchAtlases;
+    }
+  }, {
+    key: "canAddToCurrentBatch",
+    value: function canAddToCurrentBatch(atlas) {
+      if (this.batchAtlases.length === this.maxAtlasesPerBatch) {
+        return this.batchAtlases.includes(atlas);
+      }
+      return true;
+    }
+  }, {
+    key: "getAtlasIndexForBatch",
+    value: function getAtlasIndexForBatch(atlas) {
+      var atlasID = this.batchAtlases.indexOf(atlas);
+      if (atlasID < 0) {
+        if (this.batchAtlases.length === this.maxAtlasesPerBatch) {
+          throw new Error("cannot add more atlases to batch");
+        }
+        this.batchAtlases.push(atlas);
+        atlasID = this.batchAtlases.length - 1;
+      }
+      return atlasID;
+    }
+  }]);
+}();
+var circleSD = "\n  float circleSD(vec2 p, float r) {\n    return distance(vec2(0), p) - r; // signed distance\n  }\n";
+var rectangleSD = "\n  float rectangleSD(vec2 p, vec2 b) {\n    vec2 d = abs(p)-b;\n    return distance(vec2(0),max(d,0.0)) + min(max(d.x,d.y),0.0);\n  }\n";
+var roundRectangleSD = "\n  float roundRectangleSD(vec2 p, vec2 b, vec4 cr) {\n    cr.xy = (p.x > 0.0) ? cr.xy : cr.zw;\n    cr.x  = (p.y > 0.0) ? cr.x  : cr.y;\n    vec2 q = abs(p) - b + cr.x;\n    return min(max(q.x, q.y), 0.0) + distance(vec2(0), max(q, 0.0)) - cr.x;\n  }\n";
+var ellipseSD = "\n  float ellipseSD(vec2 p, vec2 ab) {\n    p = abs( p ); // symmetry\n\n    // find root with Newton solver\n    vec2 q = ab*(p-ab);\n    float w = (q.x<q.y)? 1.570796327 : 0.0;\n    for( int i=0; i<5; i++ ) {\n      vec2 cs = vec2(cos(w),sin(w));\n      vec2 u = ab*vec2( cs.x,cs.y);\n      vec2 v = ab*vec2(-cs.y,cs.x);\n      w = w + dot(p-u,v)/(dot(p-u,u)+dot(v,v));\n    }\n    \n    // compute final point and distance\n    float d = length(p-ab*vec2(cos(w),sin(w)));\n    \n    // return signed distance\n    return (dot(p/ab,p/ab)>1.0) ? d : -d;\n  }\n";
+var RENDER_TARGET = {
+  SCREEN: {
+    name: "screen",
+    screen: true
+  },
+  PICKING: {
+    name: "picking",
+    picking: true
+  }
+};
+var TEX_PICKING_MODE = {
+  // render the texture just like in RENDER_TARGET.SCREEN mode
+  IGNORE: 1,
+  // don't render the texture at all
+  USE_BB: 2
+  // render the bounding box as an opaque rectangle
+};
 var TEXTURE = 0;
 var EDGE_STRAIGHT = 1;
 var EDGE_CURVE_SEGMENT = 2;
 var EDGE_ARROW = 3;
 var RECTANGLE = 4;
+var ROUND_RECTANGLE = 5;
+var BOTTOM_ROUND_RECTANGLE = 6;
+var ELLIPSE = 7;
 var ElementDrawingWebGL = function() {
   function ElementDrawingWebGL2(r, gl, opts) {
     _classCallCheck(this, ElementDrawingWebGL2);
@@ -27624,20 +28138,68 @@ var ElementDrawingWebGL = function() {
     opts.enableWrapping = true;
     opts.createTextureCanvas = createTextureCanvas;
     this.atlasManager = new AtlasManager(r, opts);
-    this.program = this.createShaderProgram(RENDER_TARGET.SCREEN);
-    this.pickingProgram = this.createShaderProgram(RENDER_TARGET.PICKING);
-    this.vao = this.createVAO();
+    this.batchManager = new AtlasBatchManager(opts);
+    this.simpleShapeOptions = /* @__PURE__ */ new Map();
+    this.program = this._createShaderProgram(RENDER_TARGET.SCREEN);
+    this.pickingProgram = this._createShaderProgram(RENDER_TARGET.PICKING);
+    this.vao = this._createVAO();
   }
   return _createClass(ElementDrawingWebGL2, [{
     key: "addAtlasCollection",
-    value: function addAtlasCollection(groupName, opts) {
-      this.atlasManager.addAtlasCollection(groupName, opts);
+    value: function addAtlasCollection(collectionName, opts) {
+      this.atlasManager.addAtlasCollection(collectionName, opts);
     }
+    /**
+     * @typedef { Object } TextureRenderTypeOpts
+     * @property { string } collection - name of atlas collection to render textures to
+     * @property { function } getKey - returns the "style key" for an element, may be a single value or an array for multi-line lables
+     * @property { function } drawElement - uses a canvas renderer to draw the element to the texture atlas
+     * @property { boolean  } drawClipped - if true the context will be clipped to the bounding box before drawElement() is called, may affect performance
+     * @property { function } getBoundingBox - returns the bounding box for an element
+     * @property { function } getRotation
+     * @property { function } getRotationPoint
+     * @property { function } getRotationOffset
+     * @property { function } isVisible - an extra check for visibility in addition to ele.visible()
+     * @property { function } getTexPickingMode - returns a value from the TEX_PICKING_MODE enum
+     */
+    /**
+     * @param { string } typeName
+     * @param { TextureRenderTypeOpts } opts
+     */
   }, {
-    key: "addAtlasRenderType",
-    value: function addAtlasRenderType(typeName, opts) {
+    key: "addTextureAtlasRenderType",
+    value: function addTextureAtlasRenderType(typeName, opts) {
       this.atlasManager.addRenderType(typeName, opts);
     }
+    /**
+     * @typedef { Object } SimpleShapeRenderTypeOpts
+     * @property { function } getBoundingBox - returns the bounding box for an element
+     * @property { function } isVisible - this is an extra check for visibility in addition to ele.visible()
+     * @property { function } isSimple - check if element is a simple shape, or if it needs to fall back to texture rendering
+     * @property { ShapeVisualProperties } shapeProps
+     */
+    /**
+     * @typedef { Object } ShapeVisualProperties
+     * @property { string } shape
+     * @property { string } color
+     * @property { string } opacity
+     * @property { string } padding
+     * @property { string } radius
+     * @property { boolean } border
+    */
+    /**
+     * @param { string } typeName
+     * @param { SimpleShapeRenderTypeOpts } opts
+     */
+  }, {
+    key: "addSimpleShapeRenderType",
+    value: function addSimpleShapeRenderType(typeName, opts) {
+      this.simpleShapeOptions.set(typeName, opts);
+    }
+    /**
+     * Inform the atlasManager when element style keys may have changed.
+     * The atlasManager can then mark unused textures for "garbage collection".
+     */
   }, {
     key: "invalidate",
     value: function invalidate(eles) {
@@ -27654,22 +28216,25 @@ var ElementDrawingWebGL = function() {
         return atlasManager.invalidate(eles);
       }
     }
+    /**
+     * Run texture garbage collection.
+     */
   }, {
     key: "gc",
     value: function gc2() {
       this.atlasManager.gc();
     }
   }, {
-    key: "createShaderProgram",
-    value: function createShaderProgram(renderTarget) {
+    key: "_createShaderProgram",
+    value: function _createShaderProgram(renderTarget) {
       var gl = this.gl;
-      var vertexShaderSource = "#version 300 es\n      precision highp float;\n\n      uniform mat3 uPanZoomMatrix;\n      uniform int  uAtlasSize;\n      \n      // instanced\n      in vec2 aPosition; \n\n      in mat3 aTransform;\n\n      // what are we rendering?\n      in int aVertType;\n\n      // for picking\n      in vec4 aIndex;\n      \n      // For textures\n      in int aAtlasId; // which shader unit/atlas to use\n      in vec4 aTex; // x/y/w/h of texture in atlas\n\n      // for edges\n      in vec4 aPointAPointB;\n      in vec4 aPointCPointD;\n      in float aLineWidth;\n      in vec4 aColor;\n\n      out vec2 vTexCoord;\n      out vec4 vColor;\n      flat out int vAtlasId;\n      flat out vec4 vIndex;\n      flat out int vVertType;\n\n      void main(void) {\n        int vid = gl_VertexID;\n        vec2 position = aPosition;\n\n        if(aVertType == ".concat(TEXTURE, ") {\n          float texX = aTex.x;\n          float texY = aTex.y;\n          float texW = aTex.z;\n          float texH = aTex.w;\n\n          int vid = gl_VertexID;\n\n          if(vid == 1 || vid == 2 || vid == 4) {\n            texX += texW;\n          }\n          if(vid == 2 || vid == 4 || vid == 5) {\n            texY += texH;\n          }\n\n          float d = float(uAtlasSize);\n          vTexCoord = vec2(texX / d, texY / d); // tex coords must be between 0 and 1\n\n          gl_Position = vec4(uPanZoomMatrix * aTransform * vec3(position, 1.0), 1.0);\n        }\n        else if(aVertType == ").concat(RECTANGLE, ") {\n          gl_Position = vec4(uPanZoomMatrix * aTransform * vec3(position, 1.0), 1.0);\n          vColor = aColor;\n        }\n        else if(aVertType == ").concat(EDGE_STRAIGHT, ") {\n          vec2 source = aPointAPointB.xy;\n          vec2 target = aPointAPointB.zw;\n\n          // adjust the geometry so that the line is centered on the edge\n          position.y = position.y - 0.5;\n\n          vec2 xBasis = target - source;\n          vec2 yBasis = normalize(vec2(-xBasis.y, xBasis.x));\n          vec2 point = source + xBasis * position.x + yBasis * aLineWidth * position.y;\n\n          gl_Position = vec4(uPanZoomMatrix * vec3(point, 1.0), 1.0);\n          vColor = aColor;\n        } \n        else if(aVertType == ").concat(EDGE_CURVE_SEGMENT, ") {\n          vec2 pointA = aPointAPointB.xy;\n          vec2 pointB = aPointAPointB.zw;\n          vec2 pointC = aPointCPointD.xy;\n          vec2 pointD = aPointCPointD.zw;\n\n          // adjust the geometry so that the line is centered on the edge\n          position.y = position.y - 0.5;\n\n          vec2 p0 = pointA;\n          vec2 p1 = pointB;\n          vec2 p2 = pointC;\n          vec2 pos = position;\n          if(position.x == 1.0) {\n            p0 = pointD;\n            p1 = pointC;\n            p2 = pointB;\n            pos = vec2(0.0, -position.y);\n          }\n\n          vec2 p01 = p1 - p0;\n          vec2 p12 = p2 - p1;\n          vec2 p21 = p1 - p2;\n\n          // Find the normal vector.\n          vec2 tangent = normalize(normalize(p12) + normalize(p01));\n          vec2 normal = vec2(-tangent.y, tangent.x);\n\n          // Find the vector perpendicular to p0 -> p1.\n          vec2 p01Norm = normalize(vec2(-p01.y, p01.x));\n\n          // Determine the bend direction.\n          float sigma = sign(dot(p01 + p21, normal));\n          float width = aLineWidth;\n\n          if(sign(pos.y) == -sigma) {\n            // This is an intersecting vertex. Adjust the position so that there's no overlap.\n            vec2 point = 0.5 * width * normal * -sigma / dot(normal, p01Norm);\n            gl_Position = vec4(uPanZoomMatrix * vec3(p1 + point, 1.0), 1.0);\n          } else {\n            // This is a non-intersecting vertex. Treat it like a mitre join.\n            vec2 point = 0.5 * width * normal * sigma * dot(normal, p01Norm);\n            gl_Position = vec4(uPanZoomMatrix * vec3(p1 + point, 1.0), 1.0);\n          }\n\n          vColor = aColor;\n        } \n        else if(aVertType == ").concat(EDGE_ARROW, " && vid < 3) {\n          // massage the first triangle into an edge arrow\n          if(vid == 0)\n            position = vec2(-0.15, -0.3);\n          if(vid == 1)\n            position = vec2( 0.0,   0.0);\n          if(vid == 2)\n            position = vec2( 0.15, -0.3);\n\n          gl_Position = vec4(uPanZoomMatrix * aTransform * vec3(position, 1.0), 1.0);\n          vColor = aColor;\n        }\n        else {\n          gl_Position = vec4(2.0, 0.0, 0.0, 1.0); // discard vertex by putting it outside webgl clip space\n        }\n\n        vAtlasId = aAtlasId;\n        vIndex = aIndex;\n        vVertType = aVertType;\n      }\n    ");
-      var idxs = this.atlasManager.getIndexArray();
-      var fragmentShaderSource = "#version 300 es\n      precision highp float;\n\n      // define texture unit for each node in the batch\n      ".concat(idxs.map(function(i2) {
+      var vertexShaderSource = "#version 300 es\n      precision highp float;\n\n      uniform mat3 uPanZoomMatrix;\n      uniform int  uAtlasSize;\n      \n      // instanced\n      in vec2 aPosition; // a vertex from the unit square\n      \n      in mat3 aTransform; // used to transform verticies, eg into a bounding box\n      in int aVertType; // the type of thing we are rendering\n\n      // the z-index that is output when using picking mode\n      in vec4 aIndex;\n      \n      // For textures\n      in int aAtlasId; // which shader unit/atlas to use\n      in vec4 aTex; // x/y/w/h of texture in atlas\n\n      // for edges\n      in vec4 aPointAPointB;\n      in vec4 aPointCPointD;\n      in vec2 aLineWidth; // also used for node border width\n\n      // simple shapes\n      in vec4 aCornerRadius; // for round-rectangle [top-right, bottom-right, top-left, bottom-left]\n      in vec4 aColor; // also used for edges\n      in vec4 aBorderColor; // aLineWidth is used for border width\n\n      // output values passed to the fragment shader\n      out vec2 vTexCoord;\n      out vec4 vColor;\n      out vec2 vPosition;\n      // flat values are not interpolated\n      flat out int vAtlasId; \n      flat out int vVertType;\n      flat out vec2 vTopRight;\n      flat out vec2 vBotLeft;\n      flat out vec4 vCornerRadius;\n      flat out vec4 vBorderColor;\n      flat out vec2 vBorderWidth;\n      flat out vec4 vIndex;\n      \n      void main(void) {\n        int vid = gl_VertexID;\n        vec2 position = aPosition; // TODO make this a vec3, simplifies some code below\n\n        if(aVertType == ".concat(TEXTURE, ") {\n          float texX = aTex.x; // texture coordinates\n          float texY = aTex.y;\n          float texW = aTex.z;\n          float texH = aTex.w;\n\n          if(vid == 1 || vid == 2 || vid == 4) {\n            texX += texW;\n          }\n          if(vid == 2 || vid == 4 || vid == 5) {\n            texY += texH;\n          }\n\n          float d = float(uAtlasSize);\n          vTexCoord = vec2(texX / d, texY / d); // tex coords must be between 0 and 1\n\n          gl_Position = vec4(uPanZoomMatrix * aTransform * vec3(position, 1.0), 1.0);\n        }\n        else if(aVertType == ").concat(RECTANGLE, " || aVertType == ").concat(ELLIPSE, " \n             || aVertType == ").concat(ROUND_RECTANGLE, " || aVertType == ").concat(BOTTOM_ROUND_RECTANGLE, ") { // simple shapes\n\n          // the bounding box is needed by the fragment shader\n          vBotLeft  = (aTransform * vec3(0, 0, 1)).xy; // flat\n          vTopRight = (aTransform * vec3(1, 1, 1)).xy; // flat\n          vPosition = (aTransform * vec3(position, 1)).xy; // will be interpolated\n\n          // calculations are done in the fragment shader, just pass these along\n          vColor = aColor;\n          vCornerRadius = aCornerRadius;\n          vBorderColor = aBorderColor;\n          vBorderWidth = aLineWidth;\n\n          gl_Position = vec4(uPanZoomMatrix * aTransform * vec3(position, 1.0), 1.0);\n        }\n        else if(aVertType == ").concat(EDGE_STRAIGHT, ") {\n          vec2 source = aPointAPointB.xy;\n          vec2 target = aPointAPointB.zw;\n\n          // adjust the geometry so that the line is centered on the edge\n          position.y = position.y - 0.5;\n\n          // stretch the unit square into a long skinny rectangle\n          vec2 xBasis = target - source;\n          vec2 yBasis = normalize(vec2(-xBasis.y, xBasis.x));\n          vec2 point = source + xBasis * position.x + yBasis * aLineWidth[0] * position.y;\n\n          gl_Position = vec4(uPanZoomMatrix * vec3(point, 1.0), 1.0);\n          vColor = aColor;\n        } \n        else if(aVertType == ").concat(EDGE_CURVE_SEGMENT, ") {\n          vec2 pointA = aPointAPointB.xy;\n          vec2 pointB = aPointAPointB.zw;\n          vec2 pointC = aPointCPointD.xy;\n          vec2 pointD = aPointCPointD.zw;\n\n          // adjust the geometry so that the line is centered on the edge\n          position.y = position.y - 0.5;\n\n          vec2 p0, p1, p2, pos;\n          if(position.x == 0.0) { // The left side of the unit square\n            p0 = pointA;\n            p1 = pointB;\n            p2 = pointC;\n            pos = position;\n          } else { // The right side of the unit square, use same approach but flip the geometry upside down\n            p0 = pointD;\n            p1 = pointC;\n            p2 = pointB;\n            pos = vec2(0.0, -position.y);\n          }\n\n          vec2 p01 = p1 - p0;\n          vec2 p12 = p2 - p1;\n          vec2 p21 = p1 - p2;\n\n          // Find the normal vector.\n          vec2 tangent = normalize(normalize(p12) + normalize(p01));\n          vec2 normal = vec2(-tangent.y, tangent.x);\n\n          // Find the vector perpendicular to p0 -> p1.\n          vec2 p01Norm = normalize(vec2(-p01.y, p01.x));\n\n          // Determine the bend direction.\n          float sigma = sign(dot(p01 + p21, normal));\n          float width = aLineWidth[0];\n\n          if(sign(pos.y) == -sigma) {\n            // This is an intersecting vertex. Adjust the position so that there's no overlap.\n            vec2 point = 0.5 * width * normal * -sigma / dot(normal, p01Norm);\n            gl_Position = vec4(uPanZoomMatrix * vec3(p1 + point, 1.0), 1.0);\n          } else {\n            // This is a non-intersecting vertex. Treat it like a mitre join.\n            vec2 point = 0.5 * width * normal * sigma * dot(normal, p01Norm);\n            gl_Position = vec4(uPanZoomMatrix * vec3(p1 + point, 1.0), 1.0);\n          }\n\n          vColor = aColor;\n        } \n        else if(aVertType == ").concat(EDGE_ARROW, " && vid < 3) {\n          // massage the first triangle into an edge arrow\n          if(vid == 0)\n            position = vec2(-0.15, -0.3);\n          if(vid == 1)\n            position = vec2(  0.0,  0.0);\n          if(vid == 2)\n            position = vec2( 0.15, -0.3);\n\n          gl_Position = vec4(uPanZoomMatrix * aTransform * vec3(position, 1.0), 1.0);\n          vColor = aColor;\n        }\n        else {\n          gl_Position = vec4(2.0, 0.0, 0.0, 1.0); // discard vertex by putting it outside webgl clip space\n        }\n\n        vAtlasId = aAtlasId;\n        vVertType = aVertType;\n        vIndex = aIndex;\n      }\n    ");
+      var idxs = this.batchManager.getIndexArray();
+      var fragmentShaderSource = "#version 300 es\n      precision highp float;\n\n      // declare texture unit for each texture atlas in the batch\n      ".concat(idxs.map(function(i2) {
         return "uniform sampler2D uTexture".concat(i2, ";");
-      }).join("\n	"), "\n\n      uniform vec4 uBGColor;\n\n      in vec2 vTexCoord;\n      in vec4 vColor;\n      flat in int vAtlasId;\n      flat in vec4 vIndex;\n      flat in int vVertType;\n\n      out vec4 outColor;\n\n      void main(void) {\n        if(vVertType == ").concat(TEXTURE, ") {\n          ").concat(idxs.map(function(i2) {
+      }).join("\n	"), "\n\n      uniform vec4 uBGColor;\n      uniform float uZoom;\n\n      in vec2 vTexCoord;\n      in vec4 vColor;\n      in vec2 vPosition; // model coordinates\n\n      flat in int vAtlasId;\n      flat in vec4 vIndex;\n      flat in int vVertType;\n      flat in vec2 vTopRight;\n      flat in vec2 vBotLeft;\n      flat in vec4 vCornerRadius;\n      flat in vec4 vBorderColor;\n      flat in vec2 vBorderWidth;\n\n      out vec4 outColor;\n\n      ").concat(circleSD, "\n      ").concat(rectangleSD, "\n      ").concat(roundRectangleSD, "\n      ").concat(ellipseSD, "\n\n      vec4 blend(vec4 top, vec4 bot) { // blend colors with premultiplied alpha\n        return vec4( \n          top.rgb + (bot.rgb * (1.0 - top.a)),\n          top.a   + (bot.a   * (1.0 - top.a)) \n        );\n      }\n\n      vec4 distInterp(vec4 cA, vec4 cB, float d) { // interpolate color using Signed Distance\n        // scale to the zoom level so that borders don't look blurry when zoomed in\n        // note 1.5 is an aribitrary value chosen because it looks good\n        return mix(cA, cB, 1.0 - smoothstep(0.0, 1.5 / uZoom, abs(d))); \n      }\n\n      void main(void) {\n        if(vVertType == ").concat(TEXTURE, ") {\n          // look up the texel from the texture unit\n          ").concat(idxs.map(function(i2) {
         return "if(vAtlasId == ".concat(i2, ") outColor = texture(uTexture").concat(i2, ", vTexCoord);");
-      }).join("\n	else "), "\n        } else if(vVertType == ").concat(EDGE_ARROW, ") {\n          // blend arrow color with background (using premultiplied alpha)\n          outColor.rgb = vColor.rgb + (uBGColor.rgb * (1.0 - vColor.a)); \n          outColor.a = 1.0; // make opaque, masks out line under arrow\n        } else {\n          outColor = vColor;\n        }\n\n        ").concat(renderTarget.picking ? "if(outColor.a == 0.0) discard;\n             else outColor = vIndex;" : "", "\n      }\n    ");
+      }).join("\n	else "), "\n        } \n        else if(vVertType == ").concat(EDGE_ARROW, ") {\n          // mimics how canvas renderer uses context.globalCompositeOperation = 'destination-out';\n          outColor = blend(vColor, uBGColor);\n          outColor.a = 1.0; // make opaque, masks out line under arrow\n        }\n        else if(vVertType == ").concat(RECTANGLE, " && vBorderWidth == vec2(0.0)) { // simple rectangle with no border\n          outColor = vColor; // unit square is already transformed to the rectangle, nothing else needs to be done\n        }\n        else if(vVertType == ").concat(RECTANGLE, " || vVertType == ").concat(ELLIPSE, " \n          || vVertType == ").concat(ROUND_RECTANGLE, " || vVertType == ").concat(BOTTOM_ROUND_RECTANGLE, ") { // use SDF\n\n          float outerBorder = vBorderWidth[0];\n          float innerBorder = vBorderWidth[1];\n          float borderPadding = outerBorder * 2.0;\n          float w = vTopRight.x - vBotLeft.x - borderPadding;\n          float h = vTopRight.y - vBotLeft.y - borderPadding;\n          vec2 b = vec2(w/2.0, h/2.0); // half width, half height\n          vec2 p = vPosition - vec2(vTopRight.x - b[0] - outerBorder, vTopRight.y - b[1] - outerBorder); // translate to center\n\n          float d; // signed distance\n          if(vVertType == ").concat(RECTANGLE, ") {\n            d = rectangleSD(p, b);\n          } else if(vVertType == ").concat(ELLIPSE, " && w == h) {\n            d = circleSD(p, b.x); // faster than ellipse\n          } else if(vVertType == ").concat(ELLIPSE, ") {\n            d = ellipseSD(p, b);\n          } else {\n            d = roundRectangleSD(p, b, vCornerRadius.wzyx);\n          }\n\n          // use the distance to interpolate a color to smooth the edges of the shape, doesn't need multisampling\n          // we must smooth colors inwards, because we can't change pixels outside the shape's bounding box\n          if(d > 0.0) {\n            if(d > outerBorder) {\n              discard;\n            } else {\n              outColor = distInterp(vBorderColor, vec4(0), d - outerBorder);\n            }\n          } else {\n            if(d > innerBorder) {\n              vec4 outerColor = outerBorder == 0.0 ? vec4(0) : vBorderColor;\n              vec4 innerBorderColor = blend(vBorderColor, vColor);\n              outColor = distInterp(innerBorderColor, outerColor, d);\n            } \n            else {\n              vec4 outerColor;\n              if(innerBorder == 0.0 && outerBorder == 0.0) {\n                outerColor = vec4(0);\n              } else if(innerBorder == 0.0) {\n                outerColor = vBorderColor;\n              } else {\n                outerColor = blend(vBorderColor, vColor);\n              }\n              outColor = distInterp(vColor, outerColor, d - innerBorder);\n            }\n          }\n        }\n        else {\n          outColor = vColor;\n        }\n\n        ").concat(renderTarget.picking ? "if(outColor.a == 0.0) discard;\n             else outColor = vIndex;" : "", "\n      }\n    ");
       var program = createProgram(gl, vertexShaderSource, fragmentShaderSource);
       program.aPosition = gl.getAttribLocation(program, "aPosition");
       program.aIndex = gl.getAttribLocation(program, "aIndex");
@@ -27681,25 +28246,28 @@ var ElementDrawingWebGL = function() {
       program.aPointCPointD = gl.getAttribLocation(program, "aPointCPointD");
       program.aLineWidth = gl.getAttribLocation(program, "aLineWidth");
       program.aColor = gl.getAttribLocation(program, "aColor");
+      program.aCornerRadius = gl.getAttribLocation(program, "aCornerRadius");
+      program.aBorderColor = gl.getAttribLocation(program, "aBorderColor");
       program.uPanZoomMatrix = gl.getUniformLocation(program, "uPanZoomMatrix");
       program.uAtlasSize = gl.getUniformLocation(program, "uAtlasSize");
       program.uBGColor = gl.getUniformLocation(program, "uBGColor");
+      program.uZoom = gl.getUniformLocation(program, "uZoom");
       program.uTextures = [];
-      for (var i = 0; i < this.atlasManager.getMaxAtlasesPerBatch(); i++) {
+      for (var i = 0; i < this.batchManager.getMaxAtlasesPerBatch(); i++) {
         program.uTextures.push(gl.getUniformLocation(program, "uTexture".concat(i)));
       }
       return program;
     }
   }, {
-    key: "createVAO",
-    value: function createVAO() {
-      var instanceGeometry = [0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1];
-      this.vertexCount = instanceGeometry.length / 2;
+    key: "_createVAO",
+    value: function _createVAO() {
+      var unitSquare = [0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1];
+      this.vertexCount = unitSquare.length / 2;
       var n = this.maxInstances;
       var gl = this.gl, program = this.program;
       var vao = gl.createVertexArray();
       gl.bindVertexArray(vao);
-      createBufferStaticDraw(gl, "vec2", program.aPosition, instanceGeometry);
+      createBufferStaticDraw(gl, "vec2", program.aPosition, unitSquare);
       this.transformBuffer = create3x3MatrixBufferDynamicDraw(gl, n, program.aTransform);
       this.indexBuffer = createBufferDynamicDraw(gl, n, "vec4", program.aIndex);
       this.vertTypeBuffer = createBufferDynamicDraw(gl, n, "int", program.aVertType);
@@ -27707,8 +28275,10 @@ var ElementDrawingWebGL = function() {
       this.texBuffer = createBufferDynamicDraw(gl, n, "vec4", program.aTex);
       this.pointAPointBBuffer = createBufferDynamicDraw(gl, n, "vec4", program.aPointAPointB);
       this.pointCPointDBuffer = createBufferDynamicDraw(gl, n, "vec4", program.aPointCPointD);
-      this.lineWidthBuffer = createBufferDynamicDraw(gl, n, "float", program.aLineWidth);
+      this.lineWidthBuffer = createBufferDynamicDraw(gl, n, "vec2", program.aLineWidth);
       this.colorBuffer = createBufferDynamicDraw(gl, n, "vec4", program.aColor);
+      this.cornerRadiusBuffer = createBufferDynamicDraw(gl, n, "vec4", program.aCornerRadius);
+      this.borderColorBuffer = createBufferDynamicDraw(gl, n, "vec4", program.aBorderColor);
       gl.bindVertexArray(null);
       return vao;
     }
@@ -27718,7 +28288,7 @@ var ElementDrawingWebGL = function() {
       var _this = this;
       if (!this._buffers) {
         this._buffers = Object.keys(this).filter(function(k) {
-          return k.endsWith("Buffer");
+          return endsWith(k, "Buffer");
         }).map(function(k) {
           return _this[k];
         });
@@ -27733,14 +28303,14 @@ var ElementDrawingWebGL = function() {
       this.renderTarget = renderTarget;
       this.batchDebugInfo = [];
       this.wrappedCount = 0;
-      this.rectangleCount = 0;
+      this.simpleCount = 0;
       this.startBatch();
     }
   }, {
     key: "startBatch",
     value: function startBatch2() {
       this.instanceCount = 0;
-      this.atlasManager.startBatch();
+      this.batchManager.startBatch();
     }
   }, {
     key: "endFrame",
@@ -27748,81 +28318,285 @@ var ElementDrawingWebGL = function() {
       this.endBatch();
     }
   }, {
-    key: "getTempMatrix",
-    value: function getTempMatrix() {
-      return this.tempMatrix = this.tempMatrix || create();
+    key: "_isVisible",
+    value: function _isVisible(ele, opts) {
+      if (ele.visible()) {
+        if (opts && opts.isVisible) {
+          return opts.isVisible(ele);
+        }
+        return true;
+      }
+      return false;
     }
+    /**
+     * Draws a texture using the texture atlas.
+     */
   }, {
     key: "drawTexture",
     value: function drawTexture(ele, eleIndex, type) {
-      var atlasManager = this.atlasManager;
-      if (!ele.visible()) {
+      var atlasManager = this.atlasManager, batchManager = this.batchManager;
+      var opts = atlasManager.getRenderTypeOpts(type);
+      if (!this._isVisible(ele, opts)) {
         return;
       }
-      if (!atlasManager.getRenderTypeOpts(type).isVisible(ele)) {
+      if (ele.isEdge() && !this._isValidEdge(ele)) {
         return;
       }
-      if (!atlasManager.canAddToCurrentBatch(ele, type)) {
-        this.endBatch();
-      }
-      if (this.instanceCount + 1 >= this.maxInstances) {
-        this.endBatch();
-      }
-      var instance = this.instanceCount;
-      this.vertTypeBuffer.getView(instance)[0] = TEXTURE;
-      var indexView = this.indexBuffer.getView(instance);
-      indexToVec4(eleIndex, indexView);
-      var atlasInfo = atlasManager.getAtlasInfo(ele, type);
-      var index = atlasInfo.index, tex1 = atlasInfo.tex1, tex2 = atlasInfo.tex2;
-      if (tex2.w > 0) this.wrappedCount++;
-      var first2 = true;
-      for (var _i = 0, _arr = [tex1, tex2]; _i < _arr.length; _i++) {
-        var tex = _arr[_i];
-        if (tex.w != 0) {
-          var _instance = this.instanceCount;
-          this.vertTypeBuffer.getView(_instance)[0] = TEXTURE;
-          var _indexView = this.indexBuffer.getView(_instance);
-          indexToVec4(eleIndex, _indexView);
-          var atlasIdView = this.atlasIdBuffer.getView(_instance);
-          atlasIdView[0] = index;
-          var texView = this.texBuffer.getView(_instance);
-          texView[0] = tex.x;
-          texView[1] = tex.y;
-          texView[2] = tex.w;
-          texView[3] = tex.h;
-          var matrixView = this.transformBuffer.getMatrixView(_instance);
-          atlasManager.setTransformMatrix(ele, matrixView, type, atlasInfo, first2);
-          this.instanceCount++;
+      if (this.renderTarget.picking && opts.getTexPickingMode) {
+        var mode = opts.getTexPickingMode(ele);
+        if (mode === TEX_PICKING_MODE.IGNORE) {
+          return;
+        } else if (mode == TEX_PICKING_MODE.USE_BB) {
+          this.drawPickingRectangle(ele, eleIndex, type);
+          return;
         }
-        first2 = false;
       }
-      if (this.instanceCount >= this.maxInstances) {
-        this.endBatch();
+      var atlasInfoArray = atlasManager.getAtlasInfo(ele, type);
+      var _iterator = _createForOfIteratorHelper(atlasInfoArray), _step;
+      try {
+        for (_iterator.s(); !(_step = _iterator.n()).done; ) {
+          var atlasInfo = _step.value;
+          var atlas = atlasInfo.atlas, tex1 = atlasInfo.tex1, tex2 = atlasInfo.tex2;
+          if (!batchManager.canAddToCurrentBatch(atlas)) {
+            this.endBatch();
+          }
+          var atlasIndex = batchManager.getAtlasIndexForBatch(atlas);
+          for (var _i = 0, _arr = [[tex1, true], [tex2, false]]; _i < _arr.length; _i++) {
+            var _arr$_i = _slicedToArray(_arr[_i], 2), tex = _arr$_i[0], first2 = _arr$_i[1];
+            if (tex.w != 0) {
+              var instance = this.instanceCount;
+              this.vertTypeBuffer.getView(instance)[0] = TEXTURE;
+              var indexView = this.indexBuffer.getView(instance);
+              indexToVec4(eleIndex, indexView);
+              var atlasIdView = this.atlasIdBuffer.getView(instance);
+              atlasIdView[0] = atlasIndex;
+              var texView = this.texBuffer.getView(instance);
+              texView[0] = tex.x;
+              texView[1] = tex.y;
+              texView[2] = tex.w;
+              texView[3] = tex.h;
+              var matrixView = this.transformBuffer.getMatrixView(instance);
+              this.setTransformMatrix(ele, matrixView, opts, atlasInfo, first2);
+              this.instanceCount++;
+              if (!first2) this.wrappedCount++;
+              if (this.instanceCount >= this.maxInstances) {
+                this.endBatch();
+              }
+            }
+          }
+        }
+      } catch (err) {
+        _iterator.e(err);
+      } finally {
+        _iterator.f();
+      }
+    }
+    /**
+     * matrix is expected to be a 9 element array
+     * this function follows same pattern as CRp.drawCachedElementPortion(...)
+     */
+  }, {
+    key: "setTransformMatrix",
+    value: function setTransformMatrix(ele, matrix, opts, atlasInfo) {
+      var first2 = arguments.length > 4 && arguments[4] !== void 0 ? arguments[4] : true;
+      var padding = 0;
+      if (opts.shapeProps && opts.shapeProps.padding) {
+        padding = ele.pstyle(opts.shapeProps.padding).pfValue;
+      }
+      if (atlasInfo) {
+        var bb = atlasInfo.bb, tex1 = atlasInfo.tex1, tex2 = atlasInfo.tex2;
+        var ratio = tex1.w / (tex1.w + tex2.w);
+        if (!first2) {
+          ratio = 1 - ratio;
+        }
+        var adjBB = this._getAdjustedBB(bb, padding, first2, ratio);
+        this._applyTransformMatrix(matrix, adjBB, opts, ele);
+      } else {
+        var _bb = opts.getBoundingBox(ele);
+        var _adjBB = this._getAdjustedBB(_bb, padding, true, 1);
+        this._applyTransformMatrix(matrix, _adjBB, opts, ele);
       }
     }
   }, {
-    key: "drawSimpleRectangle",
-    value: function drawSimpleRectangle(ele, eleIndex, type) {
-      if (!ele.visible()) {
-        return;
+    key: "_applyTransformMatrix",
+    value: function _applyTransformMatrix(matrix, adjBB, opts, ele) {
+      var x2, y2;
+      identity2(matrix);
+      var theta = opts.getRotation ? opts.getRotation(ele) : 0;
+      if (theta !== 0) {
+        var _opts$getRotationPoin = opts.getRotationPoint(ele), sx = _opts$getRotationPoin.x, sy = _opts$getRotationPoin.y;
+        translate(matrix, matrix, [sx, sy]);
+        rotate(matrix, matrix, theta);
+        var offset = opts.getRotationOffset(ele);
+        x2 = offset.x + (adjBB.xOffset || 0);
+        y2 = offset.y + (adjBB.yOffset || 0);
+      } else {
+        x2 = adjBB.x1;
+        y2 = adjBB.y1;
       }
-      var atlasManager = this.atlasManager;
+      translate(matrix, matrix, [x2, y2]);
+      scale(matrix, matrix, [adjBB.w, adjBB.h]);
+    }
+    /**
+     * Adjusts a node or label BB to accomodate padding and split for wrapped textures.
+     * @param bb - the original bounding box
+     * @param padding - the padding to add to the bounding box
+     * @param first - whether this is the first part of a wrapped texture
+     * @param ratio - the ratio of the texture width of part of the text to the entire texture
+     */
+  }, {
+    key: "_getAdjustedBB",
+    value: function _getAdjustedBB(bb, padding, first2, ratio) {
+      var x1 = bb.x1, y1 = bb.y1, w = bb.w, h = bb.h, yOffset = bb.yOffset;
+      if (padding) {
+        x1 -= padding;
+        y1 -= padding;
+        w += 2 * padding;
+        h += 2 * padding;
+      }
+      var xOffset = 0;
+      var adjW = w * ratio;
+      if (first2 && ratio < 1) {
+        w = adjW;
+      } else if (!first2 && ratio < 1) {
+        xOffset = w - adjW;
+        x1 += xOffset;
+        w = adjW;
+      }
+      return {
+        x1,
+        y1,
+        w,
+        h,
+        xOffset,
+        yOffset
+      };
+    }
+    /**
+     * Draw a solid opaque rectangle matching the element's Bounding Box.
+     * Used by the PICKING mode to make the entire BB of a label clickable.
+     */
+  }, {
+    key: "drawPickingRectangle",
+    value: function drawPickingRectangle(ele, eleIndex, type) {
+      var opts = this.atlasManager.getRenderTypeOpts(type);
       var instance = this.instanceCount;
       this.vertTypeBuffer.getView(instance)[0] = RECTANGLE;
       var indexView = this.indexBuffer.getView(instance);
       indexToVec4(eleIndex, indexView);
-      var color = ele.pstyle("background-color").value;
-      var opacity = ele.pstyle("background-opacity").value;
       var colorView = this.colorBuffer.getView(instance);
-      toWebGLColor(color, opacity, colorView);
+      toWebGLColor([0, 0, 0], 1, colorView);
       var matrixView = this.transformBuffer.getMatrixView(instance);
-      atlasManager.setTransformMatrix(ele, matrixView, type);
-      this.rectangleCount++;
+      this.setTransformMatrix(ele, matrixView, opts);
+      this.simpleCount++;
       this.instanceCount++;
       if (this.instanceCount >= this.maxInstances) {
         this.endBatch();
       }
     }
+    /**
+     * Draw a node using either a texture or a "simple shape".
+     */
+  }, {
+    key: "drawNode",
+    value: function drawNode(node, eleIndex, type) {
+      var opts = this.simpleShapeOptions.get(type);
+      if (!this._isVisible(node, opts)) {
+        return;
+      }
+      var props = opts.shapeProps;
+      var vertType = this._getVertTypeForShape(node, props.shape);
+      if (vertType === void 0 || opts.isSimple && !opts.isSimple(node)) {
+        this.drawTexture(node, eleIndex, type);
+        return;
+      }
+      var instance = this.instanceCount;
+      this.vertTypeBuffer.getView(instance)[0] = vertType;
+      if (vertType === ROUND_RECTANGLE || vertType === BOTTOM_ROUND_RECTANGLE) {
+        var bb = opts.getBoundingBox(node);
+        var radius2 = this._getCornerRadius(node, props.radius, bb);
+        var radiusView = this.cornerRadiusBuffer.getView(instance);
+        radiusView[0] = radius2;
+        radiusView[1] = radius2;
+        radiusView[2] = radius2;
+        radiusView[3] = radius2;
+        if (vertType === BOTTOM_ROUND_RECTANGLE) {
+          radiusView[0] = 0;
+          radiusView[2] = 0;
+        }
+      }
+      var indexView = this.indexBuffer.getView(instance);
+      indexToVec4(eleIndex, indexView);
+      var color = node.pstyle(props.color).value;
+      var opacity = node.pstyle(props.opacity).value;
+      var colorView = this.colorBuffer.getView(instance);
+      toWebGLColor(color, opacity, colorView);
+      var lineWidthView = this.lineWidthBuffer.getView(instance);
+      lineWidthView[0] = 0;
+      lineWidthView[1] = 0;
+      if (props.border) {
+        var borderWidth = node.pstyle("border-width").value;
+        if (borderWidth > 0) {
+          var borderColor = node.pstyle("border-color").value;
+          var borderOpacity = node.pstyle("border-opacity").value;
+          var borderColorView = this.borderColorBuffer.getView(instance);
+          toWebGLColor(borderColor, borderOpacity, borderColorView);
+          var borderPos = node.pstyle("border-position").value;
+          if (borderPos === "inside") {
+            lineWidthView[0] = 0;
+            lineWidthView[1] = -borderWidth;
+          } else if (borderPos === "outside") {
+            lineWidthView[0] = borderWidth;
+            lineWidthView[1] = 0;
+          } else {
+            var halfWidth = borderWidth / 2;
+            lineWidthView[0] = halfWidth;
+            lineWidthView[1] = -halfWidth;
+          }
+        }
+      }
+      var matrixView = this.transformBuffer.getMatrixView(instance);
+      this.setTransformMatrix(node, matrixView, opts);
+      this.simpleCount++;
+      this.instanceCount++;
+      if (this.instanceCount >= this.maxInstances) {
+        this.endBatch();
+      }
+    }
+  }, {
+    key: "_getVertTypeForShape",
+    value: function _getVertTypeForShape(node, shapeProp) {
+      var shape = node.pstyle(shapeProp).value;
+      switch (shape) {
+        case "rectangle":
+          return RECTANGLE;
+        case "ellipse":
+          return ELLIPSE;
+        case "roundrectangle":
+        case "round-rectangle":
+          return ROUND_RECTANGLE;
+        case "bottom-round-rectangle":
+          return BOTTOM_ROUND_RECTANGLE;
+        default:
+          return void 0;
+      }
+    }
+  }, {
+    key: "_getCornerRadius",
+    value: function _getCornerRadius(node, radiusProp, _ref2) {
+      var w = _ref2.w, h = _ref2.h;
+      if (node.pstyle(radiusProp).value === "auto") {
+        return getRoundRectangleRadius(w, h);
+      } else {
+        var radius2 = node.pstyle(radiusProp).pfValue;
+        var halfWidth = w / 2;
+        var halfHeight = h / 2;
+        return Math.min(radius2, halfHeight, halfWidth);
+      }
+    }
+    /**
+     * Only supports drawing triangles at the moment.
+     */
   }, {
     key: "drawEdgeArrow",
     value: function drawEdgeArrow(edge, eleIndex, prefix) {
@@ -27870,13 +28644,16 @@ var ElementDrawingWebGL = function() {
         this.endBatch();
       }
     }
+    /**
+     * Draw straight-line or bezier curve edges.
+     */
   }, {
     key: "drawEdgeLine",
     value: function drawEdgeLine(edge, eleIndex) {
       if (!edge.visible()) {
         return;
       }
-      var points = this.getEdgePoints(edge);
+      var points = this._getEdgePoints(edge);
       if (!points) {
         return;
       }
@@ -27908,13 +28685,13 @@ var ElementDrawingWebGL = function() {
         }
       } else {
         for (var i = 0; i < points.length - 2; i += 2) {
-          var _instance2 = this.instanceCount;
-          this.vertTypeBuffer.getView(_instance2)[0] = EDGE_CURVE_SEGMENT;
-          var _indexView2 = this.indexBuffer.getView(_instance2);
-          indexToVec4(eleIndex, _indexView2);
-          var _colorView = this.colorBuffer.getView(_instance2);
+          var _instance = this.instanceCount;
+          this.vertTypeBuffer.getView(_instance)[0] = EDGE_CURVE_SEGMENT;
+          var _indexView = this.indexBuffer.getView(_instance);
+          indexToVec4(eleIndex, _indexView);
+          var _colorView = this.colorBuffer.getView(_instance);
           toWebGLColor(color, opacity, _colorView);
-          var _lineWidthBuffer = this.lineWidthBuffer.getView(_instance2);
+          var _lineWidthBuffer = this.lineWidthBuffer.getView(_instance);
           _lineWidthBuffer[0] = width2;
           var pAx = points[i - 2], pAy = points[i - 1];
           var pBx = points[i], pBy = points[i + 1];
@@ -27928,12 +28705,12 @@ var ElementDrawingWebGL = function() {
             pDx = 2 * pCx - pBx + 1e-3;
             pDy = 2 * pCy - pBy + 1e-3;
           }
-          var pointABView = this.pointAPointBBuffer.getView(_instance2);
+          var pointABView = this.pointAPointBBuffer.getView(_instance);
           pointABView[0] = pAx;
           pointABView[1] = pAy;
           pointABView[2] = pBx;
           pointABView[3] = pBy;
-          var pointCDView = this.pointCPointDBuffer.getView(_instance2);
+          var pointCDView = this.pointCPointDBuffer.getView(_instance);
           pointCDView[0] = pCx;
           pointCDView[1] = pCy;
           pointCDView[2] = pDx;
@@ -27946,28 +28723,37 @@ var ElementDrawingWebGL = function() {
       }
     }
   }, {
-    key: "getEdgePoints",
-    value: function getEdgePoints(edge) {
+    key: "_isValidEdge",
+    value: function _isValidEdge(edge) {
       var rs = edge._private.rscratch;
       if (rs.badLine || rs.allpts == null || isNaN(rs.allpts[0])) {
+        return false;
+      }
+      return true;
+    }
+  }, {
+    key: "_getEdgePoints",
+    value: function _getEdgePoints(edge) {
+      var rs = edge._private.rscratch;
+      if (!this._isValidEdge(edge)) {
         return;
       }
       var controlPoints3 = rs.allpts;
       if (controlPoints3.length == 4) {
         return controlPoints3;
       }
-      var numSegments = this.getNumSegments(edge);
-      return this.getCurveSegmentPoints(controlPoints3, numSegments);
+      var numSegments = this._getNumSegments(edge);
+      return this._getCurveSegmentPoints(controlPoints3, numSegments);
     }
   }, {
-    key: "getNumSegments",
-    value: function getNumSegments(edge) {
+    key: "_getNumSegments",
+    value: function _getNumSegments(edge) {
       var numSegments = 15;
       return Math.min(Math.max(numSegments, 5), this.maxInstances);
     }
   }, {
-    key: "getCurveSegmentPoints",
-    value: function getCurveSegmentPoints(controlPoints3, segments) {
+    key: "_getCurveSegmentPoints",
+    value: function _getCurveSegmentPoints(controlPoints3, segments) {
       if (controlPoints3.length == 4) {
         return controlPoints3;
       }
@@ -27981,14 +28767,14 @@ var ElementDrawingWebGL = function() {
           curvePoints[i * 2 + 1] = controlPoints3[controlPoints3.length - 1];
         } else {
           var t = i / segments;
-          this.setCurvePoint(controlPoints3, t, curvePoints, i * 2);
+          this._setCurvePoint(controlPoints3, t, curvePoints, i * 2);
         }
       }
       return curvePoints;
     }
   }, {
-    key: "setCurvePoint",
-    value: function setCurvePoint(points, t, curvePoints, cpi) {
+    key: "_setCurvePoint",
+    value: function _setCurvePoint(points, t, curvePoints, cpi) {
       if (points.length <= 2) {
         curvePoints[cpi] = points[0];
         curvePoints[cpi + 1] = points[1];
@@ -28000,7 +28786,7 @@ var ElementDrawingWebGL = function() {
           newpoints[i] = x2;
           newpoints[i + 1] = y2;
         }
-        return this.setCurvePoint(newpoints, t, curvePoints, cpi);
+        return this._setCurvePoint(newpoints, t, curvePoints, cpi);
       }
     }
   }, {
@@ -28011,18 +28797,18 @@ var ElementDrawingWebGL = function() {
       var program = this.renderTarget.picking ? this.pickingProgram : this.program;
       gl.useProgram(program);
       gl.bindVertexArray(vao);
-      var _iterator = _createForOfIteratorHelper(this.buffers), _step;
+      var _iterator2 = _createForOfIteratorHelper(this.buffers), _step2;
       try {
-        for (_iterator.s(); !(_step = _iterator.n()).done; ) {
-          var buffer = _step.value;
+        for (_iterator2.s(); !(_step2 = _iterator2.n()).done; ) {
+          var buffer = _step2.value;
           buffer.bufferSubData(count);
         }
       } catch (err) {
-        _iterator.e(err);
+        _iterator2.e(err);
       } finally {
-        _iterator.f();
+        _iterator2.f();
       }
-      var atlases = this.atlasManager.getAtlases();
+      var atlases = this.batchManager.getAtlases();
       for (var i = 0; i < atlases.length; i++) {
         atlases[i].bufferIfNeeded(gl);
       }
@@ -28031,8 +28817,9 @@ var ElementDrawingWebGL = function() {
         gl.bindTexture(gl.TEXTURE_2D, atlases[_i2].texture);
         gl.uniform1i(program.uTextures[_i2], _i2);
       }
+      gl.uniform1f(program.uZoom, getEffectiveZoom(this.r));
       gl.uniformMatrix3fv(program.uPanZoomMatrix, false, this.panZoomMatrix);
-      gl.uniform1i(program.uAtlasSize, this.atlasManager.getAtlasSize());
+      gl.uniform1i(program.uAtlasSize, this.batchManager.getAtlasSize());
       var webglBgColor = toWebGLColor(this.bgColor, 1);
       gl.uniform4fv(program.uBGColor, webglBgColor);
       gl.drawArraysInstanced(gl.TRIANGLES, 0, vertexCount, count);
@@ -28062,74 +28849,11 @@ var ElementDrawingWebGL = function() {
         atlasInfo,
         totalAtlases,
         wrappedCount: this.wrappedCount,
-        rectangleCount: this.rectangleCount,
+        simpleCount: this.simpleCount,
         batchCount: batchInfo.length,
         batchInfo,
         totalInstances
       };
-    }
-  }]);
-}();
-function fillStyle(color, opacity) {
-  return "rgba(".concat(color[0], ", ").concat(color[1], ", ").concat(color[2], ", ").concat(opacity, ")");
-}
-var OverlayUnderlayRenderer = function() {
-  function OverlayUnderlayRenderer2(r) {
-    _classCallCheck(this, OverlayUnderlayRenderer2);
-    this.r = r;
-  }
-  return _createClass(OverlayUnderlayRenderer2, [{
-    key: "getStyleKey",
-    value: function getStyleKey(type, node) {
-      var _this$getStyle = this.getStyle(type, node), shape = _this$getStyle.shape, opacity = _this$getStyle.opacity, color = _this$getStyle.color;
-      if (!shape) return null;
-      var w = node.width();
-      var h = node.height();
-      var c = fillStyle(color, opacity);
-      return hashString("".concat(shape, "-").concat(w, "-").concat(h, "-").concat(c));
-    }
-  }, {
-    key: "isVisible",
-    value: function isVisible2(type, node) {
-      var opacity = node.pstyle("".concat(type, "-opacity")).value;
-      return opacity > 0;
-    }
-  }, {
-    key: "getStyle",
-    value: function getStyle(type, node) {
-      var opacity = node.pstyle("".concat(type, "-opacity")).value;
-      var color = node.pstyle("".concat(type, "-color")).value;
-      var shape = node.pstyle("".concat(type, "-shape")).value;
-      return {
-        opacity,
-        color,
-        shape
-      };
-    }
-  }, {
-    key: "getPadding",
-    value: function getPadding(type, node) {
-      return node.pstyle("".concat(type, "-padding")).pfValue;
-    }
-  }, {
-    key: "draw",
-    value: function draw(type, context, node, bb) {
-      if (!this.isVisible(type, node)) return;
-      var r = this.r;
-      var w = bb.w;
-      var h = bb.h;
-      var x2 = w / 2;
-      var y2 = h / 2;
-      var _this$getStyle2 = this.getStyle(type, node), shape = _this$getStyle2.shape, color = _this$getStyle2.color, opacity = _this$getStyle2.opacity;
-      context.save();
-      context.fillStyle = fillStyle(color, opacity);
-      if (shape === "round-rectangle" || shape === "roundrectangle") {
-        r.drawRoundRectanglePath(context, x2, y2, w, h, "auto");
-      } else if (shape === "ellipse") {
-        r.drawEllipsePath(context, x2, y2, w, h);
-      }
-      context.fill();
-      context.restore();
     }
   }]);
 }();
@@ -28147,6 +28871,7 @@ CRp$4.initWebgl = function(opts, fns) {
   r.webglDebugShowAtlases = opts.webglDebugShowAtlases;
   r.pickingFrameBuffer = createPickingFrameBuffer(gl);
   r.pickingFrameBuffer.needsDraw = true;
+  r.drawing = new ElementDrawingWebGL(r, gl, opts);
   var getLabelRotation3 = function getLabelRotation4(prop) {
     return function(ele) {
       return r.getTextAngle(ele, prop);
@@ -28158,83 +28883,108 @@ CRp$4.initWebgl = function(opts, fns) {
       return label && label.value;
     };
   };
-  r.drawing = new ElementDrawingWebGL(r, gl, opts);
-  var our = new OverlayUnderlayRenderer(r);
-  r.drawing.addAtlasCollection("node", atlasCollectionDefaults({
+  var isLayerVisible = function isLayerVisible2(prefix) {
+    return function(node) {
+      return node.pstyle("".concat(prefix, "-opacity")).value > 0;
+    };
+  };
+  var getTexPickingMode = function getTexPickingMode2(ele) {
+    var enabled = ele.pstyle("text-events").strValue === "yes";
+    return enabled ? TEX_PICKING_MODE.USE_BB : TEX_PICKING_MODE.IGNORE;
+  };
+  var getBBForSimpleShape = function getBBForSimpleShape2(node) {
+    var _node$position = node.position(), x2 = _node$position.x, y2 = _node$position.y;
+    var w = node.outerWidth();
+    var h = node.outerHeight();
+    return {
+      w,
+      h,
+      x1: x2 - w / 2,
+      y1: y2 - h / 2
+    };
+  };
+  r.drawing.addAtlasCollection("node", {
     texRows: opts.webglTexRowsNodes
-  }));
-  r.drawing.addAtlasCollection("label", atlasCollectionDefaults({
+  });
+  r.drawing.addAtlasCollection("label", {
     texRows: opts.webglTexRows
-  }));
-  r.drawing.addAtlasRenderType("node-body", renderDefaults({
+  });
+  r.drawing.addTextureAtlasRenderType("node-body", {
     collection: "node",
     getKey: fns.getStyleKey,
     getBoundingBox: fns.getElementBox,
     drawElement: fns.drawElement
-  }));
-  r.drawing.addAtlasRenderType("label", renderDefaults({
+  });
+  r.drawing.addSimpleShapeRenderType("node-body", {
+    getBoundingBox: getBBForSimpleShape,
+    isSimple: isSimpleShape,
+    shapeProps: {
+      shape: "shape",
+      color: "background-color",
+      opacity: "background-opacity",
+      radius: "corner-radius",
+      border: true
+    }
+  });
+  r.drawing.addSimpleShapeRenderType("node-overlay", {
+    getBoundingBox: getBBForSimpleShape,
+    isVisible: isLayerVisible("overlay"),
+    shapeProps: {
+      shape: "overlay-shape",
+      color: "overlay-color",
+      opacity: "overlay-opacity",
+      padding: "overlay-padding",
+      radius: "overlay-corner-radius"
+    }
+  });
+  r.drawing.addSimpleShapeRenderType("node-underlay", {
+    getBoundingBox: getBBForSimpleShape,
+    isVisible: isLayerVisible("underlay"),
+    shapeProps: {
+      shape: "underlay-shape",
+      color: "underlay-color",
+      opacity: "underlay-opacity",
+      padding: "underlay-padding",
+      radius: "underlay-corner-radius"
+    }
+  });
+  r.drawing.addTextureAtlasRenderType("label", {
     // node label or edge mid label
     collection: "label",
-    getKey: fns.getLabelKey,
-    getBoundingBox: fns.getLabelBox,
+    getTexPickingMode,
+    getKey: getStyleKeysForLabel(fns.getLabelKey, null),
+    getBoundingBox: getBoundingBoxForLabel(fns.getLabelBox, null),
+    drawClipped: true,
     drawElement: fns.drawLabel,
     getRotation: getLabelRotation3(null),
     getRotationPoint: fns.getLabelRotationPoint,
     getRotationOffset: fns.getLabelRotationOffset,
     isVisible: isLabelVisible("label")
-  }));
-  r.drawing.addAtlasRenderType("node-overlay", renderDefaults({
-    collection: "node",
-    getBoundingBox: fns.getElementBox,
-    getKey: function getKey3(ele) {
-      return our.getStyleKey("overlay", ele);
-    },
-    drawElement: function drawElement(ctx, ele, bb) {
-      return our.draw("overlay", ctx, ele, bb);
-    },
-    isVisible: function isVisible2(ele) {
-      return our.isVisible("overlay", ele);
-    },
-    getPadding: function getPadding(ele) {
-      return our.getPadding("overlay", ele);
-    }
-  }));
-  r.drawing.addAtlasRenderType("node-underlay", renderDefaults({
-    collection: "node",
-    getBoundingBox: fns.getElementBox,
-    getKey: function getKey3(ele) {
-      return our.getStyleKey("underlay", ele);
-    },
-    drawElement: function drawElement(ctx, ele, bb) {
-      return our.draw("underlay", ctx, ele, bb);
-    },
-    isVisible: function isVisible2(ele) {
-      return our.isVisible("underlay", ele);
-    },
-    getPadding: function getPadding(ele) {
-      return our.getPadding("underlay", ele);
-    }
-  }));
-  r.drawing.addAtlasRenderType("edge-source-label", renderDefaults({
+  });
+  r.drawing.addTextureAtlasRenderType("edge-source-label", {
     collection: "label",
-    getKey: fns.getSourceLabelKey,
-    getBoundingBox: fns.getSourceLabelBox,
+    getTexPickingMode,
+    getKey: getStyleKeysForLabel(fns.getSourceLabelKey, "source"),
+    getBoundingBox: getBoundingBoxForLabel(fns.getSourceLabelBox, "source"),
+    drawClipped: true,
     drawElement: fns.drawSourceLabel,
     getRotation: getLabelRotation3("source"),
     getRotationPoint: fns.getSourceLabelRotationPoint,
     getRotationOffset: fns.getSourceLabelRotationOffset,
     isVisible: isLabelVisible("source-label")
-  }));
-  r.drawing.addAtlasRenderType("edge-target-label", renderDefaults({
+  });
+  r.drawing.addTextureAtlasRenderType("edge-target-label", {
     collection: "label",
-    getKey: fns.getTargetLabelKey,
-    getBoundingBox: fns.getTargetLabelBox,
+    getTexPickingMode,
+    getKey: getStyleKeysForLabel(fns.getTargetLabelKey, "target"),
+    getBoundingBox: getBoundingBoxForLabel(fns.getTargetLabelBox, "target"),
+    drawClipped: true,
     drawElement: fns.drawTargetLabel,
     getRotation: getLabelRotation3("target"),
     getRotationPoint: fns.getTargetLabelRotationPoint,
     getRotationOffset: fns.getTargetLabelRotationOffset,
     isVisible: isLabelVisible("target-label")
-  }));
+  });
   var setGCFlag = debounce(function() {
     console.log("garbage collect flag set");
     r.data.gc = true;
@@ -28255,6 +29005,45 @@ function getBGColor(r) {
   var cssColor = container2 && container2.style && container2.style.backgroundColor || "white";
   return color2tuple(cssColor);
 }
+function getLabelLines(ele, prefix) {
+  var rs = ele._private.rscratch;
+  return getPrefixedProperty(rs, "labelWrapCachedLines", prefix) || [];
+}
+var getStyleKeysForLabel = function getStyleKeysForLabel2(getKey3, prefix) {
+  return function(ele) {
+    var key = getKey3(ele);
+    var lines = getLabelLines(ele, prefix);
+    if (lines.length > 1) {
+      return lines.map(function(line, index) {
+        return "".concat(key, "_").concat(index);
+      });
+    }
+    return key;
+  };
+};
+var getBoundingBoxForLabel = function getBoundingBoxForLabel2(getBoundingBox, prefix) {
+  return function(ele, styleKey) {
+    var bb = getBoundingBox(ele);
+    if (typeof styleKey === "string") {
+      var ui = styleKey.indexOf("_");
+      if (ui > 0) {
+        var lineIndex = Number(styleKey.substring(ui + 1));
+        var lines = getLabelLines(ele, prefix);
+        var h = bb.h / lines.length;
+        var yOffset = h * lineIndex;
+        var y1 = bb.y1 + yOffset;
+        return {
+          x1: bb.x1,
+          w: bb.w,
+          y1,
+          h,
+          yOffset
+        };
+      }
+    }
+    return bb;
+  };
+};
 function overrideCanvasRendererFunctions(r) {
   {
     var renderCanvas = r.render;
@@ -28366,7 +29155,6 @@ function drawAtlases(r) {
   var draw = function draw2(drawing, name, row) {
     var collection4 = drawing.atlasManager.getAtlasCollection(name);
     var context = r.data.contexts[r.NODE];
-    var scale2 = 0.125;
     var atlases = collection4.atlases;
     for (var _i = 0; _i < atlases.length; _i++) {
       var atlas = atlases[_i];
@@ -28376,6 +29164,7 @@ function drawAtlases(r) {
         var h = canvas.height;
         var x2 = w * _i;
         var y2 = canvas.height * row;
+        var scale2 = 0.4;
         context.save();
         context.scale(scale2, scale2);
         context.drawImage(canvas, x2, y2);
@@ -28451,21 +29240,14 @@ function findNearestElementsWebgl(r, x2, y2) {
   }
   return [node, edge].filter(Boolean);
 }
-function isSimpleRectangle(node) {
-  return node.pstyle("shape").value === "rectangle" && node.pstyle("background-fill").value === "solid" && node.pstyle("border-width").pfValue === 0 && node.pstyle("background-image").strValue === "none";
-}
 function drawEle(r, index, ele) {
   var drawing = r.drawing;
   index += 1;
   if (ele.isNode()) {
-    drawing.drawTexture(ele, index, "node-underlay");
-    if (isSimpleRectangle(ele)) {
-      drawing.drawSimpleRectangle(ele, index, "node-body");
-    } else {
-      drawing.drawTexture(ele, index, "node-body");
-    }
+    drawing.drawNode(ele, index, "node-underlay");
+    drawing.drawNode(ele, index, "node-body");
     drawing.drawTexture(ele, index, "label");
-    drawing.drawTexture(ele, index, "node-overlay");
+    drawing.drawNode(ele, index, "node-overlay");
   } else {
     drawing.drawEdgeLine(ele, index);
     drawing.drawEdgeArrow(ele, index, "source");
@@ -28527,7 +29309,7 @@ function renderWebgl(r, options2, renderTarget) {
     var compact = false;
     var time2 = Math.ceil(end - start);
     var debugInfo = drawing.getDebugInfo();
-    var report = ["".concat(eleCount, " elements"), "".concat(debugInfo.totalInstances, " instances"), "".concat(debugInfo.batchCount, " batches"), "".concat(debugInfo.totalAtlases, " atlases"), "".concat(debugInfo.wrappedCount, " wrapped textures"), "".concat(debugInfo.rectangleCount, " simple rectangles")].join(", ");
+    var report = ["".concat(eleCount, " elements"), "".concat(debugInfo.totalInstances, " instances"), "".concat(debugInfo.batchCount, " batches"), "".concat(debugInfo.totalAtlases, " atlases"), "".concat(debugInfo.wrappedCount, " wrapped textures"), "".concat(debugInfo.simpleCount, " simple shapes")].join(", ");
     if (compact) {
       console.log("WebGL (".concat(renderTarget.name, ") - time ").concat(time2, "ms, ").concat(report));
     } else {
@@ -28536,16 +29318,16 @@ function renderWebgl(r, options2, renderTarget) {
       console.log("  ".concat(report));
       console.log("Texture Atlases Used:");
       var atlasInfo = debugInfo.atlasInfo;
-      var _iterator3 = _createForOfIteratorHelper(atlasInfo), _step3;
+      var _iterator2 = _createForOfIteratorHelper(atlasInfo), _step2;
       try {
-        for (_iterator3.s(); !(_step3 = _iterator3.n()).done; ) {
-          var info = _step3.value;
+        for (_iterator2.s(); !(_step2 = _iterator2.n()).done; ) {
+          var info = _step2.value;
           console.log("  ".concat(info.type, ": ").concat(info.keyCount, " keys, ").concat(info.atlasCount, " atlases"));
         }
       } catch (err) {
-        _iterator3.e(err);
+        _iterator2.e(err);
       } finally {
-        _iterator3.f();
+        _iterator2.f();
       }
       console.log("");
     }
@@ -29450,7 +30232,7 @@ sheetfn.appendToStyle = function(style3) {
   }
   return style3;
 };
-var version = "3.31.2";
+var version = "3.33.1";
 var cytoscape = function cytoscape2(options2) {
   if (options2 === void 0) {
     options2 = {};

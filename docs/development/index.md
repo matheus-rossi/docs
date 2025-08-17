@@ -1,68 +1,30 @@
 # Development
-![me-logo](me-logo.png)
 
 ## Who am I ?
 
-My name is Matheus Sandrini Rossi, I'm a data architect / data engineer and I'm passionate about technology and data.
+Hey, I’m Matheus Sandrini Rossi
+
+Someone who loves building data pipelines, playing with AI and developing with Python. 
+
+I’ve been doing this for a while now (almost 10 years), from setting up real-time data systems in the wild to automating stuff with Kubernetes and Terraform just because it’s fun.
+
+Recently, I've been working with LLMs, embeddings, all the hype involved in this area.
+
+I keep this wiki where I drop everything I learn (because I’ll forget otherwise), and I share a bunch of practical guides and random nerdy stuff about databases, cloud, AI … whatever I’m into at the moment.
+
+At the end of the day, I just like solving real problems and helping other people do the same, no fancy titles, no buzzwords, just building cool things and sharing the journey.
 
 ## What can you find here ?
 
-Almost everything I use in my day to day, from tools, tips, tricks, studies, guides, etc.
+- Data Engineering
+- AI Engineering
+- Data Analytics
+- Cloud
+- DevOps
+- and more
 
-## Will it be useful to me ?
+## Where can you find me ?
 
-If you work with IT and the data universe, probably yes.
-
-If you are not in this context, but you are curious, it may be useful to you too.
-
-## Pre-requisites
-
-Basic knowledge of:
-- python
-- linux
-- git
-- docker
-- sql
-
-If you dont know about it, don't worry, you can find some tips here.
-
-## Tools
-
-### Brew
-
-::: tip
-If you are using Windows, you can use Windows Subsystem for Linux (WSL).
-
-[Windows Docs](https://learn.microsoft.com/pt-br/windows/wsl/install)
-::::
-
-[Brew - Site](https://brew.sh/)
-
-All steps here documented by default uses brew as a package manager.
-Brew is famous in macOS, but can also be installed on linux machines, and windows (WSL).
-
-![HomeBrew](./brew.png)
-
-### Install Brew
-```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-```
-
-### Install packages
-```bash
-brew install package_name
-```
-
-### Update packages
-```bash
-# Upgrade one package
-brew upgrade package_name
-
-# Upgrade all packages
-brew upgrade
-```
-
-### Remove packages
-```bash
-brew uninstall package_name
-```
+- [LinkedIn](https://www.linkedin.com/in/matheus-sandrini-rossi/)
+- [Github](https://github.com/matheus-rossi)
+- Youtube - Soon

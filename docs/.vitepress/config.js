@@ -23,12 +23,14 @@ export default withMermaid(
             link: 'development/index.md',
             collapsed: false,
             items: [
+              { text: 'Environment', link: 'development/00-environment/index.md' },
               { 
                 text: 'AI Engineering', 
                 collapsed: true,
                 items: [
-                  { text: 'Agents', link: 'development/ai/agents/index.md' },
-                  { text: 'LLM', link: 'development/ai/llm/index.md' },
+                  { text: 'Large Language Models', link: 'development/ai/llm/index.md' },
+                  { text: 'How to use a LLM', link: 'development/ai/llm/using-llm.md' },
+                  { text: 'Agents', link: 'development/ai/llm/agents.md' },
                 ]
               },
               {
@@ -76,11 +78,11 @@ export default withMermaid(
                 link: '',
                 collapsed: true,
                 items: [
+                  { text: 'Concepts', link: 'development/data-engineering/concepts/index.md' },
                   { text: 'Apache Airflow', link: 'development/data-engineering/airflow/index.md' },
                   { text: 'Apache Spark', link: 'development/data-engineering/spark/index.md' },
                   { text: 'Apache Kafka', link: 'development/data-engineering/kafka/index.md' },
                   { text: 'Apache Pinot', link: 'development/data-engineering/pinot/index.md' },
-                  { text: 'Concepts', link: 'development/data-engineering/concepts/index.md' },
                   { 
                     text: 'Data Lakehouse', 
                     link: '',
